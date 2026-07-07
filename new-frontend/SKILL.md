@@ -74,11 +74,12 @@ A React + TypeScript frontend application.
 ## Stack
 
 - React 19 + TypeScript + Vite
-- Tailwind CSS + shadcn/ui (light/dark mode)
+- Tailwind CSS v4 + @nebari/design (Base UI components, light/dark mode)
 - React Router v6
 - TanStack Query v5
 - Jotai (global state)
 - Vitest + Testing Library
+- Biome (format + lint + import sort)
 
 ## Commands
 
@@ -87,7 +88,7 @@ npm run dev          # Start dev server (http://localhost:5173)
 npm run build        # Production build
 npm run test         # Run tests
 npm run test:coverage  # Tests with coverage
-npm run lint         # Lint
+npm run check        # Biome: format + lint + organize imports
 ```
 
 See [AGENTS.md](./AGENTS.md) for full conventions and coding standards.
@@ -109,12 +110,12 @@ Write these files at the project root (`$TARGET_DIR/`):
 2. `tsconfig.json`
 3. `tsconfig.node.json`
 4. `vite.config.ts`
-5. `tailwind.config.ts`
-6. `postcss.config.js`
-7. `components.json`
-8. `eslint.config.js`
-9. `.env.example`
-10. `index.html`
+5. `components.json` — includes the `@nebari` registry mapping
+6. `biome.json`
+7. `.env.example`
+8. `index.html`
+
+> Tailwind v4 needs no `tailwind.config.ts` or `postcss.config.js` (configured in `src/index.css` via `@import "tailwindcss"`), and Biome replaces `eslint.config.js`. Do not create those files.
 
 ---
 
@@ -155,25 +156,38 @@ This may take 30–60 seconds. Wait for it to complete before continuing.
 
 ---
 
-## Step 6 — Install shadcn/ui Skill
+## Step 6 — Install the Nebari UI Skill
+
+The `@nebari` registry is already wired into `components.json` (the `registries`
+block written in Step 3), so `npx shadcn add @nebari/<name>` resolves without
+any extra setup. Install the Nebari design-system consumer skill so Claude Code
+knows how to add and compose Nebari components:
 
 ```bash
-cd "$TARGET_DIR" && npx skills add shadcn/ui --agent claude --yes
+cd "$TARGET_DIR" && npx shadcn@latest add @nebari/claude-skill --yes
 ```
 
-This installs the shadcn/ui Claude Code skill into `$TARGET_DIR/.claude/skills/shadcn-ui/`. It auto-activates whenever `components.json` is detected in the project.
+This installs the `nebari-ui` skill (it targets `~/.claude/skills/nebari-ui/`).
+It auto-activates when you ask to add or use Nebari components.
 
 If the command fails (e.g. network error), note the failure but continue to Step 7.
 
 ---
 
-## Step 7 — Add Base shadcn Components
+## Step 7 — Add the Nebari Theme and Base Components
+
+Add the theme **first** (it writes the Nebari brand tokens — `:root` + `.dark`
+CSS variables — into `src/index.css`), then the base components. `shadcn` pulls
+each component's `registryDependencies` (the `utils` helper, the theme) and npm
+dependencies (Base UI, `class-variance-authority`, `lucide-react`) automatically.
 
 ```bash
-cd "$TARGET_DIR" && npx shadcn@latest add button card input badge dialog dropdown-menu separator skeleton sonner --yes
+cd "$TARGET_DIR" && npx shadcn@latest add @nebari/theme @nebari/button @nebari/card @nebari/input @nebari/badge @nebari/dialog @nebari/select @nebari/alert @nebari/tabs --yes
 ```
 
-These components cover the majority of common UI needs. If the command fails, note the failure but continue to Step 8.
+These cover the majority of common UI needs. If the command fails, note the
+failure but continue to Step 8 — the app will not build until `@nebari/theme`
+has been added, since `src/index.css` references its tokens.
 
 ---
 
@@ -192,20 +206,23 @@ Then print a success message in this exact format (with actual values substitute
 
 Stack:
   React 19 + TypeScript + Vite
-  Tailwind CSS + shadcn/ui (light/dark mode)
+  Tailwind CSS v4 + @nebari/design (Base UI, light/dark mode)
   React Router v6
   TanStack Query v5
   Jotai (global state)
-  Vitest + Testing Library + ESLint
+  Vitest + Testing Library + Biome
 
 Next steps:
   cd $PROJECT_NAME
   npm run dev        → http://localhost:5173
   npm run test       → run unit tests
+  npm run check      → format + lint + organize imports
   npm run build      → production build
 
-Add more shadcn components:
-  npx shadcn@latest add <component>
+Add more Nebari components:
+  npx shadcn add @nebari/<component>     (e.g. spinner, field, label, checkbox, switch, radio-group, textarea)
+  npx shadcn view @nebari/<component>    (inspect variants/props before installing)
+  curl -s https://nebari-dev.github.io/nebari-design/r/registry.json   (list the catalog)
 
 Add a new page:
   src/pages/PageName/PageName.tsx
@@ -227,4 +244,6 @@ Add an API hook:
 - **Project name substitution**: Replace `{{PROJECT_NAME}}` in the AGENTS.md template and `"name": "{{PROJECT_NAME}}"` in package.json with the actual project name.
 - **Empty files**: `.gitkeep` files must be written as empty files.
 - **npm install**: Run unconditionally after writing all source files.
+- **Nebari components are upstream-managed**: `npx shadcn add @nebari/<name>` copies component source into `src/components/ui/`. Treat those files as managed — never hand-edit them (they are overwritten on upgrade). Extend at the call site via `className` (merged with `cn()`) or the Base UI `render` prop. See the `nebari-ui` skill for details.
+- **Theme via CLI, not hand-copied**: The `:root`/`.dark` brand tokens come from `npx shadcn add @nebari/theme`. `src/index.css` intentionally ships only the Tailwind import, font imports, and base layer — do not paste token values into it.
 - **Do not add extra files**: Only create the files listed above.

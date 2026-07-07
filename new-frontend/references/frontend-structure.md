@@ -6,6 +6,12 @@ Use these exact file contents when scaffolding the frontend. All paths are relat
 
 ## `package.json`
 
+> `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`, and
+> `@base-ui-components/react` are the runtime deps Nebari components import; they
+> are declared here so the first `npm install` sets them up. `npx shadcn add`
+> also installs any it finds missing. Fonts are `Geist` (sans) + `IBM Plex Mono`
+> (mono) to match the `@nebari/theme` tokens.
+
 ```json
 {
   "name": "{{PROJECT_NAME}}",
@@ -18,20 +24,27 @@ Use these exact file contents when scaffolding the frontend. All paths are relat
     "preview": "vite preview",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint ."
+    "lint": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check --write ."
   },
   "dependencies": {
+    "@base-ui-components/react": "1.0.0-rc.0",
+    "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
     "@tanstack/react-query": "^5.51.1",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jotai": "^2.9.0",
     "lucide-react": "^0.400.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^6.24.1",
-    "tailwind-merge": "^2.3.0"
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.7.0",
+    "@biomejs/biome": "^2.4.15",
+    "@tailwindcss/vite": "^4.1.0",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
@@ -40,16 +53,9 @@ Use these exact file contents when scaffolding the frontend. All paths are relat
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^4.3.1",
     "@vitest/coverage-v8": "^2.0.3",
-    "autoprefixer": "^10.4.19",
-    "eslint": "^9.7.0",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-react-refresh": "^0.4.9",
-    "globals": "^15.8.0",
     "jsdom": "^24.1.1",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.4",
+    "tailwindcss": "^4.1.0",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^8.0.0",
     "vite": "^5.3.1",
     "vitest": "^2.0.3"
   }
@@ -116,11 +122,12 @@ Use these exact file contents when scaffolding the frontend. All paths are relat
 ```typescript
 /// <reference types="vitest" />
 import path from "path";
-import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -149,96 +156,67 @@ export default defineConfig({
 
 ---
 
-## `tailwind.config.ts`
+## `biome.json`
 
-```typescript
-import type { Config } from "tailwindcss";
+> Tailwind v4 is configured in CSS (`src/index.css`), not a JS config file — there is no `tailwind.config.ts` or `postcss.config.js`. The Vite plugin (`@tailwindcss/vite`) handles the build.
 
-const config: Config = {
-  darkMode: ["class"],
-  content: [
-    "./index.html",
-    "./src/**/*.{ts,tsx,js,jsx}",
-  ],
-  theme: {
-    extend: {
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-    },
+```json
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "includes": ["**", "!dist", "!coverage", "!node_modules", "!**/*.tsbuildinfo"]
   },
-  plugins: [],
-};
-
-export default config;
-```
-
----
-
-## `postcss.config.js`
-
-```javascript
-export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80
   },
-};
+  "javascript": {
+    "formatter": {
+      "semicolons": "always",
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "trailingCommas": "all",
+      "bracketSpacing": true,
+      "arrowParentheses": "always"
+    }
+  },
+  "linter": { "enabled": true, "rules": { "recommended": true } },
+  "assist": {
+    "enabled": true,
+    "actions": { "source": { "organizeImports": "on" } }
+  }
+}
 ```
 
 ---
 
 ## `components.json`
 
+> The `registries` block wires up the `@nebari` namespace so
+> `npx shadcn add @nebari/<name>` resolves against the Nebari design-system
+> registry (served from GitHub Pages). It sits alongside the normal
+> `style` / `tailwind` / `aliases` config — it does not replace them.
+
 ```json
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "default",
+  "style": "new-york",
   "rsc": false,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.ts",
+    "config": "",
     "css": "src/index.css",
-    "baseColor": "slate",
+    "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "registries": {
+    "@nebari": "https://nebari-dev.github.io/nebari-design/r/{name}.json"
   },
   "aliases": {
     "components": "@/components",
@@ -248,41 +226,6 @@ export default {
     "hooks": "@/hooks"
   }
 }
-```
-
----
-
-## `eslint.config.js`
-
-```javascript
-import js from "@eslint/js";
-import globals from "globals";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint from "typescript-eslint";
-
-export default tseslint.config(
-  { ignores: ["dist", "coverage"] },
-  {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ["**/*.{ts,tsx}"],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
-    plugins: {
-      "react-hooks": reactHooks,
-      "react-refresh": reactRefresh,
-    },
-    rules: {
-      ...reactHooks.configs.recommended.rules,
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowConstantExport: true },
-      ],
-    },
-  }
-);
 ```
 
 ---
@@ -368,64 +311,42 @@ export default App;
 
 ## `src/index.css`
 
+> This file ships **only** the Tailwind import, the Nebari fonts, the dark
+> variant, and the base layer. The Nebari brand tokens (`:root` + `.dark` CSS
+> variables and the `--font-sans` / radius / motion tokens) are installed by
+> `npx shadcn add @nebari/theme` (Step 7) — the `theme` registry item is their
+> source of truth. Do **not** hand-copy token values into this file; re-running
+> `shadcn add @nebari/theme` updates them. The app will not build until the
+> theme has been added, since the base layer references `border-border` /
+> `bg-background`.
+
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
+@custom-variant dark (&:is(.dark *));
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
+
+  html {
+    @apply font-sans;
+  }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    margin: 0;
+    min-height: 100%;
   }
 }
 ```
@@ -433,6 +354,10 @@ export default App;
 ---
 
 ## `src/lib/utils.ts`
+
+> `npx shadcn add @nebari/<component>` also installs the shared `cn()` helper
+> (the `utils` registry item) to this path. Its contents are identical to the
+> version below; if `shadcn` overwrites it, that is expected and safe.
 
 ```typescript
 import { clsx, type ClassValue } from "clsx";
