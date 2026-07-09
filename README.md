@@ -6,95 +6,19 @@ Skills install into `~/.claude/skills/` and activate automatically when their tr
 
 ## Skills
 
-### `new-frontend`
+Full instructions for each skill live in its `SKILL.md`. Summary:
 
-| | |
-|---|---|
-| **Name** | `new-frontend` |
-| **Description** | Scaffolds a new React + TypeScript frontend project (React 19, Vite, Tailwind v4, shadcn/ui, React Router v6, TanStack Query v5, Jotai, Vitest). Creates the full `src/` layout, config files, routing, theme provider, API client, Jotai store, base pages, and test setup. |
-| **Sample prompts** | `/new-frontend my-app` · "scaffold a new frontend" · "create a React project" · "bootstrap a frontend app" · "new React app" |
-
----
-
-### `new-backend`
-
-| | |
-|---|---|
-| **Name** | `new-backend` |
-| **Description** | Scaffolds a new Python FastAPI backend project (Python 3.12, PostgreSQL 16, async SQLAlchemy 2, Alembic, Pydantic v2, pytest, Ruff, uv). Creates the layered `app/` architecture, Alembic async migrations, `docker-compose.yml` with dev + test Postgres, and pytest fixtures. |
-| **Sample prompts** | `/new-backend my-api` · "scaffold a new backend" · "create a FastAPI project" · "bootstrap a backend app" · "new FastAPI app" |
-
----
-
-### `new-monorepo`
-
-| | |
-|---|---|
-| **Name** | `new-monorepo` |
-| **Description** | Scaffolds a full-stack monorepo combining a React + TypeScript frontend and a Python FastAPI backend, wiring together the `new-frontend` and `new-backend` stacks under one repo. |
-| **Sample prompts** | `/new-monorepo my-project` · "scaffold a monorepo" · "create a full-stack project" · "new full-stack app" |
-
----
-
-### `frontend-dev`
-
-| | |
-|---|---|
-| **Name** | `frontend-dev` |
-| **Description** | OpenTeams frontend conventions for React + TypeScript + Vite + shadcn/ui + Tailwind v4 projects. Covers folder structure, component/test patterns, TanStack Query + Jotai, styling with semantic tokens + `cn()`, and the Biome + Vitest quality gates. Applies when writing, modifying, or reviewing frontend code in a project with a `components.json` or `vite.config`. |
-| **Sample prompts** | "add a component to this React app" · "wire up a TanStack Query hook" · "how should I structure this page?" · "review my frontend changes for conventions" |
-
----
-
-### `backend-dev`
-
-| | |
-|---|---|
-| **Name** | `backend-dev` |
-| **Description** | OpenTeams backend conventions for Python + FastAPI + async SQLAlchemy + uv projects. Covers package layout, Pydantic v2 + pydantic-settings, async SQLAlchemy 2, structlog, and the ruff + mypy + pytest quality gate. Applies when writing, modifying, or reviewing routes, models, schemas, services, config, migrations, or tests. |
-| **Sample prompts** | "add a new FastAPI route" · "create a SQLAlchemy model + schema" · "add a service for X" · "write a migration for this model" |
-
----
-
-### `k8s-deploy`
-
-| | |
-|---|---|
-| **Name** | `k8s-deploy` |
-| **Description** | OpenTeams Kubernetes deploy & local-dev conventions — Helm charts, Tilt + k3d/minikube inner loop, docker-compose, ArgoCD, and kubectl/k9s debugging. Applies when editing Helm charts, Tiltfiles, docker-compose files, or ArgoCD Applications, running a service on a cluster, or debugging a deployment. |
-| **Sample prompts** | "write a Helm chart for this service" · "set up a Tiltfile" · "add an ArgoCD Application" · "my pods keep crashing — help debug" |
-
----
-
-### `frontend-pr-review`
-
-| | |
-|---|---|
-| **Name** | `frontend-pr-review` |
-| **Description** | Reviews a frontend pull request against OpenTeams conventions — code correctness, React/TypeScript craft, accessibility, correct use of Nebari design components/utils/theme, no hard-coded colors, no stray console logs, and flags dead commented-out code and TODOs. Accepts a PR number, PR URL, branch, or the working diff. |
-| **Sample prompts** | `/frontend-pr-review 123` · "review this frontend PR" · "review the frontend changes" · "check this React/TS diff before merge" |
-
----
-
-### `github-issue`
-
-| | |
-|---|---|
-| **Name** | `github-issue` |
-| **Description** | Generates well-structured GitHub issue markdown with Title, Summary, Motivation, Acceptance Criteria, and Out of Scope sections. |
-| **Sample prompts** | `/github-issue add dark mode toggle` · "write a github issue" · "draft an issue" · "generate issue markdown" · "create a github issue for …" |
-
----
-
-### `start-dev`
-
-| | |
-|---|---|
-| **Name** | `start-dev` |
-| **Description** | Launches one of the user's local-dev apps (`nebi`, `nebari-landing`, `nebari-chat-pack`, `jhub-apps`, `nebari-llm-serving-pack`) in its fast inner-loop mode. |
-| **Sample prompts** | `/start-dev nebi` · "start dev for nebari-landing" · "run jhub-apps locally" · "spin up nebari-chat-pack" · "launch nebi for local development" |
-
----
+| Skill | What it does | Sample prompts |
+|---|---|---|
+| `new-frontend` | Scaffolds a React + TypeScript frontend (React 19, Vite, Tailwind v4, shadcn/ui, React Router v6, TanStack Query v5, Jotai, Vitest) with full `src/` layout, routing, theme provider, API client, Jotai store, and test setup. | `/new-frontend my-app` · "scaffold a new frontend" · "create a React project" |
+| `new-backend` | Scaffolds a Python FastAPI backend (Python 3.12, PostgreSQL 16, async SQLAlchemy 2, Alembic, Pydantic v2, pytest, Ruff, uv) with layered `app/` architecture, async migrations, `docker-compose.yml`, and pytest fixtures. | `/new-backend my-api` · "scaffold a new backend" · "create a FastAPI project" |
+| `new-monorepo` | Scaffolds a full-stack monorepo combining the `new-frontend` and `new-backend` stacks under one repo. | `/new-monorepo my-project` · "scaffold a monorepo" · "new full-stack app" |
+| `frontend-dev` | OpenTeams frontend conventions — folder structure, component/test patterns, TanStack Query + Jotai, styling with semantic tokens + `cn()`, and the Biome + Vitest gates. Applies when writing or reviewing frontend code. | "add a component to this React app" · "wire up a TanStack Query hook" · "review my frontend changes" |
+| `backend-dev` | OpenTeams backend conventions — package layout, Pydantic v2 + pydantic-settings, async SQLAlchemy 2, structlog, and the ruff + mypy + pytest gate. Applies when writing or reviewing routes, models, schemas, services, or migrations. | "add a new FastAPI route" · "create a SQLAlchemy model + schema" · "write a migration" |
+| `k8s-deploy` | OpenTeams Kubernetes deploy & local-dev conventions — Helm charts, Tilt + k3d/minikube inner loop, docker-compose, ArgoCD, and kubectl/k9s debugging. | "write a Helm chart for this service" · "set up a Tiltfile" · "my pods keep crashing — help debug" |
+| `frontend-pr-review` | Reviews a frontend PR against OpenTeams conventions — correctness, React/TS craft, accessibility, Nebari component/theme usage, no hard-coded colors, no stray console logs, dead code and TODOs. Accepts a PR number, URL, branch, or the working diff. | `/frontend-pr-review 123` · "review this frontend PR" · "check this React/TS diff before merge" |
+| `github-issue` | Generates well-structured GitHub issue markdown with Title, Summary, Motivation, Acceptance Criteria, and Out of Scope sections. | `/github-issue add dark mode toggle` · "write a github issue" · "draft an issue" |
+| `start-dev` | Launches one of the user's local-dev apps (`nebi`, `nebari-landing`, `nebari-chat-pack`, `jhub-apps`, `nebari-llm-serving-pack`) in its fast inner-loop mode. | `/start-dev nebi` · "start dev for nebari-landing" · "run jhub-apps locally" |
 
 ## Installing from this repo
 
