@@ -248,7 +248,7 @@ The Nebari brand tokens are installed via `npx shadcn add @nebari/theme` into `s
 
 Claude Code skills for this project:
 
-- **nebari-ui** — the Nebari design-system consumer skill (installed via `npx shadcn add @nebari/claude-skill`, lands in `~/.claude/skills/nebari-ui/`). Covers the component catalog, Base UI `render`-prop composition, theming, and motion. Activates when you ask to add or use Nebari components.
+- **nebari-ui** — the Nebari design-system consumer skill (installed from the `@nebari` shadcn registry via `npx shadcn add @nebari/claude-skill`, lands in `~/.claude/skills/nebari-ui/`). Covers the component catalog, Base UI `render`-prop composition, theming, and motion. Activates when you ask to add or use Nebari components.
 
 ---
 

@@ -160,15 +160,17 @@ This may take 30–60 seconds. Wait for it to complete before continuing.
 
 The `@nebari` registry is already wired into `components.json` (the `registries`
 block written in Step 3), so `npx shadcn add @nebari/<name>` resolves without
-any extra setup. Install the Nebari design-system consumer skill so Claude Code
+any extra setup. Install the Nebari design-system consumer skill from the
+`@nebari` registry (served from the `nebari-design` GitHub repo) so Claude Code
 knows how to add and compose Nebari components:
 
 ```bash
 cd "$TARGET_DIR" && npx shadcn@latest add @nebari/claude-skill --yes
 ```
 
-This installs the `nebari-ui` skill (it targets `~/.claude/skills/nebari-ui/`).
-It auto-activates when you ask to add or use Nebari components.
+This pulls the `nebari-ui` skill from the registry and installs it at
+`~/.claude/skills/nebari-ui/`. It auto-activates when you ask to add or use
+Nebari components.
 
 If the command fails (e.g. network error), note the failure but continue to Step 7.
 
