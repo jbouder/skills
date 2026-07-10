@@ -128,7 +128,7 @@ Toggle by adding/removing the `.dark` class on `<html>` (the `ThemeProvider` doe
 
 ### @nebari/design components
 
-Nebari is a **shadcn component registry** styled with the Nebari brand and built on **Base UI** (not Radix). The `@nebari` registry is wired into `components.json`. Add components via CLI — **never hand-edit files in `src/components/ui/`**:
+Nebari is a **shadcn component registry** styled with the Nebari brand and built on **Base UI**. The `@nebari` registry is wired into `components.json`. Add components via CLI — **never hand-edit files in `src/components/ui/`**:
 
 ```bash
 npx shadcn add @nebari/theme      # brand tokens (add once, first)
@@ -138,7 +138,7 @@ curl -s https://nebari-dev.github.io/nebari-design/r/registry.json   # list the 
 ```
 
 - **Installed `ui/*` files are upstream-managed, not app-owned.** `shadcn add` overwrites them on upgrade — any local edit is silently lost. To change look or behavior, do it at the **call site**: pass extra classes via `className` (merged with `cn()`, so your classes win), swap the element with the Base UI `render` prop, or build a thin wrapper component in your own code.
-- **Composition uses the Base UI `render` prop** (Nebari's equivalent of Radix `asChild`), e.g. `<Button render={<a href="/docs" />}>Docs</Button>`. There is no `asChild`.
+- **Composition uses the Base UI `render` prop**, e.g. `<Button render={<a href="/docs" />}>Docs</Button>`. There is no `asChild`.
 - **Need a component not in the catalog?** Fall back to the upstream shadcn component, then style it with the same semantic tokens.
 - The `nebari-ui` skill (installed with the project) has the full catalog, composition, theming, and motion guidance.
 
@@ -258,7 +258,7 @@ Claude Code skills for this project:
 |-------|-----------|
 | Hand-edit `src/components/ui/` files | They're managed by `shadcn add` and overwritten on upgrade — extend at the call site (`className`, Base UI `render`, or a wrapper) |
 | Build a custom component when a Nebari one exists | Check the catalog (`npx shadcn view @nebari/<name>`); add it with `npx shadcn add @nebari/<name>` |
-| Use Radix or an `asChild` prop | Use the Base UI `render` prop (`<Button render={<a />}>`) |
+| Reach for an `asChild` prop | Use the Base UI `render` prop (`<Button render={<a />}>`) |
 | Add one-off utility classes that fight a component's variants | Pass a `variant`/`size`, or extend via `className` (merged with `cn()`) |
 | Use TypeScript `any` | Use proper types or `unknown` with narrowing |
 | Use raw Tailwind colors (`bg-white`, `text-gray-900`) or `dark:` variants | Use semantic tokens (`bg-background`, `text-foreground`) — they flip with `.dark` automatically |
