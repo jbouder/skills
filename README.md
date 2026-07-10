@@ -10,7 +10,7 @@ Full instructions for each skill live in its `SKILL.md`. Summary:
 
 | Skill | What it does | Sample prompts |
 |---|---|---|
-| `new-frontend` | Scaffolds a React + TypeScript frontend (React 19, Vite, Tailwind v4, shadcn/ui, React Router v6, TanStack Query v5, Jotai, Vitest) with full `src/` layout, routing, theme provider, API client, Jotai store, and test setup. | `/new-frontend my-app` · "scaffold a new frontend" · "create a React project" |
+| `new-frontend` | Scaffolds a React + TypeScript frontend (React 19, Vite, Tailwind v4, Nebari design system built on Base UI, React Router v6, TanStack Query v5, Jotai, Vitest) with full `src/` layout, routing, theme provider, API client, Jotai store, and test setup. | `/new-frontend my-app` · "scaffold a new frontend" · "create a React project" |
 | `new-backend` | Scaffolds a Python FastAPI backend (Python 3.12, PostgreSQL 16, async SQLAlchemy 2, Alembic, Pydantic v2, pytest, Ruff, uv) with layered `app/` architecture, async migrations, `docker-compose.yml`, and pytest fixtures. | `/new-backend my-api` · "scaffold a new backend" · "create a FastAPI project" |
 | `new-monorepo` | Scaffolds a full-stack monorepo combining the `new-frontend` and `new-backend` stacks under one repo. | `/new-monorepo my-project` · "scaffold a monorepo" · "new full-stack app" |
 | `frontend-dev` | OpenTeams frontend conventions — folder structure, component/test patterns, TanStack Query + Jotai, styling with semantic tokens + `cn()`, and the Biome + Vitest gates. Applies when writing or reviewing frontend code. | "add a component to this React app" · "wire up a TanStack Query hook" · "review my frontend changes" |
