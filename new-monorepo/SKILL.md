@@ -58,12 +58,12 @@ Read ALL content from `~/.claude/skills/new-frontend/references/frontend-structu
 4. `tsconfig.json`
 5. `tsconfig.node.json`
 6. `vite.config.ts`
-7. `tailwind.config.ts`
-8. `postcss.config.js`
-9. `components.json`
-10. `eslint.config.js`
-11. `.env.example`
-12. `index.html`
+7. `components.json` — includes the `@nebari` registry mapping
+8. `biome.json`
+9. `.env.example`
+10. `index.html`
+
+> Tailwind v4 needs no `tailwind.config.ts` or `postcss.config.js` (configured in `frontend/src/index.css` via `@import "tailwindcss"`), and Biome replaces `eslint.config.js`. Do not create those files.
 
 ### Frontend `AGENTS.md`
 
@@ -152,23 +152,41 @@ This may take 30–60 seconds. Wait for it to complete before continuing.
 
 ---
 
-## Step 6 — Install shadcn/ui Skill for Frontend
+## Step 6 — Install the Nebari UI Skill for Frontend
+
+The `@nebari` registry is already wired into `frontend/components.json` (the
+`registries` block written in Step 3), so `npx shadcn add @nebari/<name>`
+resolves without any extra setup. Install the Nebari design-system consumer
+skill from the `@nebari` registry (served from the `nebari-design` GitHub repo)
+so Claude Code knows how to add and compose Nebari components:
 
 ```bash
-cd "$TARGET_DIR/frontend" && npx skills add shadcn/ui --agent claude --yes
+cd "$TARGET_DIR/frontend" && npx shadcn@latest add @nebari/claude-skill --yes
 ```
+
+This pulls the `nebari-ui` skill from the registry and installs it at
+`~/.claude/skills/nebari-ui/`. It auto-activates when you ask to add or use
+Nebari components.
 
 If the command fails (e.g. network error), note the failure but continue to Step 7.
 
 ---
 
-## Step 7 — Add Base shadcn Components
+## Step 7 — Add the Nebari Theme and Base Components
+
+Add the theme **first** (it writes the Nebari brand tokens — `:root` + `.dark`
+CSS variables — into `frontend/src/index.css`), then the base components.
+`shadcn` pulls each component's `registryDependencies` (the `utils` helper, the
+theme) and npm dependencies (Base UI, `class-variance-authority`,
+`lucide-react`) automatically.
 
 ```bash
-cd "$TARGET_DIR/frontend" && npx shadcn@latest add button card input badge dialog dropdown-menu separator skeleton sonner --yes
+cd "$TARGET_DIR/frontend" && npx shadcn@latest add @nebari/theme @nebari/button @nebari/card @nebari/input @nebari/badge @nebari/dialog @nebari/select @nebari/alert @nebari/tabs --yes
 ```
 
-If the command fails, note the failure but continue to Step 8.
+These cover the majority of common UI needs. If the command fails, note the
+failure but continue to Step 8 — the app will not build until `@nebari/theme`
+has been added, since `frontend/src/index.css` references its tokens.
 
 ---
 
@@ -202,11 +220,11 @@ Then print a success message in this exact format (with actual values substitute
 
 Structure:
   $PROJECT_NAME/
-  ├── frontend/    React 19 + TypeScript + Vite + Tailwind + shadcn/ui
+  ├── frontend/    React 19 + TypeScript + Vite + Tailwind v4 + @nebari/design (Base UI)
   └── backend/     Python 3.12 + FastAPI + PostgreSQL + Alembic
 
 Stack:
-  Frontend: React 19 · TypeScript · Vite · Tailwind CSS · shadcn/ui · React Router v6 · TanStack Query v5 · Jotai · Vitest
+  Frontend: React 19 · TypeScript · Vite · Tailwind CSS v4 · @nebari/design (Base UI) · React Router v6 · TanStack Query v5 · Jotai · Vitest
   Backend:  FastAPI · SQLAlchemy 2 (async) · asyncpg · Alembic · Pydantic v2 · pytest-asyncio · httpx · Ruff · uv
 
 Next steps:
@@ -232,8 +250,10 @@ Next steps:
   make build
 
 Frontend API calls: already proxied — fetch("/api/...") in the browser hits http://localhost:8000
-Add more shadcn components:
-  cd frontend && npx shadcn@latest add <component>
+Add more Nebari components:
+  cd frontend && npx shadcn add @nebari/<component>     (e.g. spinner, field, label, checkbox, switch, radio-group, textarea)
+  cd frontend && npx shadcn view @nebari/<component>    (inspect variants/props before installing)
+  curl -s https://nebari-dev.github.io/nebari-design/r/registry.json   (list the catalog)
 
 See AGENTS.md (root), frontend/AGENTS.md, and backend/AGENTS.md for full conventions.
 ```

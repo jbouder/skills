@@ -51,7 +51,7 @@ Full-stack monorepo: React + TypeScript frontend, Python FastAPI backend.
 
 ```
 {{PROJECT_NAME}}/
-├── frontend/    React 19 + TypeScript + Vite + Tailwind CSS + shadcn/ui
+├── frontend/    React 19 + TypeScript + Vite + Tailwind v4 + @nebari/design (Base UI)
 └── backend/     Python 3.12 + FastAPI + PostgreSQL + Alembic
 ```
 
@@ -87,7 +87,7 @@ Frontend API calls use `/api/...` — Vite proxies them to the backend automatic
 | `make test-frontend` | Frontend tests (Vitest) |
 | `make test-backend` | Backend tests (pytest) |
 | `make build` | Production build of frontend |
-| `make lint` | Lint frontend (ESLint) + backend (Ruff) |
+| `make lint` | Lint frontend (Biome) + backend (Ruff) |
 | `make db-up` | Start Postgres containers |
 | `make db-down` | Stop Postgres containers |
 | `make db-migrate` | Apply Alembic migrations |

@@ -2,7 +2,7 @@
 
 This file covers the monorepo root. Each sub-project has its own `AGENTS.md` with detailed conventions:
 
-- **[frontend/AGENTS.md](./frontend/AGENTS.md)** — React, TypeScript, Tailwind, shadcn/ui, TanStack Query, Jotai, Vitest
+- **[frontend/AGENTS.md](./frontend/AGENTS.md)** — React, TypeScript, Tailwind, Nebari design system (Base UI), TanStack Query, Jotai, Vitest
 - **[backend/AGENTS.md](./backend/AGENTS.md)** — FastAPI, SQLAlchemy, Alembic, Pydantic, pytest, Ruff
 
 Read the relevant sub-project `AGENTS.md` before making changes there.
@@ -33,7 +33,7 @@ Read the relevant sub-project `AGENTS.md` before making changes there.
 │   │   ├── App.tsx
 │   │   ├── lib/api.ts          # fetch wrapper — use this for all HTTP calls
 │   │   ├── hooks/              # TanStack Query hooks (one per resource)
-│   │   ├── components/ui/      # shadcn components (never hand-edit)
+│   │   ├── components/ui/      # Nebari components (managed by shadcn add — never hand-edit)
 │   │   ├── pages/              # route-level components
 │   │   ├── store/              # Jotai atoms
 │   │   └── providers/ThemeProvider/
@@ -162,6 +162,6 @@ Frontend env vars use the `VITE_` prefix and live in `frontend/.env.local` (giti
 | Commit `backend/.env` | Use `backend/.env.example` as the template |
 | Fetch directly in React components | Create a hook in `frontend/src/hooks/` |
 | Call the DB in a FastAPI router directly | Go through a service and repository |
-| Hand-edit `frontend/src/components/ui/` | Use `npx shadcn@latest add <component>` from `frontend/` |
+| Hand-edit `frontend/src/components/ui/` | Use `npx shadcn add @nebari/<component>` from `frontend/` (overwritten on upgrade — extend at the call site) |
 | `git init` inside `frontend/` or `backend/` | One git repo at the monorepo root |
 | Mix frontend and backend concerns | Keep sub-projects independent — they communicate via HTTP only |
