@@ -56,7 +56,7 @@ src/
 │   └── api.ts           # fetch wrapper
 ├── store/               # all Jotai atoms
 │   └── appAtoms.ts
-├── hooks/               # use-*.ts — TanStack Query wrappers + custom hooks
+├── hooks/               # useThing.ts — TanStack Query wrappers + custom hooks
 ├── components/
 │   ├── ui/              # shadcn (generated — don't edit)
 │   └── UserCard/
@@ -84,7 +84,7 @@ import UserCard from "@/components/UserCard/UserCard";  // ❌ inner file
 | Component / its directory | PascalCase | `UserCard`, `UserCard/` |
 | Component file | PascalCase | `UserCard.tsx` |
 | Non-component file | camelCase | `utils.ts`, `appAtoms.ts` |
-| Hook | `use` + camelCase | `useCurrentUser`, `use-products.ts` |
+| Hook / its file | `use` + camelCase | `useCurrentUser`, `useProducts.ts` |
 | Utility / function | camelCase | `formatDate`, `cn` |
 
 ## Reference Files
@@ -103,7 +103,7 @@ Read the relevant reference before doing that kind of work — they contain the 
 | Hand-edit `src/components/ui/` | `npx shadcn@latest add <component>`; wrap to customize |
 | Build a custom primitive that shadcn already ships | Check `src/components/ui/` first, then add it |
 | Use raw Tailwind colors (`bg-white`, `text-gray-900`) | Semantic tokens (`bg-background`, `text-foreground`) |
-| Fetch in a component with `useEffect` | A `use-*` hook wrapping `useQuery`/`useMutation` |
+| Fetch in a component with `useEffect` | A `use*` hook wrapping `useQuery`/`useMutation` |
 | Store server/API data in a Jotai atom | TanStack Query owns server state |
 | Scatter atoms across component files | All atoms in `src/store/` |
 | Use `any` | Real types or `unknown` + narrowing |

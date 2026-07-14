@@ -40,10 +40,10 @@ export const api = {
 
 ## TanStack Query — one hook per resource
 
-Wrap every query/mutation in a `use-*` hook under `src/hooks/`. Components consume the hook; they never see `queryKey` or `api` directly.
+Wrap every query/mutation in a `use*` hook under `src/hooks/` (file named to match the hook, e.g. `useProducts.ts`). Components consume the hook; they never see `queryKey` or `api` directly.
 
 ```ts
-// src/hooks/use-products.ts
+// src/hooks/useProducts.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 

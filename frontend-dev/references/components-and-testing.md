@@ -46,7 +46,7 @@ Component conventions:
 - **Props interface** named `<Component>Props`, defined above the component. Always accept `className?: string` and merge it with `cn()` so callers can extend styling.
 - One component per file. Function declaration + `export default`.
 - Keep markup in semantic tokens (see `styling.md`).
-- A component that fetches should call a `use-*` hook, not `fetch` (see `state-and-data.md`).
+- A component that fetches should call a `use*` hook, not `fetch` (see `state-and-data.md`).
 
 ## Pages
 
