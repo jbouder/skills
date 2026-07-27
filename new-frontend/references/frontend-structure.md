@@ -7,7 +7,7 @@ Use these exact file contents when scaffolding the frontend. All paths are relat
 ## `package.json`
 
 > `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`, and
-> `@base-ui-components/react` are the runtime deps Nebari components import; they
+> `@base-ui/react` are the runtime deps Nebari components import; they
 > are declared here so the first `npm install` sets them up. `npx shadcn add`
 > also installs any it finds missing. Fonts are `Geist` (sans) + `IBM Plex Mono`
 > (mono) to match the `@nebari/theme` tokens.
@@ -29,7 +29,7 @@ Use these exact file contents when scaffolding the frontend. All paths are relat
     "check": "biome check --write ."
   },
   "dependencies": {
-    "@base-ui-components/react": "1.0.0-rc.0",
+    "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource/ibm-plex-mono": "^5.2.7",
     "@tanstack/react-query": "^5.51.1",
