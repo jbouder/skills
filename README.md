@@ -17,6 +17,7 @@ Full instructions for each skill live in its `SKILL.md`. Summary:
 | `backend-dev` | OpenTeams backend conventions — package layout, Pydantic v2 + pydantic-settings, async SQLAlchemy 2, structlog, and the ruff + mypy + pytest gate. Applies when writing or reviewing routes, models, schemas, services, or migrations. | "add a new FastAPI route" · "create a SQLAlchemy model + schema" · "write a migration" |
 | `k8s-deploy` | OpenTeams Kubernetes deploy & local-dev conventions — Helm charts, Tilt + k3d/minikube inner loop, docker-compose, ArgoCD, and kubectl/k9s debugging. | "write a Helm chart for this service" · "set up a Tiltfile" · "my pods keep crashing — help debug" |
 | `frontend-pr-review` | Reviews a frontend PR against OpenTeams conventions — correctness, React/TS craft, accessibility, Nebari component/theme usage, no hard-coded colors, no stray console logs, dead code and TODOs. Accepts a PR number, URL, branch, or the working diff. | `/frontend-pr-review 123` · "review this frontend PR" · "check this React/TS diff before merge" |
+| `pr-review` | Language-agnostic PR gate in two phases: a verified, severity-ranked report in the terminal, then — only on your go-ahead — a pushed GitHub change request with inline comments on the blockers and a short review body. Verifies every finding against the PR head before relaying, and carries the GitHub review-API mechanics (hunk anchoring, suggestion blocks) in `references/`. | `/pr-review 72` · "review pr 72" · "gate this PR before merge" |
 | `github-issue` | Generates well-structured GitHub issue markdown with Title, Summary, Motivation, Acceptance Criteria, and Out of Scope sections. | `/github-issue add dark mode toggle` · "write a github issue" · "draft an issue" |
 | `start-dev` | Launches one of the user's local-dev apps (`nebi`, `nebari-landing`, `nebari-chat-pack`, `jhub-apps`, `nebari-llm-serving-pack`) in its fast inner-loop mode. | `/start-dev nebi` · "start dev for nebari-landing" · "run jhub-apps locally" |
 
@@ -32,7 +33,8 @@ Or install all of them:
 
 ```bash
 for skill in backend-dev frontend-dev frontend-pr-review github-issue \
-             k8s-deploy new-backend new-frontend new-monorepo start-dev; do
+             k8s-deploy new-backend new-frontend new-monorepo pr-review \
+             start-dev; do
   npx skills add "./$skill" --agent claude
 done
 ```
