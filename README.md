@@ -21,6 +21,7 @@ Full instructions for each skill live in its `SKILL.md`. Summary:
 | `github-issue` | Generates well-structured GitHub issue markdown. Feature/task issues get Title, Summary, Motivation, Acceptance Criteria, and Out of Scope; bug reports get Title, Description, Steps to reproduce, Expected behavior, Environment, and Additional context. Infers the type from the description, or force it with `--bug` / `--feature`. | `/github-issue add dark mode toggle` · `/github-issue --bug deploy crashes on empty config` · "write a github issue" · "file a bug" |
 | `tool-eval` | Evaluates a tool, app, library, or repo — the problem it solves, what it does and doesn't do, health/maturity, and how it compares to alternatives (including "do nothing"). Reports TL;DR and an Adopt/Trial/Hold/Skip verdict first. Accepts a name, GitHub URL, package name, or local repo path. | `/tool-eval owner/repo` · "evaluate this tool" · "what does X do and why do we need it" · "compare X vs Y" |
 | `start-dev` | Launches one of the user's local-dev apps (`nebi`, `nebari-landing`, `nebari-chat-pack`, `jhub-apps`, `nebari-llm-serving-pack`) in its fast inner-loop mode. | `/start-dev nebi` · "start dev for nebari-landing" · "run jhub-apps locally" |
+| `talk-deck` | Builds an interactive HTML slide deck for a talk — keyboard navigation, speaker notes, a timed running order, live demos with Show code toggles, takeaways and resources — with optional deep-dive and UI/UX-focus modes, a checker script, and publishing to the OpenTeams artifacts site or a claude.ai artifact. | `/talk-deck WebGPU --ux` · "make a 30 minute talk on X for the UI/UX CoP" · "add a demo slide to my deck" |
 
 ## Installing from this repo
 
@@ -35,7 +36,7 @@ Or install all of them:
 ```bash
 for skill in backend-dev frontend-dev frontend-pr-review github-issue \
              k8s-deploy new-backend new-frontend new-monorepo pr-review \
-             start-dev tool-eval; do
+             start-dev talk-deck tool-eval; do
   npx skills add "./$skill" --agent claude
 done
 ```
