@@ -54,3 +54,7 @@ Each skill folder contains a `SKILL.md` (the skill definition and instructions) 
 ├── references/       # Detailed reference docs loaded on demand
 └── scripts/          # Helper scripts invoked by the skill
 ```
+
+## License
+
+[MIT](LICENSE). Use, copy, modify, and redistribute freely.
