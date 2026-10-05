@@ -1,5 +1,5 @@
 ---
-name: frontend-dev
+name: frontend-conventions
 description: OpenTeams frontend conventions for React + TypeScript + Vite + shadcn/ui + Tailwind v4 projects. Use when writing, modifying, or reviewing frontend code — components, pages, hooks, state, data fetching, styling, or tests — in any project with a components.json or vite.config. Covers folder structure, component/test patterns, TanStack Query + Jotai, styling with semantic tokens + cn(), and Biome + Vitest quality gates.
 ---
 

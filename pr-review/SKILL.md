@@ -43,7 +43,7 @@ When it's on, confirm the project's actual conventions before reviewing — don'
 - `src/index.css` / `globals.css` — the **defined semantic tokens**. This is your allowlist for "is this color a real token or a hardcode?".
 - `biome.json` — so a "lint" comment is a real finding, not a style opinion the tooling already owns.
 
-The canonical "what good looks like" lives in two skills — read them when a checklist item needs the full rule: **`frontend-dev`** (structure, naming, TanStack Query vs Jotai, the quality gate) and **`nebari-ui`** (the `@nebari` registry, theme tokens, `cn()`, `render`-prop composition, motion tokens, managed `ui/*`). For deeper design/UX critique of a specific view, `impeccable` is the specialist.
+The canonical "what good looks like" lives in two skills — read them when a checklist item needs the full rule: **`frontend-conventions`** (structure, naming, TanStack Query vs Jotai, the quality gate) and **`nebari-ui`** (the `@nebari` registry, theme tokens, `cn()`, `render`-prop composition, motion tokens, managed `ui/*`). For deeper design/UX critique of a specific view, `impeccable` is the specialist.
 
 ### 3. Run the deep review
 

@@ -13,7 +13,7 @@ The frontend lens of `pr-review`. Walk every section against the frontend part o
 - **Security** — No secrets/API keys/tokens in source. `dangerouslySetInnerHTML` only with sanitized input. No building URLs/queries from unescaped user input. `target="_blank"` has `rel="noopener noreferrer"`.
 - **Error handling** — Errors surfaced to the user (toast/inline), not swallowed. `catch {}` blocks that silently drop errors are a finding.
 
-## 2. Frontend craft (see `frontend-dev`)
+## 2. Frontend craft (see `frontend-conventions`)
 
 - **Structure** — New component/page in its own PascalCase dir with a barrel `index.ts` and a co-located `*.test.tsx`? Imports from the folder, not the inner file?
 - **Naming** — Components PascalCase, non-components camelCase, hooks `use…`.

@@ -1,5 +1,5 @@
 ---
-name: backend-dev
+name: backend-conventions
 description: OpenTeams backend conventions for Python + FastAPI + async SQLAlchemy + uv projects. Use when writing, modifying, or reviewing backend code — routes, models, schemas, services, config, migrations, or tests — in any project with a pyproject.toml and a src/ or app/ layout. Covers package layout, Pydantic v2 + pydantic-settings, async SQLAlchemy 2, structlog, and the ruff + mypy + pytest quality gate.
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: k8s-deploy
+name: k8s-conventions
 description: OpenTeams Kubernetes deploy & local-dev conventions — Helm charts, Tilt + k3d/minikube inner loop, docker-compose, ArgoCD, and kubectl/k9s debugging. Use when writing or editing Helm charts (Chart.yaml, values.yaml, templates), Tiltfiles, docker-compose files, or ArgoCD Applications, when running a service locally on a cluster, or when debugging a deployment (pods crashing, images not updating, services unreachable).
 ---
 
