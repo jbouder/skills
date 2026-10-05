@@ -1,6 +1,6 @@
 ---
 name: new-nebari-app
-description: Scaffold a static web app (HTML/CSS/JS) in the layout the Nebari Apps Pack expects, with a nebari-app.yaml launch manifest, and launch it on the cluster through the nebari-apps MCP server. Use when the user wants to create, scaffold, or generate an app for Nebari, or says "launch it" about an app directory containing nebari-app.yaml.
+description: Scaffold a static web app (plain HTML/CSS/JS, no build step) in the layout the Nebari Apps Pack expects, with a nebari-app.yaml launch manifest, and launch it on the cluster through the nebari-apps MCP server. Use when the user wants a static page or prototype deployed to a Nebari cluster ("scaffold a static Nebari app", "make a page and deploy it to Nebari"), or says "launch it" about an app directory containing nebari-app.yaml. Not for React/FastAPI codebases — use new-project for those.
 ---
 
 # Scaffold and launch Nebari apps

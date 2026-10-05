@@ -1,6 +1,6 @@
 ---
 name: new-project
-description: Scaffolds a new OpenTeams project — a React+TypeScript frontend (Vite, Tailwind v4, Nebari design system), a Python FastAPI backend (PostgreSQL, async SQLAlchemy, Alembic, pytest, uv), or a full-stack monorepo with both wired together. Triggers on /new-project, "scaffold a new frontend", "create a React project", "new React app", "scaffold a new backend", "create a FastAPI project", "new FastAPI app", "bootstrap a frontend/backend app", "scaffold a monorepo", "create a full-stack project", "new full-stack app".
+description: Scaffolds a new OpenTeams project — a React+TypeScript frontend (Vite, Tailwind v4, Nebari design system), a Python FastAPI backend (PostgreSQL, async SQLAlchemy, Alembic, pytest, uv), or a full-stack monorepo with both wired together. Not for static pages deployed through the Nebari Apps Pack — use new-nebari-app for those. Triggers on /new-project, "scaffold a new frontend", "create a React project", "new React app", "scaffold a new backend", "create a FastAPI project", "new FastAPI app", "bootstrap a frontend/backend app", "scaffold a monorepo", "create a full-stack project", "new full-stack app".
 argument-hint: <project-name> [--frontend | --backend | --monorepo]
 allowed-tools:
   - Write
