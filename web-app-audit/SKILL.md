@@ -1,13 +1,13 @@
 ---
 name: web-app-audit
-description: Run a full maturity audit of a web application repo and produce a scored report — security boundaries, auth and sessions, security headers, secrets and config, rate limiting and throttling, database protection, logging and observability, resilience and scalability, testing, CI/CD, dependency pinning and versioning, containers and deployment, accessibility, motion, UX polish, AI/LLM safety, project structure and large files, architecture, GitHub repo health, docs, and AI agent instructions. Use when asked to "audit this app", "run a web app audit", "how production-ready is this repo", "what's missing before launch", "audit security/CI/docs across the repo", or /web-app-audit.
+description: Run a full maturity audit of a web application repo and produce a scored report — security boundaries, auth and sessions, security headers, secrets/config/crypto, rate limiting and throttling, database protection, privacy and data lifecycle, logging and observability, resilience and scalability, release engineering and incident readiness, testing, CI/CD, supply chain and licensing, containers and deployment, accessibility, motion, UX polish and i18n/SEO, frontend performance, AI/LLM and agent safety, data integrity, project structure and large files, architecture, GitHub repo health, docs, and AI agent instructions. Use when asked to "audit this app", "run a web app audit", "how production-ready is this repo", "what's missing before launch", "audit security/CI/docs across the repo", or /web-app-audit.
 user-invocable: true
 argument-hint: "[repo path | owner/repo] [--quick] [--only <dimension,...>] [--issues]"
 ---
 
 # Web App Audit
 
-Audits a web app repository across 21 dimensions and produces a scored report:
+Audits a web app repository across 25 dimensions and produces a scored report:
 a maturity level per dimension, severity-ranked findings with evidence, drift
 between what the repo claims and what the code does, and a backlog sized to
 one PR per item.
@@ -27,8 +27,9 @@ the audit. The report shape is **`assets/report-template.md`**.
   into the scratchpad first: `gh repo clone owner/repo <dir> -- --depth 200`).
 - **`--quick`**: inventory, gates and a pass over the Security and Operations
   groups only. Say in the report that it was quick.
-- **`--only a,b`**: audit just the named dimensions (match loosely: "security",
-  "ci", "docs", "a11y", "structure").
+- **`--only a,b`**: audit just the named dimensions or groups (match loosely:
+  "security", "privacy", "release", "ci", "perf", "integrity", "docs", "a11y",
+  "structure").
 - **`--issues`**: after the report, draft GitHub issues for the backlog (see
   Step 7). Never file them without approval.
 
@@ -91,9 +92,17 @@ instruction to return scores, evidence and findings in the template's shape,
 read-only, with every claim anchored to `path:line`. Merge their results
 yourself. For `--quick` or `--only`, do it inline.
 
-Structure and size (dimension 17) deserves real reading, not a count: for each
+Structure and size (dimension 21) deserves real reading, not a count: for each
 source file the inventory lists over ~1,000 lines, open it and say whether it
 is cohesive or several concerns that should be split, and name the split.
+
+**Runtime pass for the Experience group.** Grep cannot see contrast, focus
+order or Largest Contentful Paint. If the app can be started without
+credentials or external services (the `run` skill, a compose file, a dev
+script), start it, open the two or three main screens, and run axe and
+Lighthouse against them; the `web-perf` and `impeccable` skills, if available,
+go deeper. Record which pages were measured. If it cannot be started, say the
+Experience scores are static-analysis only.
 
 ## Step 4 — Check for drift
 
@@ -126,8 +135,13 @@ Every finding must survive a second look:
 ## Step 6 — Write the report
 
 Fill `assets/report-template.md`: summary and top risks first, then the
-scorecard, ranked findings, drift, per-dimension detail, strengths, backlog,
-and method/caveats. Severity:
+scorecard with group means, ranked findings, drift, per-dimension detail,
+strengths, backlog, and method/caveats.
+
+The overall grade is the plain mean of applicable dimensions, **capped at 2.0
+while any Security-group dimension is at 0 or 1**; when the cap applies, show
+the uncapped mean beside it and name the dimension that triggered it. Do not
+weight dimensions (see "Overall grade" in `dimensions.md`). Severity:
 
 - **High**: exploitable or data-exposing, a production outage waiting to
   happen, or a guard that is claimed but absent.
