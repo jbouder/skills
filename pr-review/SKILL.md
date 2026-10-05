@@ -92,7 +92,7 @@ Open with a verdict, then group by severity, most severe first. Anchor every fin
 ```
 ## PR Review — <PR title / branch>
 
-**Verdict:** Approve · Approve with nits · Request changes
+**Verdict:** Approve · Request changes
 <one-sentence rationale>
 
 ## 🔴 Blocking
@@ -110,11 +110,10 @@ most useful sentence in the whole review.>
 <the fix, specifically.>
 
 ## 🟡 Should fix
-## 🔵 Minor
 
 ## Worth knowing
-<merge collisions, stale comments, doc drift — not defects, but the author
-wants them.>
+<migration-number collisions, structural conflicts with other open PRs —
+not defects, but the author needs them before merging.>
 ```
 
 Convention findings from the frontend lens are usually short — one line each is fine: `` `src/components/UserCard/UserCard.tsx:42` — Hardcoded `bg-white`; use `bg-background` (defined in index.css). Breaks dark mode. `` Save the full mechanism/evidence/fix treatment for behavioral defects.
@@ -124,6 +123,7 @@ Rules that keep the report worth reading:
 - **Lead with the mechanism, not the severity label.** "This wraps `mcpHandler`, not `handler`, so the cap is discarded" beats "HIGH: security issue in handler wiring".
 - **Name why CI is green** whenever it is. `TestFoo` using `DevMode: true` and thereby testing the one branch where the wrapper survives is the detail that makes the finding land.
 - **Distinguish reachable from latent.** A defect gated behind a feature that hasn't shipped is real but not blocking — say which it is.
+- **No nits.** Don't report naming preferences, formatting, wording, "could be slightly cleaner" refactors, or anything the linter/formatter already owns. If a finding wouldn't change behavior, correctness, security, accessibility, or a future reader's understanding of an invariant, leave it out entirely — not in a lower tier, not in "Worth knowing".
 - **Don't pad with praise**, but do say when the PR's own hard work was right (a genuine catch in the author's review history is worth one sentence).
 - If the PR is clean, say so plainly and skip to offering an approve.
 
@@ -135,13 +135,13 @@ Then **stop**. Do not push yet.
 
 ## Phase 2 — Push (only after approval)
 
-Default scope: **inline comments for the blocking findings only**, a short body, and the minor findings left in the terminal. Push more only if the user asks.
+Default scope: **inline comments for the blocking findings only**, a short body, and the should-fix findings left in the terminal. Push more only if the user asks.
 
 ### The body comment stays light
 
 One to three sentences. It frames the review; it does not restate it. Good shape:
 
-> One blocker inline — the body cap is wired so it only takes effect in dev mode, the inverse of the intent. One-word fix. Everything else I found is minor and can follow up.
+> One blocker inline — the body cap is wired so it only takes effect in dev mode, the inverse of the intent. One-word fix. The rest is should-fix and can follow up.
 
 What to keep out of it: a re-listing of the inline findings, a summary of the PR, praise padding, and hedging about your own confidence. If a finding needed a caveat, the caveat belongs in that finding's inline comment.
 
@@ -164,6 +164,6 @@ Report back with the review URL, one line per inline comment placed, and — imp
 
 - **🔴 Blocking** — wrong behavior in a reachable path; a security or access-control control that doesn't apply where it claims to; data loss; a migration or startup path that can brick a deployment. Reproduce these. Frontend: breaks dark mode or a11y (an unlabeled icon-only control, a keyboard trap), edits managed `ui/*`, leaks a secret into the bundle.
 - **🟡 Should fix** — real defect with a narrow trigger, a guard that silently no-ops, a documented invariant the code doesn't hold, a regression in an adjacent surface. Frontend: convention violations with real consequences — server data in a Jotai atom, `any`, a missing loading/error state, hardcoded styling that happens to look right in light mode.
-- **🔵 Minor** — latent behind unshipped features, comment/doc drift that would mislead a future reader, missing limits that only affect ergonomics. Frontend: stray `console.log`, an untracked TODO, naming, a cleaner existing component/variant.
+  Also 🟡: a defect latent behind an unshipped feature, and a stale comment that is the *stated rationale* for a workaround (the next reader will reason from a false invariant). Frontend: stray `console.log`/`debugger`, dead commented-out code, a TODO marking something incomplete in the code being merged.
 
-Comment drift deserves more weight than it looks like it does: a stale comment that is the *stated rationale* for a workaround will make the next reader reason from a false invariant. That's a 🔵 that earns its place in the report.
+There is no minor/nit tier. Anything below 🟡 — naming, style, cosmetic doc drift, "use this slightly nicer variant", ergonomics-only limits — is dropped, not reported.

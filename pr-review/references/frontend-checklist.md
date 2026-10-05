@@ -52,13 +52,13 @@ Cross-check every color against the tokens defined in the app's `index.css`/`glo
 - Named Tailwind palette colors: `bg-white`, `bg-black`, `text-gray-900`, `border-slate-200`, `text-red-500`, etc. → semantic token (`bg-background`, `text-foreground`, `border-border`, `text-destructive`).
 - Inline `style={{ color, background, border }}` for anything a class/token could express.
 - `dark:` variants added by hand to patch a color — the tokens already flip; a `dark:` override usually signals a hardcode upstream.
-- Magic spacing/size numbers where a scale/utility exists (lower severity, but note egregious ones).
+- Magic spacing/size numbers where a scale/utility exists (only when egregious — otherwise it's a nit, skip it).
 
 The test: **would this render correctly in dark mode without change?** If not, it's hardcoded.
 
 ## 6. Console logs & debug leftovers
 
-- `console.log` / `console.debug` / `console.info` left in shipped code → remove (🔵, or 🟡 if it logs user/PII data).
+- `console.log` / `console.debug` / `console.info` left in shipped code → remove (🟡; 🔴 if it logs user/PII data).
 - `console.error` / `console.warn` in genuine error/warn paths → usually fine; note if it's really debug noise.
 - Logs behind `import.meta.env.DEV` or a logger util → acceptable; don't flag.
 - `debugger` statements, `alert()` → always flag.
@@ -66,7 +66,7 @@ The test: **would this render correctly in dark mode without change?** If not, i
 ## 7. Commented-out code & TODOs
 
 - **Commented-out code blocks** — dead code left behind "just in case". Flag for removal (git history preserves it).
-- **`TODO` / `FIXME` / `XXX` / `HACK`** — flag each. Downgrade to informational if it references a tracked issue (`TODO(#123)`); flag as should-fix if it marks something incomplete in the very code being merged.
+- **`TODO` / `FIXME` / `XXX` / `HACK`** — flag each. Skip it if it references a tracked issue (`TODO(#123)`); flag as should-fix if it marks something incomplete in the very code being merged.
 - **Placeholder content** — `lorem ipsum`, `TODO: real copy`, stubbed handlers (`onClick={() => {}}`), `throw new Error("not implemented")` on a shipped path.
 
 ## Scope rule
