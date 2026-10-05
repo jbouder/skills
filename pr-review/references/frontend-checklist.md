@@ -1,6 +1,6 @@
-# Frontend PR Review Checklist
+# Frontend Review Checklist
 
-The working substance of the review. Walk every section against the diff. Each item is a question — a "no" (or "unclear") is a candidate finding to verify in Step 4 before reporting.
+The frontend lens of `pr-review`. Walk every section against the frontend part of the diff. Each item is a question — a "no" (or "unclear") is a candidate finding to verify (Phase 1, step 4) before reporting.
 
 ## 1. General code review
 
@@ -46,7 +46,7 @@ The working substance of the review. Walk every section against the diff. Each i
 
 ## 5. No hard-coded colors or styling
 
-Cross-check every color against the tokens defined in the app's `index.css`/`globals.css` (gathered in Step 2). Findings:
+Cross-check every color against the tokens defined in the app's `index.css`/`globals.css` (gathered during frontend discovery). Findings:
 
 - Raw hex (`#fff`, `#1a1a1a`), `rgb(...)`, `hsl(...)`, `rgba(...)` in JSX/className/inline styles — **unless** it's the token *definition* in the theme file itself.
 - Named Tailwind palette colors: `bg-white`, `bg-black`, `text-gray-900`, `border-slate-200`, `text-red-500`, etc. → semantic token (`bg-background`, `text-foreground`, `border-border`, `text-destructive`).
@@ -58,7 +58,7 @@ The test: **would this render correctly in dark mode without change?** If not, i
 
 ## 6. Console logs & debug leftovers
 
-- `console.log` / `console.debug` / `console.info` left in shipped code → remove (🟢, or 🟡 if it logs user/PII data).
+- `console.log` / `console.debug` / `console.info` left in shipped code → remove (🔵, or 🟡 if it logs user/PII data).
 - `console.error` / `console.warn` in genuine error/warn paths → usually fine; note if it's really debug noise.
 - Logs behind `import.meta.env.DEV` or a logger util → acceptable; don't flag.
 - `debugger` statements, `alert()` → always flag.

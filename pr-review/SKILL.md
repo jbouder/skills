@@ -1,8 +1,8 @@
 ---
 name: pr-review
-description: Review a pull request in depth, report severity-ranked findings with verified evidence, then on approval push a GitHub change request with inline comments on the blockers and a short review body. Use when asked to "review pr <n>", "review this PR", "/pr-review", or to gate a PR before merge. Language-agnostic — for React/TS-specific convention checks use frontend-pr-review instead.
+description: Review a pull request in depth, report severity-ranked findings with verified evidence, then on approval push a GitHub change request with inline comments on the blockers and a short review body. Language-agnostic, with a frontend lens that switches on automatically for React/TS diffs — OpenTeams conventions, accessibility, correct use of Nebari design components/utils/theme, no hard-coded colors or styling, no stray console logs, dead commented-out code and TODOs. Use when asked to "review pr <n>", "review this PR", "review this frontend PR", "review the frontend changes", "check this React/TS diff before merge", "/pr-review", or to gate a PR before merge.
 user-invocable: true
-argument-hint: "[PR number | PR url | (blank = ask which PR)]"
+argument-hint: "[PR number | PR url | branch | (blank = working diff, or ask which PR)] [--quick]"
 ---
 
 # PR Review
@@ -15,27 +15,68 @@ The two phases are separate on purpose. Pushing a review is outward-facing and h
 
 ### 1. Orient
 
-```bash
-gh pr view <n> --json title,body,author,state,baseRefName,headRefName,additions,deletions,changedFiles,url
-gh pr diff <n> --name-only
-```
+Pick the target from the argument:
+
+- **PR number / URL** → the normal path:
+  ```bash
+  gh pr view <n> --json title,body,author,state,baseRefName,headRefName,additions,deletions,changedFiles,url
+  gh pr diff <n> --name-only
+  ```
+- **Branch name** → `git diff <base>...<branch>` (base is usually `main`/`master` — check the repo). If the branch has an open PR (`gh pr list --head <branch>`), switch to the PR path.
+- **No argument** → if the user is clearly asking about a PR, ask which one. If they're asking about their own changes, review the working diff: `git diff HEAD` plus untracked files from `git status`.
+
+Branch and working-diff reviews end after the Phase 1 report — there's no PR to push to.
 
 Read the PR body properly. A well-written description tells you what the author already knows is risky, what they tested, and what they deliberately deferred — all of which shapes where to look. A description claiming a defect class was already found and fixed is a hint to check whether the fix is complete, not a reason to skip that area.
 
-### 2. Run the deep review
+Make sure you're in the right repo — the working dir may be a parent folder; `cd` into the app if needed.
 
-Invoke the built-in **`code-review`** skill with the PR number. It reads the full diff, builds the branch in a scratch worktree, and writes throwaway reproduction tests to confirm suspicious paths — which is what separates a real finding from a plausible-sounding one. It runs in the background; wait for it, don't duplicate its work in the meantime.
+### 2. Decide whether the frontend lens applies
+
+Turn it on when the diff touches `.tsx`/`.jsx`/`.ts`/`.css` under a frontend app, or the repo (or a monorepo package the diff touches) has a `components.json` or `vite.config.*`. A PR that touches both a backend and a frontend gets both treatments — run the frontend lens on the frontend files only.
+
+When it's on, confirm the project's actual conventions before reviewing — don't assume the org defaults apply:
+
+- `package.json` — scripts, React/Router/Tailwind versions, Biome vs ESLint.
+- `components.json` — shadcn config; **is the `@nebari` registry registered?** If so, Nebari rules apply.
+- `vite.config.ts` / `tailwind.config.*` — Tailwind v4 (CSS-first) vs v3.
+- `src/index.css` / `globals.css` — the **defined semantic tokens**. This is your allowlist for "is this color a real token or a hardcode?".
+- `biome.json` — so a "lint" comment is a real finding, not a style opinion the tooling already owns.
+
+The canonical "what good looks like" lives in two skills — read them when a checklist item needs the full rule: **`frontend-dev`** (structure, naming, TanStack Query vs Jotai, the quality gate) and **`nebari-ui`** (the `@nebari` registry, theme tokens, `cn()`, `render`-prop composition, motion tokens, managed `ui/*`). For deeper design/UX critique of a specific view, `impeccable` is the specialist.
+
+### 3. Run the deep review
+
+Invoke the built-in **`code-review`** skill with the PR number (or branch). It reads the full diff, builds the branch in a scratch worktree, and writes throwaway reproduction tests to confirm suspicious paths — which is what separates a real finding from a plausible-sounding one. It runs in the background; don't duplicate its work in the meantime.
+
+If the frontend lens is on, use that wait to work **`references/frontend-checklist.md`** against the frontend files — read it now; it's the substance of the frontend review. Read the full current version of each changed file, not just the hunk: a hunk hides whether a `console.log` is inside a debug guard, whether an import is now unused, whether the token exists in the theme. Its seven dimensions:
+
+1. **General code** — error/loading/empty states, no `any`, nullability, duplication, frontend security (`dangerouslySetInnerHTML`, `target="_blank"`).
+2. **Frontend craft** — folder/naming/barrels, TanStack Query vs Jotai, no `useEffect` fetching, hook rules, co-located tests, no hand-edits to `src/components/ui/`.
+3. **Accessibility** — semantic HTML, accessible names, keyboard/focus, forms, ARIA, contrast, `motion-safe:` gating.
+4. **Nebari design system** — reuse existing components/variants, `render` prop over rewrapping, `cn()`, managed `ui/*`, motion tokens.
+5. **No hard-coded colors or styling** — raw hex/`rgb()`/`hsl()`, named Tailwind colors, inline color styles, hand-added `dark:` patches. The test: would it render correctly in dark mode without change?
+6. **No stray `console.*`** / `debugger` / `alert()`.
+7. **Commented-out code & TODOs** — dead blocks, untracked `TODO`/`FIXME`, placeholder content.
+
+**`--quick`**: skip `code-review` and do a single direct pass (plus the frontend checklist if it applies). Say in the report that it was a quick pass and blockers weren't reproduced.
 
 If `code-review` is unavailable, do the review directly, but keep its standard: **every finding you report must be substantiated against the actual code**, and blocking findings should be reproduced.
 
-### 3. Verify the findings yourself — do not relay unchecked
+### 4. Verify the findings yourself — do not relay unchecked
 
 Subagent findings are input, not output. Both times this process has run, the returned findings contained at least one claim that needed correcting before it was safe to relay. Check each finding cheaply before it goes in the report:
 
-- **Does the file exist, and is it actually in the diff?** A finding may cite a real defect located in *unchanged* code. That is still a legitimate finding when the PR causes it (e.g. this PR canonicalizes emails at the store boundary, and an untouched `findMember` still compares exactly) — but say so explicitly, because it changes where the fix goes and it can't be anchored inline.
+- **Does the file exist, and is it actually in the diff?** A finding may cite a real defect located in *unchanged* code. That is still a legitimate finding when the PR causes it (e.g. this PR canonicalizes emails at the store boundary, and an untouched `findMember` still compares exactly) — but say so explicitly, because it changes where the fix goes and it can't be anchored inline. Otherwise, pre-existing issues are out of scope unless the change makes them materially worse; tag any you mention `[pre-existing]`.
 - **Do the line numbers resolve?** `git show <head-sha>:<path> | sed -n '<n>p'` — cite lines from the PR head, not from your checked-out branch.
 - **Are "X does not exist" claims true?** grep for it. Watch zsh globbing: `grep -rn "Foo" .` not `grep -rn "Foo" --include=*.go .` (zsh expands the glob and the command fails with `no matches found`).
 - **Does the reproduction actually reproduce?** If the subagent describes a repro, the described mechanism must match what the code does. A repro that depends on a code path that isn't there is a dead finding.
+
+Frontend findings come from pattern-matching, so they need their own check:
+
+- **A "hardcoded color"** — is it truly not a token? Tokens are often *defined* as hsl/oklch values in the theme file; that's the definition, not a violation.
+- **A "console.log"** — is it behind an `import.meta.env.DEV` guard or a logger util? Then it may be fine.
+- **A "missing label"** — is there an `aria-label`, `aria-labelledby`, or wrapping `<label>` elsewhere in the file?
 
 Drop what doesn't hold. Correct what's half-right. A finding you can't substantiate is worse than no finding, because it costs the author a round trip to disprove.
 
@@ -44,11 +85,16 @@ While verifying, also check two things the review usually misses:
 - **Migration/version-number collisions** with other open branches (`ls` the migrations dir on both branches — goose and most migration tools error on duplicate versions, so whichever merges second must renumber).
 - **Structural merge conflicts** with the branch you're on or other open PRs — a PR built on a type or field another open PR deletes is a rewrite, not a textual merge. Worth a line even though it isn't a defect.
 
-### 4. Report
+### 5. Report
 
-Group by severity, most severe first. Anchor every finding to `file:line`. State the failure concretely — inputs and state → wrong outcome — and give the fix.
+Open with a verdict, then group by severity, most severe first. Anchor every finding to `file:line`. State the failure concretely — inputs and state → wrong outcome — and give the fix.
 
 ```
+## PR Review — <PR title / branch>
+
+**Verdict:** Approve · Approve with nits · Request changes
+<one-sentence rationale>
+
 ## 🔴 Blocking
 
 **1. <one-line claim>** — `path/to/file.go:59`
@@ -71,6 +117,8 @@ most useful sentence in the whole review.>
 wants them.>
 ```
 
+Convention findings from the frontend lens are usually short — one line each is fine: `` `src/components/UserCard/UserCard.tsx:42` — Hardcoded `bg-white`; use `bg-background` (defined in index.css). Breaks dark mode. `` Save the full mechanism/evidence/fix treatment for behavioral defects.
+
 Rules that keep the report worth reading:
 
 - **Lead with the mechanism, not the severity label.** "This wraps `mcpHandler`, not `handler`, so the cap is discarded" beats "HIGH: security issue in handler wiring".
@@ -79,7 +127,7 @@ Rules that keep the report worth reading:
 - **Don't pad with praise**, but do say when the PR's own hard work was right (a genuine catch in the author's review history is worth one sentence).
 - If the PR is clean, say so plainly and skip to offering an approve.
 
-Close the report by offering the push:
+For a PR, close the report by offering the push:
 
 > Want me to push these as inline comments and request changes?
 
@@ -114,8 +162,8 @@ Report back with the review URL, one line per inline comment placed, and — imp
 
 ## Severity guide
 
-- **🔴 Blocking** — wrong behavior in a reachable path; a security or access-control control that doesn't apply where it claims to; data loss; a migration or startup path that can brick a deployment. Reproduce these.
-- **🟡 Should fix** — real defect with a narrow trigger, a guard that silently no-ops, a documented invariant the code doesn't hold, a regression in an adjacent surface.
-- **🔵 Minor** — latent behind unshipped features, comment/doc drift that would mislead a future reader, missing limits that only affect ergonomics.
+- **🔴 Blocking** — wrong behavior in a reachable path; a security or access-control control that doesn't apply where it claims to; data loss; a migration or startup path that can brick a deployment. Reproduce these. Frontend: breaks dark mode or a11y (an unlabeled icon-only control, a keyboard trap), edits managed `ui/*`, leaks a secret into the bundle.
+- **🟡 Should fix** — real defect with a narrow trigger, a guard that silently no-ops, a documented invariant the code doesn't hold, a regression in an adjacent surface. Frontend: convention violations with real consequences — server data in a Jotai atom, `any`, a missing loading/error state, hardcoded styling that happens to look right in light mode.
+- **🔵 Minor** — latent behind unshipped features, comment/doc drift that would mislead a future reader, missing limits that only affect ergonomics. Frontend: stray `console.log`, an untracked TODO, naming, a cleaner existing component/variant.
 
 Comment drift deserves more weight than it looks like it does: a stale comment that is the *stated rationale* for a workaround will make the next reader reason from a false invariant. That's a 🔵 that earns its place in the report.
