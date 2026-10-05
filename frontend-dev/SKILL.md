@@ -5,7 +5,7 @@ description: OpenTeams frontend conventions for React + TypeScript + Vite + shad
 
 # OpenTeams Frontend Development
 
-Conventions and patterns for the OpenTeams frontend stack. Follow these when building or changing any React frontend in this org. To scaffold a brand-new project, use the `new-frontend` skill instead — this skill governs ongoing development.
+Conventions and patterns for the OpenTeams frontend stack. Follow these when building or changing any React frontend in this org. To scaffold a brand-new project, use the `new-project` skill instead — this skill governs ongoing development.
 
 ## The Stack
 

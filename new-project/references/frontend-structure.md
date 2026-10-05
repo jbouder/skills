@@ -1,6 +1,69 @@
 # Frontend File Contents
 
-Use these exact file contents when scaffolding the frontend. All paths are relative to `$PROJECT_NAME/`.
+Use these exact file contents when scaffolding the frontend. All paths are relative to the frontend root (`$PROJECT_NAME/`, or `$PROJECT_NAME/frontend/` in a monorepo). Replace every `{{PROJECT_NAME}}` with the frontend's name.
+
+---
+
+## `.gitignore`
+
+```
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+build/
+coverage/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+```
+
+---
+
+## `README.md`
+
+````markdown
+# {{PROJECT_NAME}}
+
+A React + TypeScript frontend application.
+
+## Stack
+
+- React 19 + TypeScript + Vite
+- Tailwind CSS v4 + @nebari/design (Base UI components, light/dark mode)
+- React Router v6
+- TanStack Query v5
+- Jotai (global state)
+- Vitest + Testing Library
+- Biome (format + lint + import sort)
+
+## Commands
+
+```bash
+npm run dev          # Start dev server (http://localhost:5173)
+npm run build        # Production build
+npm run test         # Run tests
+npm run test:coverage  # Tests with coverage
+npm run check        # Biome: format + lint + organize imports
+```
+
+See [AGENTS.md](./AGENTS.md) for full conventions and coding standards.
+````
 
 ---
 

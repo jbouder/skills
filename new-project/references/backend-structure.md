@@ -1,6 +1,6 @@
 # Backend File Contents
 
-Use these exact file contents when scaffolding the backend. All paths are relative to `$PROJECT_NAME/`. Replace every `{{PROJECT_NAME}}` with the actual project name.
+Use these exact file contents when scaffolding the backend. All paths are relative to the backend root (`$PROJECT_NAME/`, or `$PROJECT_NAME/backend/` in a monorepo). Replace every `{{PROJECT_NAME}}` with the actual project name.
 
 ---
 

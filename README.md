@@ -10,9 +10,7 @@ Full instructions for each skill live in its `SKILL.md`. Summary:
 
 | Skill | What it does | Sample prompts |
 |---|---|---|
-| `new-frontend` | Scaffolds a React + TypeScript frontend (React 19, Vite, Tailwind v4, Nebari design system built on Base UI, React Router v6, TanStack Query v5, Jotai, Vitest) with full `src/` layout, routing, theme provider, API client, Jotai store, and test setup. | `/new-frontend my-app` · "scaffold a new frontend" · "create a React project" |
-| `new-backend` | Scaffolds a Python FastAPI backend (Python 3.12, PostgreSQL 16, async SQLAlchemy 2, Alembic, Pydantic v2, pytest, Ruff, uv) with layered `app/` architecture, async migrations, `docker-compose.yml`, and pytest fixtures. | `/new-backend my-api` · "scaffold a new backend" · "create a FastAPI project" |
-| `new-monorepo` | Scaffolds a full-stack monorepo combining the `new-frontend` stack (React 19, Vite, Tailwind v4, Nebari design system built on Base UI) and the `new-backend` stack (FastAPI, async SQLAlchemy 2, Alembic, Pydantic v2) under one repo, with a root `Makefile`, `docker-compose.yml`, and a `/api` dev proxy wiring the two together. | `/new-monorepo my-project` · "scaffold a monorepo" · "new full-stack app" |
+| `new-project` | Scaffolds a new project in one of three layouts. `--frontend`: React + TypeScript (React 19, Vite, Tailwind v4, Nebari design system built on Base UI, React Router v6, TanStack Query v5, Jotai, Vitest, Biome) with routing, theme provider, API client, Jotai store, and test setup. `--backend`: Python FastAPI (Python 3.12, PostgreSQL 16, async SQLAlchemy 2, Alembic, Pydantic v2, pytest, Ruff, uv) with layered `app/` architecture, async migrations, `docker-compose.yml`, and pytest fixtures. `--monorepo`: both under one repo with a root `Makefile` and a `/api` dev proxy wiring them together. Infers the layout from the request when no flag is given. | `/new-project my-app --frontend` · `/new-project my-api --backend` · "scaffold a monorepo" · "create a React project" |
 | `frontend-dev` | OpenTeams frontend conventions — folder structure, component/test patterns, TanStack Query + Jotai, styling with semantic tokens + `cn()`, and the Biome + Vitest gates. Applies when writing or reviewing frontend code. | "add a component to this React app" · "wire up a TanStack Query hook" · "review my frontend changes" |
 | `backend-dev` | OpenTeams backend conventions — package layout, Pydantic v2 + pydantic-settings, async SQLAlchemy 2, structlog, and the ruff + mypy + pytest gate. Applies when writing or reviewing routes, models, schemas, services, or migrations. | "add a new FastAPI route" · "create a SQLAlchemy model + schema" · "write a migration" |
 | `k8s-deploy` | OpenTeams Kubernetes deploy & local-dev conventions — Helm charts, Tilt + k3d/minikube inner loop, docker-compose, ArgoCD, and kubectl/k9s debugging. | "write a Helm chart for this service" · "set up a Tiltfile" · "my pods keep crashing — help debug" |
@@ -28,14 +26,14 @@ Full instructions for each skill live in its `SKILL.md`. Summary:
 Install a single skill with the [`skills`](https://docs.anthropic.com/en/docs/claude-code/skills) CLI:
 
 ```bash
-npx skills add ./new-frontend --agent claude
+npx skills add ./new-project --agent claude
 ```
 
 Or install all of them:
 
 ```bash
 for skill in backend-dev frontend-dev github-issue k8s-deploy \
-             new-backend new-frontend new-monorepo pr-review \
+             new-nebari-app new-project pr-review \
              start-dev talk-deck tool-eval web-app-audit; do
   npx skills add "./$skill" --agent claude
 done

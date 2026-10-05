@@ -5,7 +5,7 @@ description: OpenTeams backend conventions for Python + FastAPI + async SQLAlche
 
 # OpenTeams Backend Development
 
-Conventions and patterns for the OpenTeams Python backend stack. Follow these when building or changing any FastAPI backend in this org. To scaffold a brand-new project, use the `new-backend` skill instead — this skill governs ongoing development.
+Conventions and patterns for the OpenTeams Python backend stack. Follow these when building or changing any FastAPI backend in this org. To scaffold a brand-new project, use the `new-project` skill instead — this skill governs ongoing development.
 
 ## The Stack
 
@@ -41,7 +41,7 @@ Before writing code, confirm what the project actually uses — conventions belo
 
 The org runs two layouts. **Detect, then mirror — never convert one to the other unasked.**
 
-**`app/` — deployable service** (scaffolded by `new-backend`). Flat application package, layered by responsibility:
+**`app/` — deployable service** (scaffolded by `new-project --backend`). Flat application package, layered by responsibility:
 
 ```
 app/
