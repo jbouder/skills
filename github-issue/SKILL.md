@@ -1,6 +1,6 @@
 ---
 name: github-issue
-description: Generates well-structured GitHub issue markdown for feature/task issues (title, Summary, Motivation, Acceptance Criteria, Out of Scope) and bug reports (title, Description, Steps to reproduce, Expected behavior, Environment, Additional context). Triggers on /github-issue, "write a github issue", "draft an issue", "generate issue markdown", "create a github issue for", "write a bug report", "file a bug".
+description: Generates well-structured GitHub issue markdown for feature/task issues (title, Summary, Motivation, Acceptance Criteria, optional Out of Scope) and bug reports (title, Description, Steps to reproduce, Expected behavior, Environment, Additional context). Triggers on /github-issue, "write a github issue", "draft an issue", "generate issue markdown", "create a github issue for", "write a bug report", "file a bug".
 argument-hint: [--bug|--feature] <what the issue is about>
 allowed-tools:
   - Read
@@ -58,8 +58,8 @@ Write the issue using exactly these sections, in this order:
 - `## <Title>` — H2 heading. Action-oriented and concise (e.g. "Add Biome for Formatting & Linting"). This is the issue title; everything below is the body.
 - `### Summary` — 1–3 sentences. What the issue proposes and its scope. Link tools/libraries with markdown links. State which parts of the codebase it touches.
 - `### Motivation` — bullet list. One specific reason or benefit per bullet.
-- `### Acceptance Criteria` — GitHub task-list checkboxes (`- [ ]`). Each item must be concrete and independently verifiable — prefer commands, files, or observable behavior over vague goals.
-- `### Out of Scope` — bullet list of explicitly excluded work, with pointers to what handles it instead where relevant.
+- `### Acceptance Criteria` — GitHub task-list checkboxes (`- [ ]`). Usually 3–5 items. Each one states an outcome that defines "done" and can be checked, in a short line. Describe *what* must be true, not *how* to build it: leave out implementation steps, file-by-file changes, config keys, and edge-case enumerations unless one is essential to the requirement. The person picking up the issue decides the details.
+- `### Out of Scope` — **optional; omit it by default.** Include it only when there is a genuine exclusion a reader would otherwise reasonably assume is included (e.g. an adjacent language, platform, or follow-up the user explicitly deferred). One or two bullets. Never invent exclusions just to fill the section.
 
 ### Bug reports
 
@@ -77,7 +77,7 @@ Write the issue using exactly these sections, in this order (mirrors the `bug_re
 - Use the section headings verbatim for the chosen template.
 - Wrap commands, filenames, config keys, and package names in backticks.
 - Keep bullets tight — a single claim each. No filler.
-- Omit a section only if it is genuinely not applicable; prefer to fill every section the template defines.
+- Fill every required section. Out of Scope (features) and Additional context (bugs) are optional — omit them when there is nothing real to say.
 
 ## Step 5 — Output
 

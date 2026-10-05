@@ -14,15 +14,10 @@ Replace or consolidate existing formatting/linting tooling with [Biome](https://
 
 ### Acceptance Criteria
 
-- [ ] `biome.json` added at monorepo root with agreed-upon rule set
-- [ ] `biome check` runs clean against all packages
-- [ ] `biome check --write` used for format-on-save (replace Prettier)
-- [ ] CI step added: `biome ci` fails the build on violations
-- [ ] VS Code workspace settings updated to use Biome as default formatter
-- [ ] Existing ESLint / Prettier configs removed (or scoped only to packages that can't migrate)
-- [ ] `package.json` scripts updated: `lint`, `format`, `check` all delegate to Biome
+- [ ] Biome configured at the repo root and passing across all packages
+- [ ] CI fails the build on Biome violations
+- [ ] ESLint and Prettier removed
 
 ### Out of Scope
 
-- Python files (handled separately by Ruff in the `marketplace/` pixi projects)
-- Biome does not process `.toml`, `.md`, or `.yaml` — existing tooling (or none) handles those
+- Python files (handled separately by Ruff)

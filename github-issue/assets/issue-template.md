@@ -12,11 +12,11 @@
 
 ### Acceptance Criteria
 
-- [ ] <Concrete, verifiable outcome>
-- [ ] <Each box is independently checkable>
-- [ ] <Prefer commands, files, or observable behavior over vague goals>
+- [ ] <Outcome that defines "done" — short, checkable>
+- [ ] <What must be true, not how to build it>
+- [ ] <Usually 3–5 boxes; no implementation steps>
 
+<!-- Optional: include only for a genuine exclusion a reader would otherwise assume is in scope. Otherwise delete this section. -->
 ### Out of Scope
 
-- <Explicitly excluded work, so reviewers don't expect it>
-- <Things handled by other tooling/issues, with a pointer to what handles them>
+- <Excluded work, with a pointer to what handles it>
