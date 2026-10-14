@@ -1,6 +1,6 @@
 ---
 name: start-dev
-description: Launch one of the user's local-dev apps (nebi, nebari-landing, nebari-chat-pack, jhub-apps, nebari-llm-serving-pack, provenance-collector-pack, nebari-apps-pack, collab-hub-pack, nebari-local) in its fast inner-loop mode; for nebari-local, brings up the local cluster and its gateway port-forward. Triggers on /start-dev, "start dev for <app>", "run <app> locally", "spin up <app>", "launch <app> for local development".
+description: Launch one of the user's local-dev apps (nebi, nebari-landing, nebari-chat-pack, jhub-apps, nebari-llm-serving-pack, provenance-collector-pack, nebari-apps-pack, collab-hub-pack, analytics-pack, nebari-local) in its fast inner-loop mode; for nebari-local, brings up the local cluster and its gateway port-forward. Triggers on /start-dev, "start dev for <app>", "run <app> locally", "spin up <app>", "launch <app> for local development".
 ---
 
 # start-dev
@@ -23,6 +23,7 @@ The user names an app (e.g. `/start-dev nebi`, "spin up the chat pack"). Match l
 | `provenance-collector-pack`, `provenance`, `provenance-collector`, `pc` | provenance-collector-pack | `~/repos/provenance-collector-pack` |
 | `nebari-apps-pack`, `apps-pack`, `apps`, `nebari-apps` | nebari-apps-pack | `~/repos/nebari-apps-pack` |
 | `collab-hub-pack`, `collab-hub`, `collab`, `hub` | collab-hub-pack | `~/repos/collab-hub-pack` |
+| `analytics-pack`, `analytics`, `umami`, `analytics pack` | analytics-pack | `~/repos/analytics-pack` |
 | `nebari-local`, `local`, `cluster`, `port-forward`, `gateway` | nebari-local | `~/repos/nebari-local` |
 
 If no app is named or the match is ambiguous, list the apps and ask which one.
