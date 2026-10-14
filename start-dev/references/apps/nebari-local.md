@@ -26,17 +26,33 @@ kubectl --context kind-nebari-local get nodes       # expect: Ready
 **2. Start the gateway port-forward.** One forward serves every service and pack, because
 Envoy routes them by hostname. It needs sudo to bind 443.
 
-- **Already running?** Check with `sudo -n lsof -nP -iTCP:443 -sTCP:LISTEN` or just try
-  the verify curl below. Don't start a second one.
-- The Bash tool can't answer a sudo password prompt. Check with `sudo -n true`. If that
-  fails, ask the user to run `! sudo -v` (it caches credentials for a few minutes), then
-  continue.
-- Start it with `run_in_background: true`:
+- **Already running?** Run the verify curl below first. If it answers, don't start a
+  second forward. (`lsof` without sudo can't see the root-owned listener, so it isn't a
+  reliable check.)
+- **Sudo password: use a macOS dialog.** Neither the Bash tool nor `!`-prefixed commands
+  have a terminal, so a plain `sudo` (or `! sudo -v`) fails with "a terminal is required
+  to read the password". Use `sudo -A` with an askpass helper that pops a native password
+  dialog. Write the helper to the session scratchpad (`chmod 700`):
 
 ```sh
-sudo kubectl --context kind-nebari-local port-forward -n envoy-gateway-system \
+#!/bin/sh
+exec osascript -e 'text returned of (display dialog "sudo password for the nebari-local port-forward (kubectl, port 443):" default answer "" with hidden answer with title "Claude Code: sudo" with icon caution)'
+```
+
+- Start the forward with `run_in_background: true`, then tell the user a **"Claude Code:
+  sudo"** dialog is waiting for their Mac password. If `sudo -n true` already succeeds
+  (cached credentials), plain `sudo` works and no dialog appears.
+
+```sh
+SUDO_ASKPASS=<scratchpad>/askpass.sh sudo -A kubectl --context kind-nebari-local \
+  port-forward -n envoy-gateway-system \
   svc/envoy-envoy-gateway-system-nebari-gateway-be66687c 443:443
 ```
+
+- **Wait for the password, don't poll by hand.** Start a second background Bash command
+  that loops (about 1s apart, giving up after about 5 min) until the verify curl returns
+  2xx/3xx, or until the forward's output file shows a sudo error ("incorrect password",
+  "no password", "cancel"). You get one notification when it ends.
 
 - If the service name changed (it has a hash suffix), look it up with
   `kubectl --context kind-nebari-local -n envoy-gateway-system get svc` and use the
