@@ -1,7 +1,7 @@
 ---
 name: github-issue
 description: Generates well-structured GitHub issue markdown for feature/task issues (title, Summary, Motivation, Acceptance Criteria, optional Out of Scope) and bug reports (title, Description, Steps to reproduce, Expected behavior, Environment, Additional context). Triggers on /github-issue, "write a github issue", "draft an issue", "generate issue markdown", "create a github issue for", "write a bug report", "file a bug".
-argument-hint: [--bug|--feature] <what the issue is about>
+argument-hint: "[--bug|--feature] <what the issue is about>"
 allowed-tools:
   - Read
   - Write
