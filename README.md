@@ -10,6 +10,7 @@ Full instructions for each skill live in its `SKILL.md`. Summary:
 
 | Skill | What it does | Sample prompts |
 |---|---|---|
+| `a11y-audit` | Audits a live website for accessibility against WCAG 2.2 AA (or another level) and produces an interactive HTML report plus JSON. One URL crawls the site; a list scans just those pages. Pauses for you to sign in when it hits a login wall, scans pages in parallel with axe-core at desktop and mobile widths, adds keyboard-focus, obscured-focus, keyboard-trap and reflow checks, and groups repeated failures into one issue each. Every issue explains what is wrong with the real element, who it affects, where the fix likely lives and the before/after code, with highlighted screenshots. Includes a fix-first plan, a needs-review queue and a manual WCAG checklist. Ships a Playwright + axe scanner, a report builder and a checker that audits the report itself. | `/a11y-audit https://staging.example.com` · `/a11y-audit urls.txt --standard wcag21aa` · "check this site for accessibility" |
 | `backend-conventions` | OpenTeams backend conventions — package layout, Pydantic v2 + pydantic-settings, async SQLAlchemy 2, structlog, and the ruff + mypy + pytest gate. Applies when writing or reviewing routes, models, schemas, services, or migrations. | "add a new FastAPI route" · "create a SQLAlchemy model + schema" · "write a migration" |
 | `frontend-conventions` | OpenTeams frontend conventions — folder structure, component/test patterns, TanStack Query + Jotai, styling with semantic tokens + `cn()`, and the Biome + Vitest gates. Applies when writing or reviewing frontend code. | "add a component to this React app" · "wire up a TanStack Query hook" · "review my frontend changes" |
 | `github-issue` | Generates well-structured GitHub issue markdown. Feature/task issues get Title, Summary, Motivation, Acceptance Criteria, and an optional Out of Scope; bug reports get Title, Description, Steps to reproduce, Expected behavior, Environment, and Additional context. Infers the type from the description, or force it with `--bug` / `--feature`. | `/github-issue add dark mode toggle` · `/github-issue --bug deploy crashes on empty config` · "write a github issue" · "file a bug" |
@@ -30,10 +31,12 @@ Install a single skill with the [`skills`](https://docs.anthropic.com/en/docs/cl
 npx skills add ./new-project --agent claude
 ```
 
+`a11y-audit` also needs its scanner dependencies once, after install: `npm ci --prefix ~/.claude/skills/a11y-audit && (cd ~/.claude/skills/a11y-audit && npx playwright install chromium)`. The skill runs this itself on first use.
+
 Or install all of them:
 
 ```bash
-for skill in backend-conventions frontend-conventions github-issue k8s-conventions \
+for skill in a11y-audit backend-conventions frontend-conventions github-issue k8s-conventions \
              new-nebari-app new-project pr-review \
              start-dev talk-deck tool-eval web-app-audit; do
   npx skills add "./$skill" --agent claude
