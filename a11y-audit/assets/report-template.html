@@ -7,355 +7,428 @@
 <meta name="color-scheme" content="light dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f6f5f1;
+  --bg: #fbfbfc;
   --surface: #ffffff;
-  --surface-2: #eeece6;
-  --surface-3: #e5e2da;
-  --ink: #1d1c22;
-  --ink-2: #47454f;
-  --ink-3: #5c5a66;
-  --line: #dad7cf;
-  --line-strong: #b9b5ab;
-  --accent: #4335c9;
-  --accent-hover: #3529a8;
-  --accent-soft: #ebe9fb;
+  --surface-2: #f3f3f5;
+  --surface-3: #e9e9ec;
+  --ink: #121216;
+  --ink-2: #4a4a53;
+  --ink-3: #6b6b75;
+  --line: #e4e4e8;
+  --line-2: #cfcfd5;
+  --accent: #2b49d8;
+  --accent-hover: #1f3ab8;
+  --accent-soft: #e9edfc;
   --on-accent: #ffffff;
-  --critical: #b3261e; --critical-soft: #fbe8e6;
-  --serious: #a8440a; --serious-soft: #fcefe4;
-  --moderate: #7d5800; --moderate-soft: #f9f0d9;
-  --minor: #39577c; --minor-soft: #e6edf5;
-  --pass: #1d6f41; --pass-soft: #e2f2e8;
-  --neutral: #5c5a66; --neutral-soft: #ecebe7;
-  --before: #b3261e; --before-soft: #fdf3f2;
-  --after: #1d6f41; --after-soft: #f0f8f3;
-  --code-bg: #f3f1ec;
-  --shadow: 0 1px 2px rgba(29, 28, 34, .06), 0 4px 16px rgba(29, 28, 34, .06);
-  --radius: 10px;
-  --font: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --critical: #b82a24; --critical-fill: #de4a42; --critical-soft: #fbeae9;
+  --serious: #b04a00; --serious-fill: #ec7a2a; --serious-soft: #fdeee2;
+  --moderate: #8a5d00; --moderate-fill: #e9ae1f; --moderate-soft: #fbf1d6;
+  --minor: #3e55b8; --minor-fill: #7b93f0; --minor-soft: #e9edfc;
+  --pass: #1b6e40; --pass-fill: #3dae6c; --pass-soft: #e3f3e9;
+  --neutral: #6b6b75; --neutral-fill: #b8b8c0; --neutral-soft: #ededf0;
+  --code-bg: #f6f6f8;
+  --shadow: 0 1px 2px rgba(18, 18, 22, .05), 0 12px 32px -12px rgba(18, 18, 22, .18);
+  --shadow-lg: 0 2px 6px rgba(18, 18, 22, .08), 0 32px 80px -24px rgba(18, 18, 22, .45);
+  --r: 8px;
+  --font: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #131217; --surface: #1b1a21; --surface-2: #17161c; --surface-3: #25242d;
-    --ink: #edecf3; --ink-2: #bdbbc8; --ink-3: #a3a1b0; --line: #2e2d37; --line-strong: #45434f;
-    --accent: #a99fff; --accent-hover: #c2bbff; --accent-soft: #26233f; --on-accent: #131217;
-    --critical: #ff8f86; --critical-soft: #3a1b19; --serious: #ffae73; --serious-soft: #3a2516;
-    --moderate: #f0c75a; --moderate-soft: #332b12; --minor: #a3c0e8; --minor-soft: #1b2535;
-    --pass: #74d4a0; --pass-soft: #13301f; --neutral: #a3a1b0; --neutral-soft: #24232b;
-    --before: #ff8f86; --before-soft: #2a1716; --after: #74d4a0; --after-soft: #13261b;
-    --code-bg: #15141a; --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .25);
+    --bg: #0e0f12; --surface: #15161b; --surface-2: #1b1d23; --surface-3: #24262e;
+    --ink: #ebebee; --ink-2: #b4b5bd; --ink-3: #8e8f99; --line: #24262e; --line-2: #353842;
+    --accent: #93a6ff; --accent-hover: #b0bdff; --accent-soft: #1d2340; --on-accent: #0e0f12;
+    --critical: #ff8a82; --critical-fill: #e5544c; --critical-soft: #341a19;
+    --serious: #ffa468; --serious-fill: #ec7a2a; --serious-soft: #35231a;
+    --moderate: #f2c55a; --moderate-fill: #d9a21c; --moderate-soft: #302814;
+    --minor: #a9b9ff; --minor-fill: #6f88ea; --minor-soft: #1d2340;
+    --pass: #6fd39a; --pass-fill: #3aa868; --pass-soft: #14291d;
+    --neutral: #8e8f99; --neutral-fill: #4b4e59; --neutral-soft: #1f2127;
+    --code-bg: #111216;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 32px -12px rgba(0, 0, 0, .6);
+    --shadow-lg: 0 2px 6px rgba(0, 0, 0, .5), 0 32px 80px -24px rgba(0, 0, 0, .8);
+    color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #131217; --surface: #1b1a21; --surface-2: #17161c; --surface-3: #25242d;
-  --ink: #edecf3; --ink-2: #bdbbc8; --ink-3: #a3a1b0; --line: #2e2d37; --line-strong: #45434f;
-  --accent: #a99fff; --accent-hover: #c2bbff; --accent-soft: #26233f; --on-accent: #131217;
-  --critical: #ff8f86; --critical-soft: #3a1b19; --serious: #ffae73; --serious-soft: #3a2516;
-  --moderate: #f0c75a; --moderate-soft: #332b12; --minor: #a3c0e8; --minor-soft: #1b2535;
-  --pass: #74d4a0; --pass-soft: #13301f; --neutral: #a3a1b0; --neutral-soft: #24232b;
-  --before: #ff8f86; --before-soft: #2a1716; --after: #74d4a0; --after-soft: #13261b;
-  --code-bg: #15141a; --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .25);
+  --bg: #0e0f12; --surface: #15161b; --surface-2: #1b1d23; --surface-3: #24262e;
+  --ink: #ebebee; --ink-2: #b4b5bd; --ink-3: #8e8f99; --line: #24262e; --line-2: #353842;
+  --accent: #93a6ff; --accent-hover: #b0bdff; --accent-soft: #1d2340; --on-accent: #0e0f12;
+  --critical: #ff8a82; --critical-fill: #e5544c; --critical-soft: #341a19;
+  --serious: #ffa468; --serious-fill: #ec7a2a; --serious-soft: #35231a;
+  --moderate: #f2c55a; --moderate-fill: #d9a21c; --moderate-soft: #302814;
+  --minor: #a9b9ff; --minor-fill: #6f88ea; --minor-soft: #1d2340;
+  --pass: #6fd39a; --pass-fill: #3aa868; --pass-soft: #14291d;
+  --neutral: #8e8f99; --neutral-fill: #4b4e59; --neutral-soft: #1f2127;
+  --code-bg: #111216;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 32px -12px rgba(0, 0, 0, .6);
+  --shadow-lg: 0 2px 6px rgba(0, 0, 0, .5), 0 32px 80px -24px rgba(0, 0, 0, .8);
+  color-scheme: dark;
 }
 
+/* ------------------------------------------------ base */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: 80px; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.55 var(--font); font-variant-numeric: tabular-nums; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 72px; scrollbar-color: var(--line-2) transparent; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.6 var(--font); font-variant-numeric: tabular-nums; caret-color: var(--accent); }
 ::selection { background: var(--accent); color: var(--on-accent); }
-a { color: var(--accent); text-underline-offset: .18em; text-decoration-thickness: 1px; }
-a:hover { color: var(--accent-hover); text-decoration-thickness: 2px; }
+a { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent); text-underline-offset: .2em; text-decoration-thickness: 1px; transition: text-decoration-color .15s; }
+a:hover { color: var(--accent-hover); text-decoration-color: currentColor; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
-code, pre, kbd { font-family: var(--mono); font-size: .86em; }
-:not(pre) > code { background: var(--code-bg); border: 1px solid var(--line); padding: .05em .35em; border-radius: 4px; overflow-wrap: anywhere; }
-h1, h2, h3, h4 { line-height: 1.25; margin: 0; text-wrap: balance; }
-h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -.015em; }
-h2 { font-size: 1.2rem; font-weight: 650; }
-h3 { font-size: 1rem; font-weight: 650; }
-h4, h5, h6 { font-size: .95rem; font-weight: 650; }
-p { margin: 0 0 .75em; }
+code, pre, kbd { font-family: var(--mono); font-size: .86em; font-feature-settings: normal; }
+:not(pre) > code { background: var(--code-bg); border: 1px solid var(--line); padding: .08em .4em; border-radius: 5px; overflow-wrap: anywhere; color: var(--ink-2); }
+h1, h2, h3, h4 { line-height: 1.2; margin: 0; text-wrap: balance; letter-spacing: -.012em; }
+h1 { font-size: 2.125rem; font-weight: 600; letter-spacing: -.03em; }
+h2 { font-size: 1.375rem; font-weight: 600; }
+h3 { font-size: 1rem; font-weight: 600; }
+h4, h5, h6 { font-size: .9375rem; font-weight: 600; }
+p { margin: 0 0 .8em; }
 button, input, select, textarea { font: inherit; color: inherit; }
 img { max-width: 100%; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.skip { position: absolute; left: 12px; top: -100px; background: var(--accent); color: var(--on-accent); padding: 10px 14px; border-radius: 8px; z-index: 100; font-weight: 600; }
+.skip { position: absolute; left: 16px; top: -100px; background: var(--ink); color: var(--bg); padding: 10px 14px; border-radius: 8px; z-index: 100; font-weight: 600; text-decoration: none; }
 .skip:focus { top: 12px; }
-.skip:hover { color: var(--on-accent); }
-.icon { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+.muted { color: var(--ink-3); }
+.small { font-size: .875rem; }
+.num { font-variant-numeric: tabular-nums; }
+.prose { max-width: 70ch; }
+.prose p:last-child { margin-bottom: 0; }
+.prose ul, .prose ol { padding-left: 1.2em; margin: 0 0 .8em; }
+.prose li + li { margin-top: .3em; }
+.prose h4, .prose h5, .prose h6 { margin: 1em 0 .4em; }
 
-/* ------------------------------------------------ shell */
-.topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px; padding: 12px 24px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid var(--line); }
-.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.brand-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--ink); color: var(--bg); display: grid; place-items: center; flex: none; }
-.brand-mark .icon { width: 18px; height: 18px; }
-.brand-text { min-width: 0; }
-.brand-text strong { display: block; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.brand-text span { display: block; font-size: .8rem; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.topbar .spacer { flex: 1; }
-.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); cursor: pointer; font-weight: 500; font-size: .9rem; text-decoration: none; transition: background-color .15s, border-color .15s; }
-.btn:hover { background: var(--surface-3); color: var(--ink); text-decoration: none; }
+/* ------------------------------------------------ masthead + tabs */
+.masthead { display: flex; align-items: center; gap: 16px; min-height: 60px; padding-top: 10px; }
+.masthead .brand { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--ink); text-decoration: none; }
+.masthead .brand .mark { width: 28px; height: 28px; border-radius: 7px; background: var(--ink); color: var(--bg); display: grid; place-items: center; flex: none; }
+.masthead .brand .mark .icon { width: 16px; height: 16px; }
+.masthead .brand strong { font-weight: 600; font-size: .9375rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.masthead .brand span { display: block; font-size: .8125rem; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.masthead .spacer { flex: 1; }
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 5px 12px; border-radius: 7px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); cursor: pointer; font-weight: 500; font-size: .875rem; text-decoration: none; transition: background-color .15s, border-color .15s, color .15s; }
+.btn:hover { background: var(--surface-2); color: var(--ink); border-color: var(--ink-3); }
 .btn.ghost { border-color: transparent; background: transparent; }
-.btn.ghost:hover { background: var(--surface-3); }
-.btn.small { min-height: 30px; padding: 3px 10px; font-size: .84rem; }
-.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.small { min-height: 28px; padding: 2px 10px; font-size: .8125rem; }
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn.primary:hover { background: var(--ink-2); border-color: var(--ink-2); color: var(--bg); }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .menu { position: relative; }
 .menu > summary { list-style: none; }
 .menu > summary::-webkit-details-marker { display: none; }
-.menu-panel { position: absolute; right: 0; top: calc(100% + 6px); min-width: 240px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px; z-index: 30; }
-.menu-panel button { display: flex; width: 100%; gap: 10px; align-items: center; padding: 8px 10px; border: 0; background: none; border-radius: 6px; cursor: pointer; text-align: left; }
-.menu-panel button:hover { background: var(--surface-3); }
-.menu-panel small { display: block; color: var(--ink-3); font-size: .78rem; }
+.menu-panel { position: absolute; right: 0; top: calc(100% + 6px); min-width: 264px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 6px; z-index: 30; }
+.menu-panel button { display: flex; width: 100%; flex-direction: column; gap: 1px; padding: 8px 10px; border: 0; background: none; border-radius: 6px; cursor: pointer; text-align: left; font-weight: 500; font-size: .875rem; }
+.menu-panel button:hover { background: var(--surface-2); }
+.menu-panel small { color: var(--ink-3); font-size: .78rem; font-weight: 400; }
 
-.layout { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: calc(100vh - 61px); }
-.sidenav { border-right: 1px solid var(--line); background: var(--surface-2); padding: 20px 12px; }
-.sidenav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; position: sticky; top: 80px; }
-.sidenav a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-weight: 500; }
-.sidenav a:hover { background: var(--surface-3); color: var(--ink); }
-.sidenav a[aria-current="page"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
-.sidenav a[aria-current="page"] .icon { color: var(--accent); }
-.sidenav .count { margin-left: auto; font-size: .78rem; color: var(--ink-3); font-weight: 500; }
-main { padding: 32px 40px 80px; max-width: 1280px; width: 100%; }
+.tabs-bar { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: saturate(1.6) blur(12px); -webkit-backdrop-filter: saturate(1.6) blur(12px); border-bottom: 1px solid var(--line); margin-top: 14px; }
+.tabs { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a { position: relative; display: flex; align-items: center; gap: 8px; padding: 12px 10px 13px; color: var(--ink-3); text-decoration: none; font-weight: 500; font-size: .9375rem; white-space: nowrap; border-radius: 6px 6px 0 0; }
+.tabs a:hover { color: var(--ink); }
+.tabs a:first-child { margin-left: -10px; }
+.tabs a[aria-current="page"] { color: var(--ink); }
+.tabs a[aria-current="page"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; background: var(--ink); border-radius: 2px 2px 0 0; }
+.tabs .count { font-size: .8125rem; color: var(--ink-3); font-weight: 500; }
+.tabs a[aria-current="page"] .count { color: var(--ink-2); }
+
+main { padding: 40px 0 96px; }
 main:focus { outline: none; }
-.view-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; margin-bottom: 24px; }
+.view-head { margin-bottom: 32px; }
 .view-head h1:focus { outline: none; }
-.view-head > div { min-width: 0; }
-.view-head .lede { color: var(--ink-2); margin: 6px 0 0; max-width: 72ch; overflow-wrap: anywhere; }
-.view-head h1 { overflow-wrap: anywhere; }
-section + section { margin-top: 40px; }
-.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-.section-head p { color: var(--ink-3); margin: 0; font-size: .88rem; }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
-.muted { color: var(--ink-3); }
-.prose { max-width: 72ch; }
-.prose p:last-child { margin-bottom: 0; }
-.prose ul, .prose ol { padding-left: 1.2em; margin: 0 0 .75em; }
-.prose li + li { margin-top: .3em; }
+.view-head .lede { color: var(--ink-2); margin: 10px 0 0; max-width: 68ch; font-size: 1.0625rem; overflow-wrap: anywhere; }
+.view-head .meta { color: var(--ink-3); font-size: .875rem; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; overflow-wrap: anywhere; }
+.sep { color: var(--line-2); margin: 0 8px; }
+.view-head .meta .sep { margin: 0; }
+.view-head .crumb { font-size: .875rem; margin: 0 0 10px; }
+section + section { margin-top: 56px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; margin-bottom: 16px; flex-wrap: wrap; }
+.section-head p { color: var(--ink-3); margin: 0; font-size: .875rem; }
+.rule { border: 0; border-top: 1px solid var(--line); margin: 0; }
 
-/* ------------------------------------------------ badges */
-.badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 6px; border-radius: 999px; font-size: .76rem; font-weight: 600; line-height: 1.5; white-space: nowrap; background: var(--neutral-soft); color: var(--neutral); }
-.badge .icon { width: 13px; height: 13px; stroke-width: 2.2; }
-.badge.critical { background: var(--critical-soft); color: var(--critical); }
-.badge.serious { background: var(--serious-soft); color: var(--serious); }
-.badge.moderate { background: var(--moderate-soft); color: var(--moderate); }
-.badge.minor { background: var(--minor-soft); color: var(--minor); }
-.badge.pass { background: var(--pass-soft); color: var(--pass); }
-.badge.plain { background: transparent; border: 1px solid var(--line-strong); color: var(--ink-2); padding: 1px 8px; }
-.tag { display: inline-flex; align-items: center; gap: 4px; min-height: 24px; padding: 1px 7px; border-radius: 5px; background: var(--surface-3); color: var(--ink-2); font-size: .76rem; font-weight: 500; white-space: nowrap; text-decoration: none; }
-a.tag:hover { background: var(--accent-soft); color: var(--ink); }
-.tag .icon { width: 13px; height: 13px; }
+/* ------------------------------------------------ marks */
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--neutral-fill); flex: none; vertical-align: middle; }
+.dot.critical { background: var(--critical-fill); } .dot.serious { background: var(--serious-fill); }
+.dot.moderate { background: var(--moderate-fill); } .dot.minor { background: var(--minor-fill); }
+.dot.pass { background: var(--pass-fill); }
+.sev { display: inline-flex; align-items: center; gap: 7px; font-weight: 500; white-space: nowrap; }
+.sev.critical { color: var(--critical); } .sev.serious { color: var(--serious); } .sev.moderate { color: var(--moderate); } .sev.minor { color: var(--minor); } .sev.pass { color: var(--pass); }
+.tag { display: inline-flex; align-items: center; gap: 5px; min-height: 22px; padding: 0 7px; border-radius: 5px; border: 1px solid var(--line); color: var(--ink-2); font-size: .75rem; font-weight: 500; white-space: nowrap; text-decoration: none; background: var(--surface); }
+a.tag:hover { border-color: var(--ink-3); color: var(--ink); }
+.tag .icon { width: 12px; height: 12px; }
+.tag.soft { border-color: transparent; background: var(--surface-2); }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: .78rem; font-weight: 600; white-space: nowrap; background: var(--neutral-soft); color: var(--neutral); }
+.pill .icon { width: 13px; height: 13px; stroke-width: 2.2; }
+.pill.critical { background: var(--critical-soft); color: var(--critical); }
+.pill.serious { background: var(--serious-soft); color: var(--serious); }
+.pill.moderate { background: var(--moderate-soft); color: var(--moderate); }
+.pill.minor { background: var(--minor-soft); color: var(--minor); }
+.pill.pass { background: var(--pass-soft); color: var(--pass); }
+.pill.accent { background: var(--accent-soft); color: var(--accent); }
+.meta-line { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; color: var(--ink-3); font-size: .8125rem; }
+.meta-line code { font-size: .78rem; }
 
 /* ------------------------------------------------ overview */
-.narrative { font-size: 1.05rem; color: var(--ink); max-width: 75ch; margin-bottom: 20px; }
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 24px 0 0; }
-.stats > div { padding: 18px 20px; }
-.stats > div + div { border-left: 1px solid var(--line); }
-.stats dt { font-size: .82rem; color: var(--ink-3); font-weight: 500; }
-.stats dd { margin: 4px 0 0; font-size: 1.6rem; font-weight: 650; letter-spacing: -.01em; }
-.stats dd small { font-size: .85rem; font-weight: 500; color: var(--ink-3); letter-spacing: 0; }
-.impact-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--surface-3); gap: 2px; }
-.impact-bar span { display: block; height: 100%; }
-.impact-bar .critical { background: var(--critical); } .impact-bar .serious { background: var(--serious); }
-.impact-bar .moderate { background: var(--moderate); } .impact-bar .minor { background: var(--minor); }
-.impact-legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 12px 0 0; padding: 0; list-style: none; font-size: .88rem; color: var(--ink-2); }
-.impact-legend li { display: flex; align-items: center; gap: 8px; }
-.impact-legend .dot { width: 10px; height: 10px; border-radius: 3px; }
-.impact-block { padding: 18px 20px; border-top: 1px solid var(--line); }
-.plan { list-style: none; margin: 0; padding: 0; counter-reset: plan; }
-.plan li { counter-increment: plan; display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 4px 16px; padding: 16px 20px; align-items: start; }
-.plan li + li { border-top: 1px solid var(--line); }
-.plan li::before { content: counter(plan); width: 28px; height: 28px; border-radius: 50%; background: var(--surface-3); color: var(--ink); display: grid; place-items: center; font-weight: 650; font-size: .86rem; grid-row: span 2; }
-.plan .plan-title { font-weight: 600; }
-.plan .plan-title a { color: var(--ink); text-decoration: none; }
-.plan .plan-title a:hover { color: var(--accent); text-decoration: underline; }
-.plan .plan-meta { grid-column: 2; color: var(--ink-3); font-size: .86rem; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
-.plan .plan-why { grid-column: 2 / -1; color: var(--ink-2); font-size: .92rem; }
-.plan .plan-after { grid-row: 1 / span 2; grid-column: 3; text-align: right; font-size: .82rem; color: var(--ink-3); white-space: nowrap; }
-.plan .plan-after strong { display: block; font-size: 1rem; color: var(--pass); }
-.criteria-groups { display: grid; gap: 20px; }
-.criteria-group h3 { font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin-bottom: 8px; font-weight: 600; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
-.chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font-size: .84rem; }
-.chip:hover { border-color: var(--line-strong); background: var(--surface-3); color: var(--ink); }
-.chip .icon { width: 15px; height: 15px; stroke-width: 2.2; }
-.chip.fail { border-color: color-mix(in srgb, var(--critical) 45%, var(--line)); background: var(--critical-soft); }
-.chip.fail .icon { color: var(--critical); }
-.chip.review .icon { color: var(--moderate); }
-.chip.review { background: var(--moderate-soft); border-color: color-mix(in srgb, var(--moderate) 35%, var(--line)); }
-.chip.pass .icon { color: var(--pass); }
-.chip.manual .icon, .chip.na .icon { color: var(--ink-3); }
-.chip b { font-weight: 600; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .84rem; color: var(--ink-2); margin: 0 0 16px; padding: 0; list-style: none; }
-.legend li { display: flex; gap: 6px; align-items: center; }
-.legend .icon { width: 15px; height: 15px; stroke-width: 2.2; }
-.note { display: flex; gap: 12px; padding: 14px 16px; border-radius: var(--radius); background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); font-size: .92rem; }
-.note .icon { margin-top: 2px; color: var(--ink-3); }
+.verdict { margin: 0 0 40px; padding: 28px 0 32px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+.verdict-line { font-size: 1.5rem; line-height: 1.35; letter-spacing: -.015em; max-width: 34em; margin: 0 0 26px; color: var(--ink-2); text-wrap: pretty; }
+.verdict-line strong { color: var(--ink); font-weight: 600; }
+.verdict-line b { color: var(--ink); font-weight: 600; }
+.sevbar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; background: var(--surface-3); gap: 2px; }
+.sevbar span { display: block; height: 100%; transform-origin: left center; animation: grow .9s var(--ease) both; }
+.sevbar span:nth-child(2) { animation-delay: .08s; } .sevbar span:nth-child(3) { animation-delay: .16s; } .sevbar span:nth-child(4) { animation-delay: .24s; }
+@keyframes grow { from { transform: scaleX(0); } }
+.sevbar .critical { background: var(--critical-fill); } .sevbar .serious { background: var(--serious-fill); }
+.sevbar .moderate { background: var(--moderate-fill); } .sevbar .minor { background: var(--minor-fill); }
+.sevkey { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 14px 0 0; padding: 0; list-style: none; }
+.sevkey li { display: grid; grid-template-columns: 9px minmax(0, 1fr); gap: 2px 10px; align-items: center; font-size: .875rem; color: var(--ink-3); }
+.sevkey .dot { margin-top: 1px; }
+.sevkey strong { color: var(--ink); font-weight: 600; font-size: 1.0625rem; }
+.sevkey .sub { grid-column: 2; }
+.narrative { font-size: 1.0625rem; max-width: 70ch; margin: 0 0 8px; color: var(--ink); }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 24px; margin: 20px 0 0; padding: 0; list-style: none; font-size: .9375rem; color: var(--ink-2); }
+.facts li strong { color: var(--ink); font-weight: 600; }
 
-/* ------------------------------------------------ filters */
-.filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; padding: 14px; margin-bottom: 18px; }
-.field { display: grid; gap: 4px; }
-.field > label, .field > .label { font-size: .78rem; color: var(--ink-3); font-weight: 600; }
-.input, select.input { min-height: 36px; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 6px 10px; min-width: 0; }
-.search { position: relative; flex: 1 1 240px; }
-.search .icon { position: absolute; left: 10px; bottom: 9px; color: var(--ink-3); pointer-events: none; }
-.search .input { width: 100%; padding-left: 34px; }
-.toggle-group { display: flex; flex-wrap: wrap; gap: 6px; }
-.results-line { color: var(--ink-3); font-size: .88rem; margin: 0 0 12px; }
-.empty { text-align: center; padding: 48px 24px; color: var(--ink-2); }
-.empty .icon { width: 32px; height: 32px; color: var(--pass); margin-bottom: 8px; }
-.empty h2 { margin-bottom: 6px; }
+.plan { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.plan li { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 2px 20px; padding: 20px 0 22px; border-bottom: 1px solid var(--line); align-items: start; }
+.plan .n { font-size: 1.375rem; font-weight: 600; letter-spacing: -.02em; color: var(--ink-3); line-height: 1.2; grid-row: span 3; padding-top: 1px; }
+.plan h3 { font-size: 1.0625rem; }
+.plan h3 a { color: var(--ink); text-decoration: none; }
+.plan h3 a:hover { color: var(--accent); text-decoration: underline; }
+.plan .why { grid-column: 2; color: var(--ink-2); margin: 6px 0 0; max-width: 70ch; }
+.plan .why p:last-child { margin: 0; }
+.plan .meta-line { grid-column: 2; margin-top: 10px; }
+.plan .after { grid-column: 3; grid-row: 1 / span 3; text-align: right; font-size: .8125rem; color: var(--ink-3); white-space: nowrap; line-height: 1.3; padding-top: 2px; }
+.plan .after strong { display: block; font-size: 1.375rem; color: var(--ink); font-weight: 600; letter-spacing: -.02em; }
+.plan .after strong small { font-size: .9375rem; color: var(--ink-3); font-weight: 500; }
+
+.coverage { display: grid; gap: 28px; }
+.principle-row { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px 24px; align-items: start; }
+.principle-row h3 { font-size: .9375rem; font-weight: 600; padding-top: 6px; }
+.principle-row h3 span { display: block; color: var(--ink-3); font-weight: 400; font-size: .8125rem; margin-top: 2px; }
+.cells { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 6px; list-style: none; margin: 0; padding: 0; }
+.cell { display: flex; align-items: center; justify-content: center; min-height: 34px; padding: 0 6px; border-radius: 6px; font-family: var(--mono); font-size: .78rem; font-weight: 500; text-decoration: none; border: 1px solid transparent; transition: transform .15s var(--ease), box-shadow .15s; }
+.cell:hover { transform: translateY(-1px); box-shadow: var(--shadow); text-decoration: none; }
+.cell.fail { background: var(--critical); color: var(--bg); }
+.cell.review { background: var(--moderate-fill); color: #1a1400; }
+.cell.pass { background: var(--pass-soft); color: var(--pass); }
+.cell.manual { background: var(--surface-2); color: var(--ink-2); }
+.cell.na { background: transparent; color: var(--ink-3); border-color: var(--line); border-style: dashed; }
+.keyline { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .8125rem; color: var(--ink-2); margin: 0 0 20px; padding: 0; list-style: none; }
+.keyline li { display: flex; gap: 8px; align-items: center; }
+.keyline .sw { width: 14px; height: 14px; border-radius: 4px; border: 1px solid transparent; }
+.keyline .sw.fail { background: var(--critical); } .keyline .sw.review { background: var(--moderate-fill); } .keyline .sw.pass { background: var(--pass-soft); border-color: var(--pass-fill); }
+.keyline .sw.manual { background: var(--surface-3); } .keyline .sw.na { border-color: var(--line-2); border-style: dashed; }
+.failing-list { list-style: none; margin: 24px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.failing-list li { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .9375rem; }
+.failing-list code { font-size: .8125rem; background: none; border: 0; padding: 0; color: var(--ink-3); }
+.failing-list .state { font-size: .8125rem; }
+.note { display: flex; gap: 12px; padding: 14px 16px; border-radius: var(--r); background: var(--surface-2); color: var(--ink-2); font-size: .9rem; }
+.note .icon { margin-top: 3px; color: var(--ink-3); }
+.note p { margin: 0; }
+
+/* ------------------------------------------------ toolbar / filters */
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px 8px; align-items: center; padding: 0 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.search { position: relative; flex: 1 1 260px; min-width: 200px; }
+.search .icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
+.search input { width: 100%; min-height: 36px; padding: 6px 12px 6px 34px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--surface); }
+.search input::placeholder { color: var(--ink-3); }
+.search input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.select { position: relative; display: inline-flex; align-items: center; }
+.select select { appearance: none; -webkit-appearance: none; min-height: 36px; padding: 6px 30px 6px 12px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); font-size: .875rem; font-weight: 500; max-width: 240px; text-overflow: ellipsis; cursor: pointer; }
+.select select:hover { border-color: var(--ink-3); }
+.select select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.select .icon { position: absolute; right: 10px; pointer-events: none; color: var(--ink-3); width: 14px; height: 14px; }
+.seg-filter { display: inline-flex; gap: 4px; }
+.seg-filter .btn { gap: 7px; }
+.results-line { color: var(--ink-3); font-size: .875rem; margin: 0 0 4px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.empty { text-align: center; padding: 56px 24px; color: var(--ink-2); border: 1px dashed var(--line-2); border-radius: 10px; }
+.empty .icon { width: 28px; height: 28px; color: var(--pass); margin-bottom: 10px; }
+.empty h2 { margin-bottom: 6px; font-size: 1.125rem; }
+.empty p { margin: 0; }
 
 /* ------------------------------------------------ issues */
-.issue-list { display: grid; gap: 10px; }
-.issue { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); scroll-margin-top: 80px; }
-.issue[open] { box-shadow: var(--shadow); border-color: var(--line-strong); }
-.issue > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 14px; align-items: center; padding: 14px 18px; border-radius: var(--radius); }
+.issue-list { border-top: 1px solid var(--line); }
+.issue { border-bottom: 1px solid var(--line); scroll-margin-top: 72px; }
+.issue > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto 20px; gap: 4px 14px; align-items: start; padding: 18px 0 18px; position: relative; }
 .issue > summary::-webkit-details-marker { display: none; }
-.issue > summary:hover { background: color-mix(in srgb, var(--surface-3) 50%, var(--surface)); }
-.issue > summary .chev { transition: transform .2s cubic-bezier(.2, .8, .2, 1); color: var(--ink-3); }
+.issue > summary::before { content: ""; position: absolute; inset: 0 -12px; border-radius: 10px; background: var(--surface-2); opacity: 0; transition: opacity .15s; z-index: -1; }
+.issue > summary:hover::before { opacity: 1; }
+.issue > summary .dot { margin-top: 8px; margin-left: 4px; }
+.issue > summary .chev { color: var(--ink-3); margin-top: 5px; transition: transform .25s var(--ease); }
 .issue[open] > summary .chev { transform: rotate(90deg); }
-.issue .s-title { font-weight: 600; font-size: 1rem; line-height: 1.4; }
-.issue .s-meta { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: .84rem; color: var(--ink-3); }
-.issue .s-count { text-align: right; font-size: .84rem; color: var(--ink-3); white-space: nowrap; }
-.issue .s-count strong { display: block; color: var(--ink); font-size: 1rem; }
-.issue-body { border-top: 1px solid var(--line); padding: 20px 18px 22px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 28px; }
-.issue-body h3 { margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
-.issue-body h3 .icon { color: var(--ink-3); }
-.issue-body .block + .block { margin-top: 22px; }
-.issue-body .tailored { font-size: .74rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 1px 7px; border-radius: 999px; }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
-.secondary-details { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 12px; }
-.secondary-details > summary { cursor: pointer; color: var(--ink-2); font-weight: 600; font-size: .9rem; padding: 4px 0; }
-.secondary-details[open] > summary { margin-bottom: 8px; }
-.code { margin: 10px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--code-bg); }
-.code figcaption { display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 12px; font-size: .74rem; font-weight: 600; color: var(--ink-3); border-bottom: 1px solid var(--line); text-transform: uppercase; letter-spacing: .04em; }
-.code figcaption .lang { font-weight: 500; text-transform: none; letter-spacing: 0; }
+.issue .s-title { font-weight: 600; font-size: 1.0625rem; line-height: 1.4; letter-spacing: -.01em; }
+.issue .s-meta { grid-column: 2; margin-top: 4px; }
+.issue .s-count { text-align: right; white-space: nowrap; color: var(--ink-3); font-size: .8125rem; line-height: 1.3; padding-top: 2px; }
+.issue .s-count strong { display: block; color: var(--ink); font-size: 1.25rem; font-weight: 600; letter-spacing: -.02em; }
+.issue-body { padding: 4px 0 36px 34px; }
+.issue[open] .issue-body { animation: reveal .35s var(--ease) both; }
+@keyframes reveal { from { opacity: 0; transform: translateY(-4px); } }
+.issue-body h3 { margin: 0 0 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.issue-body .block + .block { margin-top: 26px; }
+.tailored { font-size: .72rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 1px 7px; border-radius: 999px; letter-spacing: .01em; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+
+.tablist { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 6px 0 24px; overflow-x: auto; scrollbar-width: none; }
+.tablist::-webkit-scrollbar { display: none; }
+.tablist button { position: relative; appearance: none; border: 0; background: none; padding: 9px 12px 11px; color: var(--ink-3); font-weight: 500; font-size: .9375rem; cursor: pointer; white-space: nowrap; border-radius: 6px 6px 0 0; }
+.tablist button:hover { color: var(--ink); background: var(--surface-2); }
+.tablist button[aria-selected="true"] { color: var(--ink); }
+.tablist button[aria-selected="true"]::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 2px; background: var(--ink); border-radius: 2px 2px 0 0; }
+.tablist button .count { color: var(--ink-3); font-size: .8125rem; margin-left: 6px; }
+.tabpanel[hidden] { display: none; }
+.fix-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.code-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin: 12px 0; }
+.code-pair .code { margin: 0; }
+.code { margin: 12px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--code-bg); }
+.code figcaption { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; font-size: .75rem; font-weight: 600; color: var(--ink-3); border-bottom: 1px solid var(--line); }
+.code figcaption .lang { font-weight: 400; color: var(--ink-3); font-family: var(--mono); }
 .code figcaption .copy { margin-left: auto; }
-.code pre { margin: 0; padding: 12px 14px; overflow-x: auto; font-size: .82rem; line-height: 1.6; tab-size: 2; }
-.code-before { border-color: color-mix(in srgb, var(--before) 40%, var(--line)); }
-.code-before figcaption { background: var(--before-soft); color: var(--before); }
-.code-after { border-color: color-mix(in srgb, var(--after) 40%, var(--line)); }
-.code-after figcaption { background: var(--after-soft); color: var(--after); }
-.copy { border: 0; background: transparent; color: var(--ink-2); font-size: .76rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.code pre { margin: 0; padding: 12px 14px; overflow-x: auto; font-size: .8125rem; line-height: 1.6; tab-size: 2; }
+.code-before figcaption > span:first-child { color: var(--critical); }
+.code-after figcaption > span:first-child { color: var(--pass); }
+.code-before figcaption > span:first-child::before, .code-after figcaption > span:first-child::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; margin-right: 7px; vertical-align: 1px; }
+.copy { border: 0; background: transparent; color: var(--ink-2); font-size: .75rem; font-weight: 600; padding: 3px 8px; border-radius: 5px; cursor: pointer; min-height: 24px; }
 .copy:hover { background: var(--surface-3); color: var(--ink); }
 
-.contrast-demo { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 12px 0 4px; }
-.swatch { border-radius: 8px; border: 1px solid var(--line); overflow: hidden; background: var(--surface); }
-.swatch .sample { padding: 14px; font-size: 1rem; }
-.swatch .sample small { display: block; font-size: .8rem; opacity: 1; }
-.swatch .facts { padding: 8px 12px; font-size: .8rem; color: var(--ink-2); border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.contrast-demo { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 14px 0 6px; }
+.swatch { border-radius: 8px; border: 1px solid var(--line); overflow: hidden; }
+.swatch .sample { padding: 16px; font-size: 1rem; line-height: 1.35; }
+.swatch .sample small { display: block; font-size: .78rem; font-family: var(--mono); margin-top: 4px; }
+.swatch .facts-row { padding: 8px 12px; font-size: .8125rem; color: var(--ink-2); border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 8px; align-items: center; background: var(--surface); }
+.swatch .facts-row strong { color: var(--ink); font-weight: 600; }
 
-.instances { display: grid; gap: 12px; }
-.instance { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: var(--surface); }
-.instance-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 8px; font-size: .86rem; }
-.instance-head a { font-weight: 600; }
-.shot-btn { display: block; width: 100%; min-height: 48px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); cursor: zoom-in; overflow: hidden; margin-bottom: 10px; }
-.shot-btn img { display: block; max-height: 220px; width: auto; margin: 0 auto; }
+.instances { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px 28px; }
+.instance { min-width: 0; }
+.instance-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 10px; font-size: .875rem; }
+.instance-head a:first-child { font-weight: 600; color: var(--ink); }
+.shot-btn { display: block; width: 100%; min-height: 48px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); cursor: zoom-in; overflow: hidden; margin-bottom: 10px; transition: border-color .15s; }
+.shot-btn:hover { border-color: var(--ink-3); }
+.shot-btn img { display: block; max-height: 260px; width: auto; margin: 0 auto; }
 .selector { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
 .selector code { flex: 1; min-width: 0; font-size: .78rem; }
-.snippet { margin: 0 0 8px; padding: 10px 12px; background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; font-size: .78rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto; }
-.why-list { margin: 0; padding-left: 1.1em; font-size: .86rem; color: var(--ink-2); }
-.why-list li + li { margin-top: 2px; }
-.why-head { font-size: .78rem; font-weight: 600; color: var(--ink-3); margin: 0 0 4px; }
-.why-more { margin-top: 4px; font-size: .84rem; color: var(--ink-3); }
-.why-more > summary { cursor: pointer; min-height: 24px; display: inline-flex; align-items: center; }
-.more-row { display: flex; justify-content: center; }
+.snippet { margin: 0 0 8px; padding: 10px 12px; background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; font-size: .78rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; max-height: 150px; overflow: auto; }
+.why { font-size: .8125rem; color: var(--ink-3); }
+.why > summary { cursor: pointer; min-height: 24px; display: inline-flex; align-items: center; font-weight: 500; }
+.why ul { margin: 6px 0 0; padding-left: 1.1em; color: var(--ink-2); }
+.why li + li { margin-top: 2px; }
+.more-row { display: flex; justify-content: center; margin-top: 20px; }
+.sub-details { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.sub-details > summary { cursor: pointer; color: var(--ink-2); font-weight: 600; font-size: .9rem; padding: 4px 0; }
+.sub-details[open] > summary { margin-bottom: 8px; }
 
 /* ------------------------------------------------ pages */
 .table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
-th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { font-size: .78rem; color: var(--ink-3); font-weight: 600; background: var(--surface-2); position: sticky; top: 0; }
+table { width: 100%; border-collapse: collapse; font-size: .9375rem; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .78rem; color: var(--ink-3); font-weight: 600; letter-spacing: .01em; }
+th:first-child, td:first-child { padding-left: 0; } th:last-child, td:last-child { padding-right: 0; }
+thead th { border-bottom-color: var(--ink); }
 th button { all: unset; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
+th button:hover { color: var(--ink); }
 th button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
-tbody tr:hover { background: color-mix(in srgb, var(--surface-3) 45%, var(--surface)); }
+tbody tr:hover { background: color-mix(in srgb, var(--surface-2) 60%, transparent); }
 td.num, th.num { text-align: right; }
-.page-cell a { font-weight: 600; }
-.page-cell .url { display: block; font-size: .8rem; color: var(--ink-3); overflow-wrap: anywhere; }
-.page-detail { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; align-items: start; }
-.page-shots { display: grid; gap: 12px; }
+.page-cell a { font-weight: 600; color: var(--ink); text-decoration: none; }
+.page-cell a:hover { color: var(--accent); text-decoration: underline; }
+.page-cell .url { display: block; font-size: .8125rem; color: var(--ink-3); overflow-wrap: anywhere; font-family: var(--mono); }
+.page-detail { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
+.page-shots { display: grid; gap: 16px; }
 .page-shots figure { margin: 0; }
-.page-shots figcaption { font-size: .8rem; color: var(--ink-3); margin-top: 4px; }
-.page-shots .shot-btn img { max-height: 420px; }
-.compact-issues { list-style: none; padding: 0; margin: 0; }
-.compact-issues li { display: flex; gap: 10px; align-items: center; padding: 10px 14px; }
-.compact-issues li + li { border-top: 1px solid var(--line); }
+.page-shots figcaption { font-size: .8125rem; color: var(--ink-3); margin-top: 6px; }
+.page-shots .shot-btn img { max-height: 440px; }
+.compact-issues { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+.compact-issues li { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .compact-issues a { color: var(--ink); text-decoration: none; font-weight: 500; }
 .compact-issues a:hover { color: var(--accent); text-decoration: underline; }
-.compact-issues .n { margin-left: auto; color: var(--ink-3); font-size: .84rem; white-space: nowrap; }
+.compact-issues .n { margin-left: auto; color: var(--ink-3); font-size: .8125rem; white-space: nowrap; }
+.compact-issues .sev { font-size: .8125rem; min-width: 84px; }
 
 /* ------------------------------------------------ review + checklist */
-.verdict { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; border: 0; padding: 0; margin: 0; }
-.verdict legend { font-size: .84rem; font-weight: 600; color: var(--ink-2); margin-right: 6px; float: left; padding: 0; }
-.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; }
-.seg label { position: relative; padding: 5px 11px; font-size: .84rem; cursor: pointer; color: var(--ink-2); }
-.seg label + label { border-left: 1px solid var(--line-strong); }
+.verdict-ctl { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; border: 0; padding: 0; margin: 0; }
+.verdict-ctl legend { font-size: .875rem; font-weight: 600; color: var(--ink-2); float: left; padding: 0; margin-right: 4px; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg label { position: relative; padding: 5px 12px; font-size: .875rem; cursor: pointer; color: var(--ink-2); min-height: 32px; display: inline-flex; align-items: center; }
+.seg label + label { border-left: 1px solid var(--line-2); }
 .seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
-.seg label:has(input:checked) { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+.seg label:hover { background: var(--surface-2); }
+.seg label:has(input:checked) { background: var(--ink); color: var(--bg); font-weight: 600; }
 .seg label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
-.progress { display: flex; align-items: center; gap: 12px; font-size: .9rem; color: var(--ink-2); }
-.progress .track { width: 180px; height: 8px; background: var(--surface-3); border-radius: 999px; overflow: hidden; }
-.progress .fill { height: 100%; background: var(--accent); border-radius: inherit; transition: width .25s cubic-bezier(.2, .8, .2, 1); }
-.sc-list { display: grid; gap: 8px; }
-.sc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 20px; scroll-margin-top: 80px; }
-.sc:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.sc h3 { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.review-box { padding: 16px 18px; border-radius: 10px; background: var(--surface-2); margin: 0 0 24px; display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; }
+.review-box .hint { font-size: .875rem; color: var(--ink-2); margin: 0; }
+.progress { display: flex; align-items: center; gap: 12px; font-size: .875rem; color: var(--ink-2); white-space: nowrap; }
+.progress .track { width: 160px; height: 6px; background: var(--surface-3); border-radius: 999px; overflow: hidden; }
+.progress .fill { height: 100%; background: var(--ink); border-radius: inherit; transition: width .3s var(--ease); }
+.principle-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 48px 0 0; padding-bottom: 10px; border-bottom: 1px solid var(--ink); }
+.principle-head h2 { font-size: 1.125rem; }
+.principle-head p { margin: 0; font-size: .875rem; color: var(--ink-3); }
+.sc-list { list-style: none; margin: 0; padding: 0; }
+.sc { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 6px 16px; padding: 16px 0 18px; border-bottom: 1px solid var(--line); scroll-margin-top: 80px; align-items: start; }
+.sc:target, .sc:focus { background: var(--accent-soft); box-shadow: 0 0 0 12px var(--accent-soft); border-radius: 2px; outline: none; }
+.sc .scn { font-family: var(--mono); font-size: .8125rem; color: var(--ink-3); padding-top: 3px; }
+.sc h3 { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 1rem; }
 .sc h3 a { color: inherit; text-decoration: none; }
-.sc h3 a:hover { text-decoration: underline; }
-.sc .how { grid-column: 1; color: var(--ink-2); font-size: .9rem; margin: 0; max-width: 80ch; }
-.sc .auto { grid-column: 1; font-size: .86rem; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
-.sc .verdict { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
-.sc textarea { grid-column: 1 / -1; width: 100%; min-height: 38px; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: var(--surface); font-size: .88rem; }
-.principle { margin: 26px 0 10px; font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 600; }
+.sc h3 a:hover { text-decoration: underline; color: var(--accent); }
+.sc .how { grid-column: 2; color: var(--ink-2); font-size: .9rem; margin: 0; max-width: 72ch; }
+.sc .auto { grid-column: 2; font-size: .8125rem; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; color: var(--ink-3); margin-top: 2px; }
+.sc .ctl { grid-column: 3; grid-row: 1 / span 3; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.sc textarea { grid-column: 2 / -1; width: 100%; min-height: 40px; resize: vertical; border: 1px solid var(--line-2); border-radius: 8px; padding: 8px 10px; background: var(--surface); font-size: .875rem; margin-top: 6px; }
+.sc textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.sc textarea[hidden] { display: none; }
+.sc .state.fail { color: var(--critical); font-weight: 600; } .sc .state.review { color: var(--moderate); font-weight: 600; } .sc .state.pass { color: var(--pass); font-weight: 600; }
 
 /* ------------------------------------------------ dialog + toast */
-dialog.viewer { border: 0; padding: 0; border-radius: 12px; background: var(--surface); color: var(--ink); max-width: min(1200px, 94vw); max-height: 92vh; box-shadow: 0 24px 80px rgba(0, 0, 0, .35); }
-dialog.viewer::backdrop { background: rgba(10, 10, 14, .6); }
+dialog.viewer { border: 0; padding: 0; border-radius: 12px; background: var(--surface); color: var(--ink); max-width: min(1200px, 94vw); max-height: 92vh; box-shadow: var(--shadow-lg); }
+dialog.viewer::backdrop { background: rgba(8, 8, 12, .62); backdrop-filter: blur(4px); }
 dialog.viewer .viewer-head { display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 16px; border-bottom: 1px solid var(--line); }
-dialog.viewer .viewer-head p { margin: 0; font-size: .9rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-dialog.viewer .viewer-body { overflow: auto; max-height: calc(92vh - 58px); background: var(--surface-2); }
+dialog.viewer .viewer-head p { margin: 0; font-size: .875rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--mono); }
+dialog.viewer .viewer-body { overflow: auto; max-height: calc(92vh - 56px); background: var(--surface-2); }
 dialog.viewer img { display: block; margin: 0 auto; }
-.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: .9rem; font-weight: 500; pointer-events: none; transition: opacity .2s, transform .25s cubic-bezier(.2, .8, .2, 1); z-index: 60; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 16px); opacity: 0; background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 999px; font-size: .875rem; font-weight: 500; pointer-events: none; transition: opacity .2s, transform .3s var(--ease); z-index: 60; box-shadow: var(--shadow); }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 /* ------------------------------------------------ responsive */
-@media (max-width: 1100px) {
-  .issue-body { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 960px) {
   .page-detail { grid-template-columns: minmax(0, 1fr); }
+  .principle-row { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .principle-row h3 { padding-top: 0; }
+  .sevkey { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 860px) {
-  .layout { grid-template-columns: minmax(0, 1fr); }
-  .sidenav { border-right: 0; border-bottom: 1px solid var(--line); padding: 8px 16px; position: sticky; top: 61px; z-index: 15; }
-  .sidenav ul { display: flex; overflow-x: auto; position: static; gap: 4px; scrollbar-width: none; }
-  .sidenav a { white-space: nowrap; padding: 7px 10px; }
-  .sidenav .count { margin-left: 4px; }
-  main { padding: 24px 16px 64px; }
-  .topbar { padding: 10px 16px; }
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stats > div:nth-child(3) { border-left: 0; }
-  .stats > div:nth-child(n+3) { border-top: 1px solid var(--line); }
-  .plan li { grid-template-columns: 36px minmax(0, 1fr); }
-  .plan .plan-after { grid-column: 2; grid-row: auto; text-align: left; }
-  .plan li::before { grid-row: span 3; }
-  .sc { grid-template-columns: minmax(0, 1fr); }
-  .sc .verdict { grid-column: 1; grid-row: auto; }
-  .issue > summary { grid-template-columns: auto minmax(0, 1fr); }
-  .issue .s-count { grid-column: 2; text-align: left; }
-  .issue .s-count strong { display: inline; }
-  html { scroll-padding-top: 130px; }
-  .issue, .sc { scroll-margin-top: 130px; }
-}
-@media (max-width: 520px) {
-  .brand-text span { display: none; }
-  .topbar .btn .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  h1 { font-size: 1.45rem; }
+@media (max-width: 720px) {
+  .wrap { padding: 0 16px; }
+  main { padding: 28px 0 72px; }
+  h1 { font-size: 1.625rem; }
+  .verdict-line { font-size: 1.25rem; }
+  .masthead .brand #brand-sub { display: none; }
+  .masthead .btn .label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .plan li { grid-template-columns: 32px minmax(0, 1fr); }
+  .plan .n { font-size: 1.125rem; grid-row: span 4; }
+  .plan .after { grid-column: 2; grid-row: auto; text-align: left; margin-top: 8px; }
+  .plan .after strong { display: inline; font-size: 1rem; margin-right: 6px; }
+  .issue > summary { grid-template-columns: 20px minmax(0, 1fr) 20px; }
+  .issue .s-count { grid-column: 2; text-align: left; padding-top: 0; }
+  .issue .s-count strong { display: inline; font-size: .9375rem; margin-right: 4px; }
+  .issue > summary .chev { grid-column: 3; grid-row: 1; }
+  .issue-body { padding-left: 0; }
+  .sc { grid-template-columns: 56px minmax(0, 1fr); }
+  .sc .ctl { grid-column: 2; grid-row: auto; align-items: flex-start; flex-direction: row; flex-wrap: wrap; margin-top: 6px; }
+  .sc textarea { grid-column: 1 / -1; }
+  .cells { grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); }
+  .instances { grid-template-columns: minmax(0, 1fr); }
+  .progress .track { width: 110px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
 @media print {
-  .topbar, .sidenav, .filters, .actions, .copy { display: none !important; }
-  .layout { display: block; }
-  .issue-body { display: block; }
+  .masthead .spacer ~ *, .tabs-bar, .toolbar, .actions, .copy, .tablist { display: none !important; }
+  .tabpanel[hidden] { display: block; }
+  .issue-body { padding-left: 0; }
 }
 </style>
 </head>
@@ -363,16 +436,12 @@ dialog.viewer img { display: block; margin: 0 auto; }
 <a class="skip" href="#main">Skip to content</a>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
-    <symbol id="i-overview" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
-    <symbol id="i-issues" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
-    <symbol id="i-pages" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/></symbol>
-    <symbol id="i-review" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
-    <symbol id="i-checklist" viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></symbol>
     <symbol id="i-logo" viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="1.8"/><path d="M5 8.5c2.3.7 4.6 1 7 1s4.7-.3 7-1"/><path d="M12 9.5v4.5"/><path d="m8.5 21 3.5-7 3.5 7"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></symbol>
     <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
     <symbol id="i-fail" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></symbol>
@@ -380,44 +449,42 @@ dialog.viewer img { display: block; margin: 0 auto; }
     <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><path d="M12 17h.01"/></symbol>
     <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
     <symbol id="i-dash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></symbol>
-    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-2-2 5.4-5.4"/><path d="M14.7 6.3 9 12l-6 6 3 3 6-6"/><path d="M14.7 6.3a4 4 0 0 1 5-3.3l-2.7 2.7.3 2.3 2.3.3 2.7-2.7a4 4 0 0 1-3.3 5"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
-    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
-    <symbol id="i-verify" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6Z"/><path d="m9 12 2 2 4-4"/></symbol>
     <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></symbol>
   </defs>
 </svg>
 
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-logo"/></svg></div>
-    <div class="brand-text"><strong id="brand-title"></strong><span id="brand-sub"></span></div>
-  </div>
-  <div class="spacer"></div>
-  <details class="menu" id="export-menu">
-    <summary class="btn"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span class="label">Export</span></summary>
-    <div class="menu-panel">
-      <button type="button" data-export="json">Report data (JSON)<small>Everything in this report</small></button>
-      <button type="button" data-export="csv">Instances (CSV)<small>One row per failing element</small></button>
-      <button type="button" data-export="md">Issue list (Markdown)<small>Ready to paste into a ticket</small></button>
-      <button type="button" data-export="checklist">Manual checklist (Markdown)<small>With your verdicts and notes</small></button>
-    </div>
-  </details>
-  <button type="button" class="btn ghost" id="theme-toggle" aria-label="Switch to dark theme"><svg class="icon" aria-hidden="true"><use href="#i-moon"/></svg></button>
-</header>
-
-<div class="layout">
-  <nav class="sidenav" aria-label="Report sections">
-    <ul>
-      <li><a href="#/overview" data-nav="overview"><svg class="icon" aria-hidden="true"><use href="#i-overview"/></svg>Overview</a></li>
-      <li><a href="#/issues" data-nav="issues"><svg class="icon" aria-hidden="true"><use href="#i-issues"/></svg>Issues<span class="count" id="nav-issues"></span></a></li>
-      <li><a href="#/pages" data-nav="pages"><svg class="icon" aria-hidden="true"><use href="#i-pages"/></svg>Pages<span class="count" id="nav-pages"></span></a></li>
-      <li><a href="#/review" data-nav="review"><svg class="icon" aria-hidden="true"><use href="#i-review"/></svg>Needs review<span class="count" id="nav-review"></span></a></li>
-      <li><a href="#/checklist" data-nav="checklist"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg>Manual checklist<span class="count" id="nav-checklist"></span></a></li>
-    </ul>
-  </nav>
-  <main id="main" tabindex="-1"></main>
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="#/overview">
+      <span class="mark" aria-hidden="true"><svg class="icon"><use href="#i-logo"/></svg></span>
+      <span><strong id="brand-title"></strong><span id="brand-sub"></span></span>
+    </a>
+    <div class="spacer"></div>
+    <details class="menu" id="export-menu">
+      <summary class="btn"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span class="label">Export</span></summary>
+      <div class="menu-panel">
+        <button type="button" data-export="json">Report data (JSON)<small>Everything in this report</small></button>
+        <button type="button" data-export="csv">Instances (CSV)<small>One row per failing element</small></button>
+        <button type="button" data-export="md">Issue list (Markdown)<small>Ready to paste into a ticket</small></button>
+        <button type="button" data-export="checklist">Manual checklist (Markdown)<small>With your verdicts and notes</small></button>
+      </div>
+    </details>
+    <button type="button" class="btn ghost" id="theme-toggle" aria-label="Switch to dark theme"><svg class="icon" aria-hidden="true"><use href="#i-moon"/></svg></button>
+  </header>
 </div>
+
+<nav class="tabs-bar" aria-label="Report sections">
+  <div class="wrap"><ul class="tabs">
+    <li><a href="#/overview" data-nav="overview">Overview</a></li>
+    <li><a href="#/issues" data-nav="issues">Issues<span class="count" id="nav-issues"></span></a></li>
+    <li><a href="#/pages" data-nav="pages">Pages<span class="count" id="nav-pages"></span></a></li>
+    <li><a href="#/review" data-nav="review">Needs review<span class="count" id="nav-review"></span></a></li>
+    <li><a href="#/checklist" data-nav="checklist">Manual checklist<span class="count" id="nav-checklist"></span></a></li>
+  </ul></div>
+</nav>
+
+<main id="main" class="wrap" tabindex="-1"></main>
 
 <div class="sr-only" role="status" aria-live="polite" id="live"></div>
 <div class="toast" id="toast" aria-hidden="true"></div>
@@ -443,12 +510,12 @@ const icon = (name, cls = 'icon') => `<svg class="${cls}" aria-hidden="true"><us
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const IMPACTS = ['critical', 'serious', 'moderate', 'minor'];
 const IMPACT_LABEL = { critical: 'Critical', serious: 'Serious', moderate: 'Moderate', minor: 'Minor' };
-const IMPACT_ICON = { critical: 'fail', serious: 'issues', moderate: 'info', minor: 'dash' };
 const pageById = Object.fromEntries(R.pages.map((p) => [p.id, p]));
 const issueById = Object.fromEntries(R.issues.map((i) => [i.id, i]));
 const violations = R.issues.filter((i) => i.kind === 'violation');
 const reviews = R.issues.filter((i) => i.kind === 'review');
 const storeKey = `a11y-audit:${R.meta.origin}:${R.meta.startedAt}`;
+const fmtDate = (d, opts = { dateStyle: 'medium' }) => new Date(d).toLocaleString(undefined, opts);
 
 // ------------------------------------------------ storage (per viewer, best effort)
 const store = {
@@ -488,15 +555,16 @@ async function copyText(text, what = 'Copied') {
 function download(name, text, type) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
-const impactBadge = (impact) => `<span class="badge ${impact}">${icon(IMPACT_ICON[impact] || 'info')}${IMPACT_LABEL[impact] || impact}</span>`;
+const sev = (impact) => `<span class="sev ${impact}"><span class="dot ${impact}" aria-hidden="true"></span>${IMPACT_LABEL[impact] || impact}</span>`;
 const levelLabel = (i) => i.level === 'best-practice' ? 'Best practice' : i.level === 'other' ? '' : `Level ${i.level}`;
-const scTags = (i) => i.wcag.map((sc) => `<a class="tag" href="#/checklist/${sc}" title="WCAG ${sc}">${sc}</a>`).join(' ');
+const scTags = (i) => i.wcag.map((sc) => `<a class="tag" href="#/checklist/${sc}" title="${esc(`WCAG ${sc} ${criterionBySc[sc]?.name || ''}`.trim())}">${sc}</a>`).join('');
 const titleCount = {}; R.pages.forEach((p) => { if (p.title) titleCount[p.title] = (titleCount[p.title] || 0) + 1; });
 // Use the title when it identifies the page; apps that reuse one title get the path.
 const pageLabel = (p) => { if (!p) return ''; const u = new URL(p.url); const path = (u.pathname + u.search + u.hash) || '/'; return p.title && titleCount[p.title] === 1 ? p.title : path; };
 const pathOf = (url) => { try { const u = new URL(url); return u.pathname + u.search + u.hash; } catch { return url; } };
 const hostOf = (url) => { try { return new URL(url).host; } catch { return url; } };
 const criterionBySc = Object.fromEntries(R.criteria.map((c) => [c.sc, c]));
+const sep = '<span class="sep" aria-hidden="true">·</span>';
 
 // ------------------------------------------------ routing
 function parseHash() {
@@ -537,64 +605,70 @@ function route() {
 window.addEventListener('hashchange', route);
 
 // ------------------------------------------------ overview
+function verdictLine(s) {
+  const clean = s.pagesClean;
+  if (!s.issues) {
+    return `<strong>No automated failures.</strong> Every one of the ${plural(s.pagesScanned, 'page')} scanned passed the automated ${esc(R.meta.standardLabel)} rules.${s.review ? ` <b>${s.review}</b> ${s.review === 1 ? 'result still needs' : 'results still need'} a person to decide.` : ''}`;
+  }
+  const word = s.byImpact.critical ? 'Needs work.' : s.byImpact.serious ? 'Needs attention.' : 'Nearly there.';
+  return `<strong>${word}</strong> <b>${s.issues}</b> distinct ${s.issues === 1 ? 'issue' : 'issues'} on <b>${s.instances}</b> ${s.instances === 1 ? 'element' : 'elements'} across <b>${s.pagesScanned - clean} of ${s.pagesScanned}</b> pages. ${clean ? `${clean === 1 ? 'One page passes' : `${clean} pages pass`} every automated check` : 'No page passes every automated check'}${s.review ? `, and <b>${s.review}</b> ${s.review === 1 ? 'result needs' : 'results need'} a person to decide.` : '.'}`;
+}
 function renderOverview() {
   const s = R.summary;
   const totalIssues = Math.max(1, s.issues);
   const bar = IMPACTS.filter((k) => s.byImpact[k]).map((k) => `<span class="${k}" style="width:${(s.byImpact[k] / totalIssues) * 100}%"></span>`).join('');
-  const legend = IMPACTS.map((k) => `<li><span class="dot" style="background:var(--${k})"></span>${IMPACT_LABEL[k]} <strong>${s.byImpact[k] || 0}</strong> <span class="muted">(${plural(s.instancesByImpact[k] || 0, 'instance')})</span></li>`).join('');
-  const plan = R.plan.map((step) => {
+  const key = IMPACTS.map((k) => `<li><span class="dot ${k}" aria-hidden="true"></span><span><strong>${s.byImpact[k] || 0}</strong> ${IMPACT_LABEL[k].toLowerCase()}</span><span class="sub">${plural(s.instancesByImpact[k] || 0, 'element')}</span></li>`).join('');
+  const plan = R.plan.map((step, n) => {
     const first = issueById[step.issues[0]];
     const href = `#/issue/${step.issues[0]}`;
     const hasViolation = step.issues.some((id) => issueById[id]?.kind === 'violation');
     return `<li>
-      <div class="plan-title"><a href="${href}">${esc(step.title)}</a></div>
-      ${hasViolation ? `<div class="plan-after"><strong>${step.cleanAfter} of ${s.pagesScanned}</strong>pages clean after this</div>` : ''}
-      <div class="plan-meta">${first ? impactBadge(first.impact) : ''}${hasViolation ? '' : '<span class="badge plain">From needs review</span>'}<span>Clears ${plural(step.instances, 'instance')} on ${plural(step.pages, 'page')}</span>${first?.enrichment?.effort ? `<span>Effort: ${esc(first.enrichment.effort)}</span>` : ''}${step.issues.length > 1 ? `<span>${step.issues.length} related issues</span>` : ''}</div>
-      ${step.whyHtml ? `<div class="plan-why prose">${step.whyHtml}</div>` : ''}
+      <span class="n" aria-hidden="true">${n + 1}</span>
+      <h3><a href="${href}"><span class="sr-only">Step ${n + 1}: </span>${esc(step.title)}</a></h3>
+      ${hasViolation ? `<div class="after"><strong>${step.cleanAfter}<small> / ${s.pagesScanned}</small></strong>pages clean after this</div>` : ''}
+      ${step.whyHtml ? `<div class="why prose">${step.whyHtml}</div>` : ''}
+      <div class="meta-line">${first ? sev(first.impact) : ''}${hasViolation ? '' : '<span class="tag soft">From needs review</span>'}<span>Clears ${plural(step.instances, 'element')} on ${plural(step.pages, 'page')}</span>${first?.enrichment?.effort ? `<span>Effort: ${esc(first.enrichment.effort)}</span>` : ''}${step.issues.length > 1 ? `<span>${step.issues.length} related issues</span>` : ''}</div>
     </li>`;
   }).join('');
-  const principles = { 1: 'Perceivable', 2: 'Operable', 3: 'Understandable', 4: 'Robust' };
-  const statusMeta = { fail: ['fail', 'Failing'], review: ['question', 'Needs review'], pass: ['pass', 'Passed automated checks'], manual: ['person', 'Needs a person'], na: ['dash', 'Not applicable here'] };
-  const groups = Object.entries(principles).map(([n, name]) => {
+  const principles = { 1: ['Perceivable', 'Can everyone see or hear it?'], 2: ['Operable', 'Can everyone use it?'], 3: ['Understandable', 'Does it make sense?'], 4: ['Robust', 'Does assistive tech get it?'] };
+  const statusMeta = { fail: 'Failing', review: 'Needs review', pass: 'Passed automated checks', manual: 'Needs a person', na: 'Not applicable here' };
+  const rows = Object.entries(principles).map(([n, [name, q]]) => {
     const list = R.criteria.filter((c) => c.sc.startsWith(`${n}.`));
-    return `<div class="criteria-group"><h3>${n}. ${name}</h3><ul class="chips">${list.map((c) => {
-      const [ic, label] = statusMeta[c.status];
+    const failing = list.filter((c) => c.status === 'fail').length;
+    return `<div class="principle-row"><h3>${n}. ${name}<span>${failing ? `${plural(failing, 'criterion', 'criteria')} failing` : esc(q)}</span></h3><ul class="cells">${list.map((c) => {
       const href = c.failing.length ? `#/issues?sc=${c.sc}` : c.review.length ? `#/review?sc=${c.sc}` : `#/checklist/${c.sc}`;
-      return `<li><a class="chip ${c.status}" href="${href}" title="${esc(`${c.sc} ${c.name}: ${label}`)}">${icon(ic)}<b>${c.sc}</b> ${esc(c.name)}<span class="sr-only">, ${label}</span></a></li>`;
+      return `<li><a class="cell ${c.status}" href="${href}" title="${esc(`${c.sc} ${c.name}: ${statusMeta[c.status]}`)}">${c.sc}<span class="sr-only"> ${esc(c.name)}, ${statusMeta[c.status]}</span></a></li>`;
     }).join('')}</ul></div>`;
   }).join('');
+  const attention = R.criteria.filter((c) => c.status === 'fail' || c.status === 'review');
   const errors = R.pages.filter((p) => p.error);
   return `
-  <div class="view-head"><div>
+  <div class="view-head">
     <h1 tabindex="-1">${esc(R.title)}</h1>
-    <p class="lede">${esc(R.meta.standardLabel)}${R.meta.bestPractices ? ' plus best practices' : ''} · ${plural(s.pagesScanned, 'page')} ${R.meta.mode === 'crawl' ? 'crawled' : 'scanned'} from <a href="${esc(R.meta.startUrls[0])}" target="_blank" rel="noopener">${esc(hostOf(R.meta.origin))}</a> · ${new Date(R.meta.startedAt).toLocaleString()}${R.meta.authenticated ? ' · signed in' : ''}</p>
-  </div></div>
+    <p class="meta"><span>${esc(R.meta.standardLabel)}${R.meta.bestPractices ? ' + best practices' : ''}</span>${sep}<span>${plural(s.pagesScanned, 'page')} ${R.meta.mode === 'crawl' ? 'crawled' : 'scanned'} from <a href="${esc(R.meta.startUrls[0])}" target="_blank" rel="noopener">${esc(hostOf(R.meta.origin))}</a></span>${sep}<span>${esc(fmtDate(R.meta.startedAt, { dateStyle: 'long', timeStyle: 'short' }))}</span>${R.meta.authenticated ? `${sep}<span>Signed in</span>` : ''}</p>
+  </div>
   <section aria-labelledby="sum-h">
     <h2 id="sum-h" class="sr-only">Summary</h2>
-    <div class="narrative prose">${R.narrativeHtml}</div>
-    <div class="panel">
-      <dl class="stats">
-        <div><dt>Distinct issues</dt><dd>${s.issues}</dd></div>
-        <div><dt>Failing elements</dt><dd>${s.instances}</dd></div>
-        <div><dt>Pages with issues</dt><dd>${s.pagesScanned - s.pagesClean} <small>of ${s.pagesScanned}</small></dd></div>
-        <div><dt>Need your review</dt><dd>${s.review}</dd></div>
-      </dl>
-      ${s.issues ? `<div class="impact-block"><div class="impact-bar" role="img" aria-label="Issues by impact: ${IMPACTS.map((k) => `${s.byImpact[k] || 0} ${k}`).join(', ')}">${bar}</div><ul class="impact-legend">${legend}</ul></div>` : ''}
+    <div class="verdict">
+      <p class="verdict-line">${verdictLine(s)}</p>
+      ${s.issues ? `<div class="sevbar" role="img" aria-label="Issues by impact: ${IMPACTS.map((k) => `${s.byImpact[k] || 0} ${k}`).join(', ')}">${bar}</div><ul class="sevkey">${key}</ul>` : ''}
     </div>
+    <div class="narrative prose">${R.narrativeHtml}</div>
   </section>
-  ${!s.issues && R.plan.length ? `<p class="note" style="margin-top:16px">${icon('pass')}<span>No automated rule failed on any page. The work below comes from the ${plural(s.review, 'item')} that <a href="#/review">need your review</a>.</span></p>` : ''}
-  ${!s.issues && !R.plan.length ? `<section><div class="panel empty">${icon('pass')}<h2>No automated failures</h2><p>Every scanned page passed the automated ${esc(R.meta.standardLabel)} rules.${s.review ? ` ${plural(s.review, 'item')} still <a href="#/review">need your review</a>, and the manual checklist covers what automation can't.` : ' Finish the manual checklist to confirm conformance.'}</p></div></section>` : ''}
+  ${!s.issues && R.plan.length ? `<p class="note">${icon('pass')}<span>No automated rule failed on any page. The work below comes from the ${plural(s.review, 'result')} that <a href="#/review">need your review</a>.</span></p>` : ''}
+  ${!s.issues && !R.plan.length ? `<section><div class="empty">${icon('pass')}<h2>Nothing to fix from the automated scan</h2><p>${s.review ? `${plural(s.review, 'result')} still <a href="#/review">need your review</a>, and the manual checklist covers what automation can't.` : 'Finish the manual checklist to confirm conformance.'}</p></div></section>` : ''}
   ${R.plan.length ? `<section aria-labelledby="plan-h">
     <div class="section-head"><h2 id="plan-h">Fix these first</h2><p>Ordered by how many pages and people each fix helps</p></div>
-    <ol class="plan panel">${plan}</ol>
+    <ol class="plan">${plan}</ol>
   </section>` : ''}
   <section aria-labelledby="crit-h">
-    <div class="section-head"><h2 id="crit-h">${esc(R.meta.standardLabel)} criteria</h2><p>${s.criteria.fail} failing · ${s.criteria.review} to review · ${s.criteria.pass} passed automated checks · ${s.criteria.manual} need a person</p></div>
-    <ul class="legend">${Object.entries(statusMeta).map(([k, [ic, label]]) => `<li class="chip-legend ${k}"><span class="chip ${k}" aria-hidden="true" style="padding:2px 4px">${icon(ic)}</span>${label}</li>`).join('')}</ul>
-    <div class="criteria-groups">${groups}</div>
-    <p class="note" style="margin-top:20px">${icon('info')}<span>Automated checks only cover part of WCAG. A criterion marked "passed" means no automated rule failed, not that the page conforms. The <a href="#/checklist">manual checklist</a> explains how to test each criterion by hand.</span></p>
+    <div class="section-head"><h2 id="crit-h">${esc(R.meta.standardLabel)} coverage</h2><p>${s.criteria.fail} failing${sep}${s.criteria.review} to review${sep}${s.criteria.pass} passed automated checks${sep}${s.criteria.manual} need a person</p></div>
+    <ul class="keyline">${Object.entries(statusMeta).map(([k, label]) => `<li><span class="sw ${k}" aria-hidden="true"></span>${label}</li>`).join('')}</ul>
+    <div class="coverage">${rows}</div>
+    ${attention.length ? `<ul class="failing-list" aria-label="Criteria that need attention">${attention.map((c) => `<li><code>${c.sc}</code><a href="${c.failing.length ? `#/issues?sc=${c.sc}` : `#/review?sc=${c.sc}`}">${esc(c.name)}</a><span class="state sev ${c.status === 'fail' ? 'critical' : 'moderate'}">${c.status === 'fail' ? plural(c.failing.length, 'issue') : `${plural(c.review.length, 'item')} to review`}</span></li>`).join('')}</ul>` : ''}
+    <p class="note" style="margin-top:24px">${icon('info')}<span>Automated checks only cover part of WCAG. A criterion marked "passed" means no automated rule failed, not that the page conforms. The <a href="#/checklist">manual checklist</a> explains how to test each criterion by hand.</span></p>
   </section>
-  ${errors.length ? `<section aria-labelledby="err-h"><div class="section-head"><h2 id="err-h">Pages that could not be scanned</h2></div><ul class="panel compact-issues">${errors.map((p) => `<li><span>${esc(p.url)}</span><span class="n">${esc(p.error)}</span></li>`).join('')}</ul></section>` : ''}`;
+  ${errors.length ? `<section aria-labelledby="err-h"><div class="section-head"><h2 id="err-h">Pages that could not be scanned</h2></div><ul class="compact-issues">${errors.map((p) => `<li><span style="overflow-wrap:anywhere">${esc(p.url)}</span><span class="n">${esc(p.error)}</span></li>`).join('')}</ul></section>` : ''}`;
 }
 
 // ------------------------------------------------ issues (shared by Issues and Needs review)
@@ -630,24 +704,26 @@ function filterBar(view, params, list) {
   const pagesHit = R.pages.filter((p) => list.some((i) => i.pages.includes(p.id)));
   const scs = [...new Set(list.flatMap((i) => i.wcag))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   const opt = (v, label, cur) => `<option value="${esc(v)}"${cur === v ? ' selected' : ''}>${esc(label)}</option>`;
-  return `<form class="filters panel" role="search" data-filters="${view}" onsubmit="return false">
-    <div class="field search"><label for="f-q">Search</label>${icon('search')}<input class="input" id="f-q" name="q" type="search" value="${esc(params.get('q') || '')}" placeholder="Rule, element, selector, color…" autocomplete="off"></div>
-    <div class="field"><span class="label" id="f-impact-l">Impact</span><div class="toggle-group" role="group" aria-labelledby="f-impact-l">${present.map((k) => `<button type="button" class="btn small" data-impact="${k}" aria-pressed="${impacts.includes(k)}">${IMPACT_LABEL[k]}</button>`).join('')}</div></div>
-    ${levels.length > 1 ? `<div class="field"><label for="f-level">Level</label><select class="input" id="f-level" name="level">${opt('', 'All levels', params.get('level') || '')}${levels.map((l) => opt(l, l === 'best-practice' ? 'Best practice' : l, params.get('level'))).join('')}</select></div>` : ''}
-    ${scs.length > 1 ? `<div class="field"><label for="f-sc">WCAG criterion</label><select class="input" id="f-sc" name="sc">${opt('', 'All criteria', params.get('sc') || '')}${scs.map((sc) => opt(sc, `${sc} ${criterionBySc[sc]?.name || ''}`, params.get('sc'))).join('')}</select></div>` : ''}
-    ${pagesHit.length > 1 ? `<div class="field"><label for="f-page">Page</label><select class="input" id="f-page" name="page">${opt('', 'All pages', params.get('page') || '')}${pagesHit.map((p) => opt(p.id, `${pageLabel(p)} (${pathOf(p.url)})`, params.get('page'))).join('')}</select></div>` : ''}
-    ${R.meta.viewports.length > 1 ? `<div class="field"><label for="f-vp">Viewport</label><select class="input" id="f-vp" name="vp">${opt('', 'Any', params.get('vp') || '')}${R.meta.viewports.map((v) => opt(v.name, `${v.name} (${v.width}px)`, params.get('vp'))).join('')}</select></div>` : ''}
-    <div class="field"><label for="f-sort">Sort</label><select class="input" id="f-sort" name="sort">${opt('priority', 'Impact', params.get('sort') || 'priority')}${opt('leverage', 'Biggest payoff', params.get('sort'))}${opt('pages', 'Most pages', params.get('sort'))}${opt('instances', 'Most instances', params.get('sort'))}</select></div>
+  const select = (id, name, label, options) => `<div class="select"><label class="sr-only" for="${id}">${label}</label><select id="${id}" name="${name}">${options}</select>${icon('chevron-down')}</div>`;
+  return `<form class="toolbar" role="search" data-filters="${view}" onsubmit="return false">
+    <div class="search"><label class="sr-only" for="f-q">Search issues</label>${icon('search')}<input id="f-q" name="q" type="search" value="${esc(params.get('q') || '')}" placeholder="Search issues…" autocomplete="off"></div>
+    ${present.length > 1 ? `<div class="seg-filter" role="group" aria-label="Filter by impact">${present.map((k) => `<button type="button" class="btn small" data-impact="${k}" aria-pressed="${impacts.includes(k)}"><span class="dot ${k}" aria-hidden="true"></span>${IMPACT_LABEL[k]}</button>`).join('')}</div>` : ''}
+    ${levels.length > 1 ? select('f-level', 'level', 'Level', `${opt('', 'All levels', params.get('level') || '')}${levels.map((l) => opt(l, l === 'best-practice' ? 'Best practice' : `Level ${l}`, params.get('level'))).join('')}`) : ''}
+    ${scs.length > 1 ? select('f-sc', 'sc', 'WCAG criterion', `${opt('', 'All criteria', params.get('sc') || '')}${scs.map((sc) => opt(sc, `${sc} ${criterionBySc[sc]?.name || ''}`, params.get('sc'))).join('')}`) : ''}
+    ${pagesHit.length > 1 ? select('f-page', 'page', 'Page', `${opt('', 'All pages', params.get('page') || '')}${pagesHit.map((p) => opt(p.id, pageLabel(p), params.get('page'))).join('')}`) : ''}
+    ${R.meta.viewports.length > 1 ? select('f-vp', 'vp', 'Viewport', `${opt('', 'Any viewport', params.get('vp') || '')}${R.meta.viewports.map((v) => opt(v.name, `${v.name[0].toUpperCase()}${v.name.slice(1)} (${v.width}px)`, params.get('vp'))).join('')}`) : ''}
+    ${select('f-sort', 'sort', 'Sort', `${opt('priority', 'Sort: impact', params.get('sort') || 'priority')}${opt('leverage', 'Sort: biggest payoff', params.get('sort'))}${opt('pages', 'Sort: most pages', params.get('sort'))}${opt('instances', 'Sort: most elements', params.get('sort'))}`)}
   </form>`;
 }
 
 function issueSummary(i) {
-  const shape = i.shape ? `<code>${esc(i.shape)}</code>${i.context && i.context !== 'body' ? `<span>inside <code>${esc(i.context)}</code></span>` : ''}` : '';
+  const shape = i.shape ? `<span><code>${esc(i.shape)}</code>${i.context && i.context !== 'body' ? ` in <code>${esc(i.context)}</code>` : ''}</span>` : '';
   return `<summary>
-    ${icon('chevron', 'icon chev')}
+    <span class="dot ${i.impact}" aria-hidden="true"></span>
     <h2 class="s-title">${esc(i.title)}</h2>
-    <span class="s-count"><strong>${i.instanceCount}</strong> on ${plural(i.pageCount, 'page')}</span>
-    <span class="s-meta">${impactBadge(i.impact)}${i.source === 'heuristic' ? '<span class="badge plain">Heuristic check</span>' : ''}${i.tags.includes('experimental') ? '<span class="badge plain">Experimental rule</span>' : ''}<span>${esc(levelLabel(i))}</span>${i.wcag.length ? `<span>WCAG ${i.wcag.join(', ')}</span>` : ''}<span><code>${esc(i.ruleId)}</code></span>${shape}${i.headline ? `<span>${esc(i.headline)}</span>` : ''}</span>
+    <span class="s-count"><strong>${i.instanceCount}</strong>${i.instanceCount === 1 ? 'element' : 'elements'} on ${plural(i.pageCount, 'page')}</span>
+    ${icon('chevron', 'icon chev')}
+    <span class="s-meta meta-line"><span class="sev ${i.impact}">${IMPACT_LABEL[i.impact]}</span>${i.source === 'heuristic' ? '<span class="tag soft">Heuristic check</span>' : ''}${i.tags.includes('experimental') ? '<span class="tag soft">Experimental rule</span>' : ''}<span>${esc(levelLabel(i))}</span>${i.wcag.length ? `<span>WCAG ${i.wcag.join(', ')}</span>` : ''}<span><code>${esc(i.ruleId)}</code></span>${shape}${i.headline ? `<span>${esc(i.headline)}</span>` : ''}</span>
   </summary>`;
 }
 
@@ -660,21 +736,21 @@ function contrastBlock(i) {
   const c = i.contrast; if (!c) return '';
   const sug = c.suggestion;
   return `<div class="contrast-demo">
-    <div class="swatch"><div class="sample" style="color:${esc(c.fg)};background:${esc(c.bg)}">Current text<small>${esc(c.fg)} on ${esc(c.bg)}</small></div><div class="facts"><span>${esc(c.ratio)}:1</span>${impactBadge('critical').replace('Critical', `Needs ${c.needed}:1`)}</div></div>
-    ${sug ? `<div class="swatch"><div class="sample" style="color:${esc(sug.hex)};background:${esc(c.bg)}">Suggested text<small>${esc(sug.hex)} on ${esc(c.bg)}</small></div><div class="facts"><span>${sug.ratio}:1</span><span class="badge pass">${icon('pass')}Passes</span><button type="button" class="copy" data-copy-text="${esc(sug.hex)}">Copy</button></div></div>` : ''}
+    <div class="swatch"><div class="sample" style="color:${esc(c.fg)};background:${esc(c.bg)}">Current text<small>${esc(c.fg)} on ${esc(c.bg)}</small></div><div class="facts-row"><span><strong>${esc(c.ratio)}:1</strong> measured</span><span class="sev critical">Needs ${esc(c.needed)}:1</span></div></div>
+    ${sug ? `<div class="swatch"><div class="sample" style="color:${esc(sug.hex)};background:${esc(c.bg)}">Suggested text<small>${esc(sug.hex)} on ${esc(c.bg)}</small></div><div class="facts-row"><span><strong>${sug.ratio}:1</strong> <span class="sev pass">passes</span></span><button type="button" class="copy" data-copy-text="${esc(sug.hex)}">Copy ${esc(sug.hex)}</button></div></div>` : ''}
   </div>
-  <p class="muted" style="font-size:.84rem">Measured at ${esc(c.fontSize || '')}${c.fontWeight ? `, weight ${esc(c.fontWeight)}` : ''}. The suggestion keeps the same hue and only changes lightness; check it against your palette.</p>`;
+  <p class="muted small">Measured at ${esc(c.fontSize || '')}${c.fontWeight ? `, weight ${esc(c.fontWeight)}` : ''}. The suggestion keeps the same hue and only changes lightness; check it against your palette.</p>`;
 }
 
 function instanceHtml(x) {
   const p = pageById[x.page];
   const msgs = [...new Set(x.checks.map((c) => c.message))];
   return `<div class="instance">
-    <div class="instance-head"><a href="#/page/${x.page}">${esc(pageLabel(p))}</a>${pageLabel(p) !== pathOf(p?.url) ? `<span class="muted">${esc(pathOf(p?.url))}</span>` : ''}${x.viewports.map((v) => `<span class="tag">${esc(v)}</span>`).join('')}<a class="tag" href="${esc(p?.url)}" target="_blank" rel="noopener">Open page ${icon('external', 'icon')}</a></div>
+    <div class="instance-head"><a href="#/page/${x.page}">${esc(pageLabel(p))}</a>${pageLabel(p) !== pathOf(p?.url) ? `<span class="muted"><code>${esc(pathOf(p?.url))}</code></span>` : ''}${x.viewports.map((v) => `<span class="tag soft">${esc(v)}</span>`).join('')}<a class="tag" href="${esc(p?.url)}" target="_blank" rel="noopener">Open page ${icon('external')}</a></div>
     ${x.screenshot ? `<button type="button" class="shot-btn" data-shot="${esc(x.screenshot)}" data-caption="${esc(`${pageLabel(p)}: ${x.target}`)}"><img src="${esc(x.screenshot)}" alt="Screenshot of the failing element, outlined in pink" loading="lazy"><span class="sr-only">Enlarge screenshot</span></button>` : ''}
     <div class="selector"><code>${esc(x.target)}</code><button type="button" class="copy" data-copy-text="${esc(x.target)}" aria-label="Copy selector">Copy</button></div>
     <pre class="snippet" tabindex="0" aria-label="Element HTML"><code>${esc(x.html)}</code></pre>
-    ${msgs.length ? `<p class="why-head">Why it was flagged</p><ul class="why-list">${msgs.slice(0, 3).map((m) => `<li>${esc(m)}</li>`).join('')}</ul>${msgs.length > 3 ? `<details class="why-more"><summary>${msgs.length - 3} more checks</summary><ul class="why-list">${msgs.slice(3).map((m) => `<li>${esc(m)}</li>`).join('')}</ul></details>` : ''}` : ''}
+    ${msgs.length ? `<details class="why"><summary>Why it was flagged (${msgs.length})</summary><ul>${msgs.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></details>` : ''}
   </div>`;
 }
 
@@ -683,67 +759,85 @@ function renderIssueBody(details) {
   if (!body || body.dataset.ready) { if (body) body.hidden = !details.open; return; }
   const i = issueById[details.dataset.issue];
   const e = i.enrichmentHtml || {}; const r = i.ruleHtml || {};
-  const tailored = '<span class="tailored">Specific to this site</span>';
-  const left = `
-    <div class="block"><h3>${icon('target')}What's wrong${e.explanation ? tailored : ''}</h3><div class="prose">${e.explanation || r.problem || `<p>${esc(i.description)}</p>`}</div>${contrastBlock(i)}</div>
-    ${r.who ? `<div class="block"><h3>${icon('person')}Who it affects</h3><div class="prose">${r.who}</div></div>` : ''}
-    ${e.where ? `<div class="block"><h3>${icon('pages')}Where to fix it${tailored}</h3><div class="prose">${e.where}</div></div>` : ''}
-    <div class="block"><h3>${icon('wrench')}How to fix it${e.fix ? tailored : ''}</h3><div class="prose">${e.fix || r.fix || `<p><a href="${esc(i.helpUrl)}" target="_blank" rel="noopener">Read the rule guidance</a></p>`}</div></div>
-    ${(e.verify || r.verify) ? `<div class="block"><h3>${icon('verify')}How to check the fix</h3><div class="prose">${e.verify || r.verify}</div></div>` : ''}
-    ${i.kind === 'review' ? verdictHtml(i) : ''}
+  const tailored = '<span class="tailored">Written for this site</span>';
+  const uid = i.id.replace(/[^\w-]/g, '');
+  const fixTab = `
+    <div class="block"><h3>What's wrong${e.explanation ? tailored : ''}</h3><div class="prose">${e.explanation || r.problem || `<p>${esc(i.description)}</p>`}</div>${contrastBlock(i)}</div>
+    ${e.where ? `<div class="block"><h3>Where to fix it${tailored}</h3><div class="prose">${e.where}</div></div>` : ''}
+    <div class="block"><h3>How to fix it${e.fix ? tailored : ''}</h3><div class="prose fix-prose">${e.fix || r.fix || `<p><a href="${esc(i.helpUrl)}" target="_blank" rel="noopener">Read the rule guidance</a></p>`}</div></div>
+    ${(e.verify || r.verify) ? `<div class="block"><h3>How to check the fix</h3><div class="prose">${e.verify || r.verify}</div></div>` : ''}
     <div class="actions">
-      <button type="button" class="btn small" data-gh="${i.id}">Copy as GitHub issue</button>
+      <button type="button" class="btn small primary" data-gh="${i.id}">Copy as GitHub issue</button>
       <button type="button" class="btn small" data-link="${i.id}">Copy link</button>
       ${i.helpUrl ? `<a class="btn small ghost" href="${esc(i.helpUrl)}" target="_blank" rel="noopener">Rule documentation ${icon('external')}</a>` : ''}
-    </div>
-    ${e.fix && r.fix ? `<details class="secondary-details"><summary>General guidance for this rule</summary><div class="prose">${r.problem || ''}${r.fix}</div></details>` : ''}
-    ${r.falsePositives ? `<details class="secondary-details"><summary>Could this be a false positive?</summary><div class="prose">${r.falsePositives}</div></details>` : ''}
-    ${r.references ? `<details class="secondary-details"><summary>References</summary><div class="prose">${r.references}</div></details>` : ''}`;
+    </div>`;
   const firstN = 6;
-  const right = `<div class="block"><h3>${icon('pages')}Where it happens</h3><p class="muted" style="font-size:.86rem">${plural(i.instanceCount, 'element')} on ${plural(i.pageCount, 'page')}. Elements are outlined in pink.</p>
+  const whereTab = `<p class="muted small" style="margin:0 0 18px">${plural(i.instanceCount, 'element')} on ${plural(i.pageCount, 'page')}. Elements are outlined in pink.</p>
     <div class="instances" data-instances>${i.instances.slice(0, firstN).map(instanceHtml).join('')}</div>
-    ${i.instances.length > firstN ? `<div class="more-row" style="margin-top:12px"><button type="button" class="btn small" data-more="${i.id}" data-shown="${firstN}">Show ${Math.min(20, i.instances.length - firstN)} more of ${i.instances.length - firstN} remaining</button></div>` : ''}
-  </div>`;
-  body.innerHTML = `<div>${left}</div><div>${right}</div>`;
+    ${i.instances.length > firstN ? `<div class="more-row"><button type="button" class="btn small" data-more="${i.id}" data-shown="${firstN}">Show ${Math.min(20, i.instances.length - firstN)} more of ${i.instances.length - firstN} remaining</button></div>` : ''}`;
+  const guidanceParts = [
+    r.who ? `<div class="block"><h3>Who it affects</h3><div class="prose">${r.who}</div></div>` : '',
+    e.fix && r.fix ? `<div class="block"><h3>General guidance for this rule</h3><div class="prose">${r.problem || ''}${r.fix}</div></div>` : (!e.fix && r.problem && e.explanation ? `<div class="block"><h3>About this rule</h3><div class="prose">${r.problem}</div></div>` : ''),
+    r.falsePositives ? `<div class="block"><h3>Could this be a false positive?</h3><div class="prose">${r.falsePositives}</div></div>` : '',
+    r.references ? `<div class="block"><h3>References</h3><div class="prose">${r.references}</div></div>` : '',
+  ].filter(Boolean);
+  const tabs = [
+    { key: 'fix', label: 'The fix', html: fixTab },
+    { key: 'where', label: 'Where it happens', count: i.instanceCount, html: whereTab },
+    ...(guidanceParts.length ? [{ key: 'guide', label: 'Guidance', html: guidanceParts.join('') }] : []),
+  ];
+  body.innerHTML = `${i.kind === 'review' ? verdictHtml(i) : ''}
+    <div class="tablist" role="tablist" aria-label="Issue details">${tabs.map((t, n) => `<button type="button" role="tab" id="tab-${uid}-${t.key}" aria-selected="${n === 0}" aria-controls="panel-${uid}-${t.key}" tabindex="${n === 0 ? 0 : -1}">${t.label}${t.count ? `<span class="count">${t.count}</span>` : ''}</button>`).join('')}</div>
+    ${tabs.map((t, n) => `<div class="tabpanel" role="tabpanel" id="panel-${uid}-${t.key}" aria-labelledby="tab-${uid}-${t.key}" tabindex="0"${n === 0 ? '' : ' hidden'}>${t.html}</div>`).join('')}`;
+  pairCode(body);
   body.dataset.ready = '1';
   body.hidden = false;
   wire(body);
 }
+// Put a before block and the after block that follows it side by side.
+function pairCode(root) {
+  $$('figure.code-before', root).forEach((b) => {
+    const a = b.nextElementSibling;
+    if (!a || !a.matches('figure.code-after')) return;
+    const pair = document.createElement('div'); pair.className = 'code-pair';
+    b.replaceWith(pair); pair.append(b, a);
+  });
+}
 
 function verdictHtml(i) {
   const v = verdicts[i.id] || '';
-  const hint = i.enrichment?.verdict ? `<p class="muted" style="font-size:.86rem;margin-top:8px">Suggested from the scan: ${esc({ 'likely-issue': 'probably a real issue', 'likely-fine': 'probably fine', unsure: 'needs a closer look' }[i.enrichment.verdict] || i.enrichment.verdict)}.</p>` : '';
-  return `<div class="block"><fieldset class="verdict"><legend>Your verdict</legend><div class="seg">${[['issue', 'Real issue'], ['fine', 'Not an issue'], ['unsure', 'Unsure']].map(([k, l]) => `<label><input type="radio" name="verdict-${i.id}" value="${k}" data-verdict="${i.id}"${v === k ? ' checked' : ''}>${l}</label>`).join('')}</div></fieldset>${hint}</div>`;
+  const hint = i.enrichment?.verdict ? `<p class="hint">Suggested from the scan: <strong>${esc({ 'likely-issue': 'probably a real issue', 'likely-fine': 'probably fine', unsure: 'needs a closer look' }[i.enrichment.verdict] || i.enrichment.verdict)}</strong>.</p>` : '<p class="hint">Look at the evidence, then record what you decide. Saved in this browser.</p>';
+  return `<div class="review-box">${hint}<fieldset class="verdict-ctl"><legend>Your verdict</legend><div class="seg">${[['issue', 'Real issue'], ['fine', 'Not an issue'], ['unsure', 'Unsure']].map(([k, l]) => `<label><input type="radio" name="verdict-${i.id}" value="${k}" data-verdict="${i.id}"${v === k ? ' checked' : ''}>${l}</label>`).join('')}</div></fieldset></div>`;
 }
 
 function renderIssues(arg, params) {
   const list = filterIssues(violations, params);
   const filtered = list.length !== violations.length;
-  return `<div class="view-head"><div><h1 tabindex="-1">Issues</h1><p class="lede">Each issue groups every element that fails the same way, so one fix usually clears all of them. Open an issue for the explanation, the fix and every place it occurs.</p></div></div>
+  return `<div class="view-head"><h1 tabindex="-1">Issues</h1><p class="lede">One entry per root cause. Each groups every element that fails the same way, so one fix usually clears all of them.</p></div>
   ${violations.length ? filterBar('issues', params, violations) : ''}
-  <p class="results-line" id="results-line">${filtered ? `Showing ${list.length} of ${plural(violations.length, 'issue')}. <a href="#/issues">Clear filters</a>` : plural(violations.length, 'issue')}</p>
-  ${list.length ? issueList(list, 'issues') : `<div class="panel empty">${icon('pass')}<h2>${violations.length ? 'No issues match these filters' : 'No automated failures'}</h2><p>${violations.length ? 'Try removing a filter.' : 'Check the Needs review and Manual checklist sections next.'}</p></div>`}`;
+  <p class="results-line" id="results-line"><span>${filtered ? `Showing ${list.length} of ${plural(violations.length, 'issue')}. <a href="#/issues">Clear filters</a>` : plural(violations.length, 'issue')}</span></p>
+  ${list.length ? issueList(list, 'issues') : `<div class="empty">${icon(violations.length ? 'search' : 'pass')}<h2>${violations.length ? 'No issues match these filters' : 'No automated failures'}</h2><p>${violations.length ? 'Try removing a filter.' : 'Check the Needs review and Manual checklist sections next.'}</p></div>`}`;
 }
 
 function renderReview(arg, params) {
   const list = filterIssues(reviews, params);
   const decided = reviews.filter((i) => verdicts[i.id]).length;
-  return `<div class="view-head"><div><h1 tabindex="-1">Needs review</h1><p class="lede">Automated tools could not decide these, usually because of complex backgrounds, hidden content or behavior that needs a person. Heuristic checks for keyboard focus and reflow also land here. Record a verdict for each one; it is saved in this browser.</p></div>
-  ${reviews.length ? `<div class="progress"><span>${decided} of ${reviews.length} decided</span><span class="track" aria-hidden="true"><span class="fill" style="width:${(decided / Math.max(1, reviews.length)) * 100}%"></span></span></div>` : ''}</div>
+  return `<div class="view-head"><h1 tabindex="-1">Needs review</h1><p class="lede">Automated tools could not decide these, usually because of complex backgrounds, hidden content or behavior that needs a person. Heuristic checks for keyboard focus and reflow also land here.</p>
+  ${reviews.length ? `<div class="progress" style="margin-top:16px"><span>${decided} of ${reviews.length} decided</span><span class="track" aria-hidden="true"><span class="fill" style="width:${(decided / Math.max(1, reviews.length)) * 100}%"></span></span></div>` : ''}</div>
   ${reviews.length ? filterBar('review', params, reviews) : ''}
-  <p class="results-line">${list.length !== reviews.length ? `Showing ${list.length} of ${reviews.length}. <a href="#/review">Clear filters</a>` : plural(reviews.length, 'item')}</p>
-  ${list.length ? issueList(list, 'review') : `<div class="panel empty">${icon('pass')}<h2>Nothing to review</h2><p>The scan could decide every result on its own.</p></div>`}`;
+  <p class="results-line"><span>${list.length !== reviews.length ? `Showing ${list.length} of ${reviews.length}. <a href="#/review">Clear filters</a>` : plural(reviews.length, 'item')}</span></p>
+  ${list.length ? issueList(list, 'review') : `<div class="empty">${icon('pass')}<h2>Nothing to review</h2><p>The scan could decide every result on its own.</p></div>`}`;
 }
 
 // ------------------------------------------------ pages
 function renderPages(arg, params) {
   const sort = params.get('sort') || 'issues';
   const rows = [...R.pages].sort((a, b) => sort === 'url' ? a.url.localeCompare(b.url) : sort === 'instances' ? (b.counts?.instances || 0) - (a.counts?.instances || 0) : (b.counts?.violations || 0) - (a.counts?.violations || 0) || (b.counts?.instances || 0) - (a.counts?.instances || 0));
-  const th = (key, label, num) => `<th scope="col"${num ? ' class="num"' : ''} aria-sort="${sort === key ? (key === 'url' ? 'ascending' : 'descending') : 'none'}"><button type="button" data-sort="${key}">${label}${sort === key ? icon('chevron', 'icon') : ''}</button></th>`;
-  const status = (p) => p.error ? `<span class="badge critical">${icon('fail')}Not scanned</span>` : p.authWall ? `<span class="badge moderate">${icon('info')}Login wall</span>` : p.counts?.violations ? `<span class="badge serious">${icon('issues')}Has issues</span>` : `<span class="badge pass">${icon('pass')}Passed</span>`;
-  const skipped = R.skipped?.length ? `<details class="secondary-details"><summary>${plural(R.skipped.length, 'URL')} found but not scanned</summary><ul class="prose" style="font-size:.86rem">${R.skipped.slice(0, 200).map((s) => `<li><code>${esc(pathOf(s.url))}</code> <span class="muted">${esc(s.reason)}</span></li>`).join('')}</ul></details>` : '';
-  return `<div class="view-head"><div><h1 tabindex="-1">Pages</h1><p class="lede">${R.meta.mode === 'crawl' ? `Pages found by crawling from ${esc(R.meta.startUrls[0])}. Pages that share a URL pattern were sampled rather than all scanned.` : 'The pages you listed.'}</p></div></div>
-  <div class="panel table-wrap"><table>
+  const th = (key, label, num) => `<th scope="col"${num ? ' class="num"' : ''} aria-sort="${sort === key ? (key === 'url' ? 'ascending' : 'descending') : 'none'}"><button type="button" data-sort="${key}">${label}${sort === key ? icon('chevron-down', 'icon') : ''}</button></th>`;
+  const status = (p) => p.error ? `<span class="sev critical"><span class="dot critical" aria-hidden="true"></span>Not scanned</span>` : p.authWall ? `<span class="sev moderate"><span class="dot moderate" aria-hidden="true"></span>Login wall</span>` : p.counts?.violations ? `<span class="sev serious"><span class="dot serious" aria-hidden="true"></span>Has issues</span>` : `<span class="sev pass"><span class="dot pass" aria-hidden="true"></span>Passed</span>`;
+  const skipped = R.skipped?.length ? `<details class="sub-details" style="margin-top:24px"><summary>${plural(R.skipped.length, 'URL')} found but not scanned</summary><ul class="prose small" style="max-width:none">${R.skipped.slice(0, 200).map((s) => `<li><code>${esc(pathOf(s.url))}</code> <span class="muted">${esc(s.reason)}</span></li>`).join('')}</ul></details>` : '';
+  return `<div class="view-head"><h1 tabindex="-1">Pages</h1><p class="lede">${R.meta.mode === 'crawl' ? `Found by crawling from <a href="${esc(R.meta.startUrls[0])}" target="_blank" rel="noopener">${esc(R.meta.startUrls[0])}</a>. Pages that share a URL pattern were sampled rather than all scanned.` : 'The pages you listed.'}</p></div>
+  <div class="table-wrap"><table>
     <caption class="sr-only">Scanned pages, sorted by ${esc(sort)}</caption>
     <thead><tr>${th('url', 'Page')}${th('issues', 'Issues', true)}${th('instances', 'Elements', true)}<th scope="col" class="num">To review</th><th scope="col">Status</th></tr></thead>
     <tbody>${rows.map((p) => `<tr><td class="page-cell"><a href="#/page/${p.id}">${esc(pageLabel(p))}</a>${pageLabel(p) !== pathOf(p.url) ? `<span class="url">${esc(pathOf(p.url))}</span>` : ''}</td><td class="num">${p.counts?.violations ?? '–'}</td><td class="num">${p.counts?.instances ?? '–'}</td><td class="num">${p.counts?.review ?? '–'}</td><td>${status(p)}</td></tr>`).join('')}</tbody>
@@ -754,19 +848,19 @@ function renderPage(id) {
   const p = pageById[id];
   if (!p) return `<div class="view-head"><h1 tabindex="-1">Page not found</h1></div><p><a href="#/pages">Back to pages</a></p>`;
   const mine = (list) => list.filter((i) => i.pages.includes(id));
-  const row = (i) => `<li>${impactBadge(i.impact)}<a href="#/issue/${i.id}">${esc(i.title)}</a><span class="n">${plural(i.instances.filter((x) => x.page === id).length, 'element')}</span></li>`;
+  const row = (i) => `<li>${sev(i.impact)}<a href="#/issue/${i.id}">${esc(i.title)}</a><span class="n">${plural(i.instances.filter((x) => x.page === id).length, 'element')}</span></li>`;
   const v = mine(violations); const r = mine(reviews);
   const from = p.foundOn ? pageById[p.foundOn] : null;
-  return `<div class="view-head"><div><p style="margin:0 0 6px"><a href="#/pages">All pages</a></p><h1 tabindex="-1">${esc(pageLabel(p))}</h1>
-    <p class="lede"><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a>${from ? ` · linked from <a href="#/page/${from.id}">${esc(pageLabel(from))}</a>` : ''}${p.status ? ` · HTTP ${p.status}` : ''}</p></div></div>
-  ${p.narrative ? `<div class="narrative prose" style="margin-bottom:20px">${esc(p.narrative)}</div>` : ''}
+  return `<div class="view-head"><p class="crumb"><a href="#/pages">All pages</a></p><h1 tabindex="-1">${esc(pageLabel(p))}</h1>
+    <p class="meta"><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a>${from ? `${sep}<span>linked from <a href="#/page/${from.id}">${esc(pageLabel(from))}</a></span>` : ''}${p.status ? `${sep}<span>HTTP ${p.status}</span>` : ''}</p></div>
+  ${p.narrative ? `<p class="narrative" style="margin-bottom:28px">${esc(p.narrative)}</p>` : ''}
   ${p.error ? `<p class="note">${icon('info')}<span>This page could not be scanned: ${esc(p.error)}</span></p>` : ''}
   ${p.note ? `<p class="note">${icon('info')}<span>${esc(p.note)}</span></p>` : ''}
   <div class="page-detail">
     <div>
       <section aria-labelledby="pv-h"><div class="section-head"><h2 id="pv-h">Issues on this page</h2><p>${plural(v.length, 'issue')}</p></div>
-        ${v.length ? `<ul class="panel compact-issues">${v.map(row).join('')}</ul>` : `<div class="panel empty">${icon('pass')}<p>No automated failures on this page.</p></div>`}</section>
-      ${r.length ? `<section aria-labelledby="pr-h"><div class="section-head"><h2 id="pr-h">Needs review</h2><p>${plural(r.length, 'item')}</p></div><ul class="panel compact-issues">${r.map(row).join('')}</ul></section>` : ''}
+        ${v.length ? `<ul class="compact-issues">${v.map(row).join('')}</ul>` : `<div class="empty">${icon('pass')}<p>No automated failures on this page.</p></div>`}</section>
+      ${r.length ? `<section aria-labelledby="pr-h"><div class="section-head"><h2 id="pr-h">Needs review</h2><p>${plural(r.length, 'item')}</p></div><ul class="compact-issues">${r.map(row).join('')}</ul></section>` : ''}
     </div>
     <aside class="page-shots" aria-label="Screenshots">
       ${p.screenshot ? `<figure><button type="button" class="shot-btn" data-shot="${esc(p.screenshot)}" data-caption="${esc(`${pageLabel(p)}, desktop`)}"><img src="${esc(p.screenshot)}" alt="Desktop screenshot of ${esc(pageLabel(p))}" loading="lazy"><span class="sr-only">Enlarge</span></button><figcaption>Desktop, full page</figcaption></figure>` : ''}
@@ -781,35 +875,59 @@ function renderChecklist() {
   const done = R.criteria.filter((c) => checklist[c.sc]?.result).length;
   const autoLine = (c) => {
     const parts = [];
-    if (c.status === 'fail') parts.push(`<span class="badge critical">${icon('fail')}Failing</span><a href="#/issues?sc=${c.sc}">${plural(c.failing.length, 'issue')}</a>`);
-    else if (c.status === 'review') parts.push(`<span class="badge moderate">${icon('question')}Needs review</span><a href="#/review?sc=${c.sc}">${plural(c.review.length, 'item')}</a>`);
-    else if (c.status === 'pass') parts.push(`<span class="badge pass">${icon('pass')}Passed automated checks</span>`);
-    else if (c.status === 'na') parts.push(`<span class="badge">${icon('dash')}Nothing to test on these pages</span>`);
-    else parts.push(`<span class="badge">${icon('person')}No automated check</span>`);
-    parts.push(`<span class="muted">${{ full: 'Fully automated', partial: 'Partly automated', manual: 'Manual only' }[c.automation] || ''}</span>`);
-    return parts.join('');
+    if (c.status === 'fail') parts.push(`<span class="state fail">Failing</span><a href="#/issues?sc=${c.sc}">${plural(c.failing.length, 'issue')}</a>`);
+    else if (c.status === 'review') parts.push(`<span class="state review">Needs review</span><a href="#/review?sc=${c.sc}">${plural(c.review.length, 'item')}</a>`);
+    else if (c.status === 'pass') parts.push(`<span class="state pass">Passed automated checks</span>`);
+    else if (c.status === 'na') parts.push(`<span>Nothing to test on these pages</span>`);
+    else parts.push(`<span>No automated check</span>`);
+    parts.push(`<span>${{ full: 'Fully automated', partial: 'Partly automated', manual: 'Manual only' }[c.automation] || ''}</span>`);
+    return parts.join(sep);
   };
   const block = (c) => {
     const st = checklist[c.sc] || {};
-    return `<article class="sc" id="sc-${c.sc}" tabindex="-1" aria-labelledby="sc-h-${c.sc}">
-      <h3 id="sc-h-${c.sc}"><a href="${esc(c.url)}" target="_blank" rel="noopener">${c.sc} ${esc(c.name)}</a><span class="tag">Level ${c.level}</span>${c.since === '2.2' ? '<span class="tag">New in 2.2</span>' : ''}</h3>
+    const hasNote = Boolean(st.note);
+    return `<li class="sc" id="sc-${c.sc}" tabindex="-1" aria-labelledby="sc-h-${c.sc}">
+      <span class="scn" aria-hidden="true">${c.sc}</span>
+      <h3 id="sc-h-${c.sc}"><a href="${esc(c.url)}" target="_blank" rel="noopener"><span class="sr-only">${c.sc} </span>${esc(c.name)}</a><span class="tag soft">Level ${c.level}</span>${c.since === '2.2' ? '<span class="tag soft">New in 2.2</span>' : ''}</h3>
       <p class="how">${esc(c.howToTest)}</p>
       <div class="auto">${autoLine(c)}</div>
-      <fieldset class="verdict"><legend class="sr-only">Your result for ${c.sc}</legend><div class="seg">${[['pass', 'Pass'], ['fail', 'Fail'], ['na', 'N/A']].map(([k, l]) => `<label><input type="radio" name="sc-${c.sc}" value="${k}" data-sc="${c.sc}"${st.result === k ? ' checked' : ''}>${l}</label>`).join('')}</div></fieldset>
-      <label class="sr-only" for="note-${c.sc}">Notes for ${c.sc}</label><textarea id="note-${c.sc}" data-note="${c.sc}" rows="1" placeholder="Notes (optional)">${esc(st.note || '')}</textarea>
-    </article>`;
+      <div class="ctl">
+        <fieldset class="verdict-ctl"><legend class="sr-only">Your result for ${c.sc}</legend><div class="seg">${[['pass', 'Pass'], ['fail', 'Fail'], ['na', 'N/A']].map(([k, l]) => `<label><input type="radio" name="sc-${c.sc}" value="${k}" data-sc="${c.sc}"${st.result === k ? ' checked' : ''}>${l}</label>`).join('')}</div></fieldset>
+        <button type="button" class="btn small ghost" data-note-toggle="${c.sc}" aria-expanded="${hasNote}" aria-controls="note-${c.sc}">${hasNote ? 'Edit note' : 'Add note'}</button>
+      </div>
+      <label class="sr-only" for="note-${c.sc}">Notes for ${c.sc}</label><textarea id="note-${c.sc}" data-note="${c.sc}" rows="2" placeholder="Notes"${hasNote ? '' : ' hidden'}>${esc(st.note || '')}</textarea>
+    </li>`;
   };
-  return `<div class="view-head"><div><h1 tabindex="-1">Manual checklist</h1><p class="lede">Every ${esc(R.meta.standardLabel)} success criterion, with what the scan found and how to test the rest by hand. Your results are saved in this browser and can be exported from the Export menu.</p></div>
-    <div class="progress"><span id="cl-progress">${done} of ${R.criteria.length} checked</span><span class="track" aria-hidden="true"><span class="fill" id="cl-fill" style="width:${(done / R.criteria.length) * 100}%"></span></span></div></div>
-    ${Object.entries(principles).map(([n, name]) => `<h2 class="principle">${n}. ${name}</h2><div class="sc-list">${R.criteria.filter((c) => c.sc.startsWith(`${n}.`)).map(block).join('')}</div>`).join('')}`;
+  return `<div class="view-head"><h1 tabindex="-1">Manual checklist</h1><p class="lede">Every ${esc(R.meta.standardLabel)} success criterion, with what the scan found and how to test the rest by hand. Your results are saved in this browser and can be exported from the Export menu.</p>
+    <div class="progress" style="margin-top:16px"><span id="cl-progress">${done} of ${R.criteria.length} checked</span><span class="track" aria-hidden="true"><span class="fill" id="cl-fill" style="width:${(done / R.criteria.length) * 100}%"></span></span></div></div>
+    ${Object.entries(principles).map(([n, name]) => {
+      const list = R.criteria.filter((c) => c.sc.startsWith(`${n}.`));
+      const d = list.filter((c) => checklist[c.sc]?.result).length;
+      return `<div class="principle-head"><h2>${n}. ${name}</h2><p data-principle-progress="${n}">${d} of ${list.length} checked</p></div><ul class="sc-list">${list.map(block).join('')}</ul>`;
+    }).join('')}`;
 }
 
 // ------------------------------------------------ wiring
 function wire(root) {
   $$('details.issue', root).forEach((d) => d.addEventListener('toggle', () => {
     renderIssueBody(d);
-    if (d.open) { const { view, params } = parseHash(); if (view === 'issues' || view === 'review' || view === 'issue') history.replaceState(null, '', `#/issue/${d.dataset.issue}`); }
+    if (d.open) { const { view } = parseHash(); if (view === 'issues' || view === 'review' || view === 'issue') history.replaceState(null, '', `#/issue/${d.dataset.issue}`); }
   }));
+  $$('[role="tablist"]', root).forEach((list) => {
+    const tabs = $$('[role="tab"]', list);
+    const select = (tab, focus = true) => {
+      tabs.forEach((t) => { const on = t === tab; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; const p = document.getElementById(t.getAttribute('aria-controls')); if (p) p.hidden = !on; });
+      if (focus) tab.focus();
+    };
+    tabs.forEach((t, n) => {
+      t.addEventListener('click', () => select(t, false));
+      t.addEventListener('keydown', (e) => {
+        const k = e.key; let next = null;
+        if (k === 'ArrowRight') next = tabs[(n + 1) % tabs.length]; else if (k === 'ArrowLeft') next = tabs[(n - 1 + tabs.length) % tabs.length]; else if (k === 'Home') next = tabs[0]; else if (k === 'End') next = tabs[tabs.length - 1];
+        if (next) { e.preventDefault(); select(next); }
+      });
+    });
+  });
   $$('form[data-filters]', root).forEach((form) => {
     const view = form.dataset.filters;
     const update = () => {
@@ -823,13 +941,13 @@ function wire(root) {
       const list = filterIssues(base, p);
       const holder = form.parentElement;
       const old = holder.querySelector('.issue-list, .empty');
-      const html = list.length ? issueList(list, view) : `<div class="panel empty">${icon('search')}<h2>No matches</h2><p>Try removing a filter.</p></div>`;
+      const html = list.length ? issueList(list, view) : `<div class="empty">${icon('search')}<h2>No matches</h2><p>Try removing a filter.</p></div>`;
       const tmp = document.createElement('div'); tmp.innerHTML = html;
       const node = tmp.firstElementChild;
       if (old) old.replaceWith(node); else holder.appendChild(node);
       wire(node);
       const line = form.nextElementSibling;
-      if (line?.classList.contains('results-line')) line.innerHTML = list.length !== base.length ? `Showing ${list.length} of ${base.length}. <a href="#/${view}">Clear filters</a>` : `${base.length} total`;
+      if (line?.classList.contains('results-line')) line.innerHTML = `<span>${list.length !== base.length ? `Showing ${list.length} of ${base.length}. <a href="#/${view}">Clear filters</a>` : `${base.length} total`}</span>`;
       announce(`${list.length} of ${base.length} shown`);
     };
     let t; form.addEventListener('input', (e) => { clearTimeout(t); t = setTimeout(update, e.target.type === 'search' ? 180 : 0); });
@@ -839,11 +957,13 @@ function wire(root) {
   $$('[data-verdict]', root).forEach((inp) => inp.addEventListener('change', () => { verdicts[inp.dataset.verdict] = inp.value; store.set('verdicts', verdicts); const decided = reviews.filter((i) => verdicts[i.id]).length; const pr = $('.progress span'); if (pr) pr.textContent = `${decided} of ${reviews.length} decided`; const f = $('.progress .fill'); if (f) f.style.width = `${(decided / reviews.length) * 100}%`; toast('Verdict saved'); }));
   $$('[data-sc]', root).forEach((inp) => inp.addEventListener('change', () => { checklist[inp.dataset.sc] = { ...(checklist[inp.dataset.sc] || {}), result: inp.value }; store.set('checklist', checklist); updateChecklistProgress(); }));
   $$('[data-note]', root).forEach((ta) => ta.addEventListener('input', () => { checklist[ta.dataset.note] = { ...(checklist[ta.dataset.note] || {}), note: ta.value }; store.set('checklist', checklist); }));
+  $$('[data-note-toggle]', root).forEach((b) => b.addEventListener('click', () => { const ta = document.getElementById(`note-${b.dataset.noteToggle}`); const show = ta.hidden; ta.hidden = !show; b.setAttribute('aria-expanded', show); if (show) ta.focus(); else b.textContent = ta.value ? 'Edit note' : 'Add note'; }));
 }
 function updateChecklistProgress() {
   const done = R.criteria.filter((c) => checklist[c.sc]?.result).length;
   const el = $('#cl-progress'); if (el) el.textContent = `${done} of ${R.criteria.length} checked`;
   const f = $('#cl-fill'); if (f) f.style.width = `${(done / R.criteria.length) * 100}%`;
+  $$('[data-principle-progress]').forEach((p) => { const n = p.dataset.principleProgress; const list = R.criteria.filter((c) => c.sc.startsWith(`${n}.`)); p.textContent = `${list.filter((c) => checklist[c.sc]?.result).length} of ${list.length} checked`; });
   $('#nav-checklist').textContent = `${done}/${R.criteria.length}`;
 }
 
@@ -856,7 +976,7 @@ document.addEventListener('click', (ev) => {
   if (t.matches('[data-shot]')) { openViewer(t.dataset.shot, t.dataset.caption); return; }
   if (t.matches('[data-more]')) {
     const i = issueById[t.dataset.more]; const shown = +t.dataset.shown; const next = i.instances.slice(shown, shown + 20);
-    const holder = t.closest('.block').querySelector('[data-instances]');
+    const holder = t.closest('.tabpanel').querySelector('[data-instances]');
     holder.insertAdjacentHTML('beforeend', next.map(instanceHtml).join(''));
     const first = holder.children[shown]; if (first) { first.setAttribute('tabindex', '-1'); first.focus(); }
     const now = shown + next.length; t.dataset.shown = now;
@@ -930,7 +1050,7 @@ function doExport(kind) {
 
 // ------------------------------------------------ boot
 $('#brand-title').textContent = R.title;
-$('#brand-sub').textContent = `${R.meta.standardLabel} · ${new Date(R.meta.startedAt).toLocaleDateString()}`;
+$('#brand-sub').textContent = `${R.meta.standardLabel} · ${fmtDate(R.meta.startedAt)}`;
 $('#nav-issues').textContent = violations.length;
 $('#nav-pages').textContent = R.pages.length;
 $('#nav-review').textContent = reviews.length;

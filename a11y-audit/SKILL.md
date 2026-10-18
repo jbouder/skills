@@ -82,11 +82,11 @@ Give the path to `report.html`. On macOS, run `open <out>/report.html`. The repo
 
 ## What the report gives the reader
 
-- **Overview:** a summary, issues by impact, a fix-first plan showing how many pages pass after each step, and the status of every WCAG criterion.
-- **Issues:** one entry per root cause, not per element. Each entry has the explanation, who it affects, where to fix it, before/after code, how to verify, possible false positives, and every instance with a highlighted screenshot, selector and markup. Contrast issues show the measured colors and a nearest passing color. Entries copy as a GitHub issue.
+- **Overview:** a one-line verdict, issues by impact, the summary, a fix-first plan showing how many pages pass after each step, and a coverage map of every WCAG criterion with the failing ones listed beneath it.
+- **Issues:** one entry per root cause, not per element. Each entry opens into three tabs: the fix (explanation, where to fix it, before/after code side by side, how to verify), where it happens (every instance with a highlighted screenshot, selector and markup), and guidance (who it affects, general rule guidance, possible false positives, references). Contrast issues show the measured colors and a nearest passing color. Entries copy as a GitHub issue.
 - **Pages:** status per page, screenshots, and what each page links from.
 - **Needs review:** results axe could not decide plus the heuristic checks, with a verdict control saved in the browser.
-- **Manual checklist:** every criterion in the chosen standard, how to test it by hand, what the scan found, and pass, fail or not-applicable controls with notes. It can be exported.
+- **Manual checklist:** every criterion in the chosen standard, how to test it by hand, what the scan found, and pass, fail or not-applicable controls with a note you can add per criterion. Progress is shown per principle. It can be exported.
 - **Export:** JSON, a CSV of instances, Markdown issues, and the checklist.
 
 ## Reference files
