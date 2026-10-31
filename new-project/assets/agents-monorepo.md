@@ -59,6 +59,7 @@ Read the relevant sub-project `AGENTS.md` before making changes there.
 ├── Makefile                    # unified dev commands
 ├── .gitignore
 ├── README.md
+├── ACCESSIBILITY.md            # WCAG 2.2 AA target, checks, known exceptions
 └── AGENTS.md                   ← this file
 ```
 
@@ -165,3 +166,4 @@ Frontend env vars use the `VITE_` prefix and live in `frontend/.env.local` (giti
 | Hand-edit `frontend/src/components/ui/` | Use `npx shadcn add @nebari/<component>` from `frontend/` (overwritten on upgrade — extend at the call site) |
 | `git init` inside `frontend/` or `backend/` | One git repo at the monorepo root |
 | Mix frontend and backend concerns | Keep sub-projects independent — they communicate via HTTP only |
+| Leave a known accessibility gap unrecorded | Fix it, or list it under **Known exceptions** in `ACCESSIBILITY.md` with its issue |
