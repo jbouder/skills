@@ -55,6 +55,7 @@ Read `references/monorepo-root.md`. Replace every `{{PROJECT_NAME}}` with `$PROJ
 2. `README.md`
 3. `Makefile`
 4. `AGENTS.md` — from `assets/agents-monorepo.md`
+5. `ACCESSIBILITY.md` — from `assets/accessibility.md`. At the root, so GitHub shows it as an Accessibility tab beside the README.
 
 ---
 
@@ -67,14 +68,15 @@ Root files:
 1. `.gitignore`
 2. `README.md`
 3. `AGENTS.md` — from `assets/agents-frontend.md`
-4. `package.json`
-5. `tsconfig.json`
-6. `tsconfig.node.json`
-7. `vite.config.ts`
-8. `components.json` — includes the `@nebari` registry mapping
-9. `biome.json`
-10. `.env.example`
-11. `index.html`
+4. `ACCESSIBILITY.md` — from `assets/accessibility.md`. **`frontend` layout only**: a monorepo has it at its root (Step 2), not in `frontend/`.
+5. `package.json`
+6. `tsconfig.json`
+7. `tsconfig.node.json`
+8. `vite.config.ts`
+9. `components.json` — includes the `@nebari` registry mapping
+10. `biome.json`
+11. `.env.example`
+12. `index.html`
 
 > Tailwind v4 needs no `tailwind.config.ts` or `postcss.config.js` (configured in `src/index.css` via `@import "tailwindcss"`), and Biome replaces `eslint.config.js`. Do not create those files.
 
@@ -230,6 +232,10 @@ Add a new page:
 Add an API hook:
   src/hooks/use-<resource>.ts
   (see AGENTS.md for the TanStack Query pattern)
+
+Accessibility:
+  ACCESSIBILITY.md   → the WCAG 2.2 AA target, how it's checked, known exceptions
+  /a11y-audit <url>  → audit the running app; then update ACCESSIBILITY.md's status
 ```
 
 ### `backend`
@@ -309,6 +315,10 @@ Add more Nebari components:
   cd frontend && npx shadcn view @nebari/<component>    (inspect variants/props before installing)
   curl -s https://nebari-dev.github.io/nebari-design/r/registry.json   (list the catalog)
 
+Accessibility:
+  ACCESSIBILITY.md   → the WCAG 2.2 AA target, how it's checked, known exceptions
+  /a11y-audit <url>  → audit the running app; then update ACCESSIBILITY.md's status
+
 See AGENTS.md (root), frontend/AGENTS.md, and backend/AGENTS.md for full conventions.
 ```
 
@@ -318,7 +328,8 @@ See AGENTS.md (root), frontend/AGENTS.md, and backend/AGENTS.md for full convent
 
 - **Read references before writing**: Read the full reference and template files for each part before writing any of its files. Never guess at file contents.
 - **Name substitution**: `{{PROJECT_NAME}}` becomes `$FRONTEND_NAME` in frontend files (so `<name>-frontend` in a monorepo) and `$PROJECT_NAME` everywhere else.
-- **Placement**: in a monorepo, frontend files go in `frontend/`, backend files in `backend/`, and only the root `.gitignore`, `README.md`, `Makefile` and `AGENTS.md` sit at `$TARGET_DIR/`.
+- **Placement**: in a monorepo, frontend files go in `frontend/`, backend files in `backend/`, and only the root `.gitignore`, `README.md`, `Makefile`, `AGENTS.md` and `ACCESSIBILITY.md` sit at `$TARGET_DIR/`.
+- **`ACCESSIBILITY.md` only where there is a UI**: `frontend` and `monorepo` get one at `$TARGET_DIR/`; a `backend` project, an API with no UI, gets none.
 - **Empty files**: `__init__.py`, `.gitkeep`, and `factories/__init__.py` files must be written as empty files.
 - **Installs run unconditionally** after the files for that part are written.
 - **Nebari components are upstream-managed**: `npx shadcn add @nebari/<name>` copies component source into `src/components/ui/`. Treat those files as managed — never hand-edit them (they are overwritten on upgrade). Extend at the call site via `className` (merged with `cn()`) or the Base UI `render` prop. See the `nebari-ui` skill.

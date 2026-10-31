@@ -236,6 +236,22 @@ The Nebari brand tokens are installed via `npx shadcn add @nebari/theme` into `s
 
 ---
 
+## Accessibility
+
+The target is WCAG 2.2 AA, and the repository's `ACCESSIBILITY.md` says how
+it is met. Keep it current: a gap you find and don't fix goes under its
+**Known exceptions** with its issue, and a fix removes it. After an audit
+(`/a11y-audit <url>`), update its status line.
+
+- Build from Nebari components; they bring the keyboard behavior and ARIA a
+  hand-rolled menu, dialog or select would miss.
+- Every control has an accessible name; an icon-only button gets an
+  `aria-label`. Tests that query by role and name hold this.
+- Colors are semantic tokens, never raw values, so contrast holds in both
+  modes.
+
+---
+
 ## Adding a New Page
 
 1. Create `src/pages/PageName/` directory (PascalCase)
@@ -248,6 +264,7 @@ The Nebari brand tokens are installed via `npx shadcn add @nebari/theme` into `s
 
 Claude Code skills for this project:
 
+- **a11y-audit** — audits the running app against WCAG 2.2 AA with axe-core, keyboard and reflow checks (`/a11y-audit <url>`). Run it before a release and update `ACCESSIBILITY.md` from it.
 - **nebari-ui** — the Nebari design-system consumer skill (installed from the `@nebari` shadcn registry via `npx shadcn add @nebari/claude-skill`, lands in `~/.claude/skills/nebari-ui/`). Covers the component catalog, Base UI `render`-prop composition, theming, and motion. Activates when you ask to add or use Nebari components.
 
 ---
