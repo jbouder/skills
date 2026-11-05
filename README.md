@@ -29,7 +29,7 @@ Full instructions for each skill live in its `SKILL.md`. Summary:
 Install a single skill with the [`skills`](https://docs.anthropic.com/en/docs/claude-code/skills) CLI:
 
 ```bash
-npx skills add ./new-project --agent claude
+npx skills add ./new-project --agent claude-code -g
 ```
 
 `a11y-audit` also needs its scanner dependencies once, after install: `npm ci --prefix ~/.claude/skills/a11y-audit && (cd ~/.claude/skills/a11y-audit && npx playwright install chromium)`. The skill runs this itself on first use.
@@ -40,7 +40,7 @@ Or install all of them:
 for skill in a11y-audit backend-conventions decision-deck frontend-conventions github-issue k8s-conventions \
              new-nebari-app new-project pr-review \
              start-dev talk-deck tool-eval web-app-audit; do
-  npx skills add "./$skill" --agent claude
+  npx skills add "./$skill" --agent claude-code -g
 done
 ```
 
