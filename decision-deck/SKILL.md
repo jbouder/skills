@@ -1,6 +1,6 @@
 ---
 name: decision-deck
-description: Build an interactive decision deck for a project discussion. It is a standalone HTML page that walks a room through the open decisions (hosting, stack, scope, build or buy, phasing, anything with options). It has reference cards with pros and cons, a fit matrix, question slides grouped by discussion area, a live weighted recommendation with reasons and "watch out" risks, per-question comments, facilitator notes, answers shared through a claude.ai artifact, and Markdown, CSV and JSON export. Every deck gets its own visual design drawn from the customer and the subject, never a stock look. Use when the user wants a planner, decision deck, options deck, discovery or scoping questionnaire, stack planner, "help the client choose", or an interactive deck to drive a discussion about a particular project, or asks to add questions, options or areas to an existing deck built this way. Also use /decision-deck.
+description: Build an interactive decision deck for a project discussion. It is a standalone HTML page that walks a room through the open decisions (hosting, stack, scope, build or buy, phasing, anything with options). It has reference cards with pros and cons, a fit matrix, question slides grouped by discussion area, a live weighted recommendation with reasons and "watch out" risks, per-question comments, facilitator notes, answers shared through a claude.ai artifact, Markdown, CSV and JSON export, and a PDF export of the deck with the room's answers. Every deck gets its own visual design drawn from the customer and the subject, never a stock look. Use when the user wants a planner, decision deck, options deck, discovery or scoping questionnaire, stack planner, "help the client choose", or an interactive deck to drive a discussion about a particular project, or asks to add questions, options or areas to an existing deck built this way. Also use /decision-deck.
 user-invocable: true
 argument-hint: "<project> [decisions to frame] [--minutes N] [audience notes]"
 ---
@@ -75,7 +75,9 @@ Follow `references/publishing.md`. For a claude.ai artifact, load the `artifact-
 
 ## After the meeting
 
-The answers live in the artifact's database, in the `deck` collection under the document `answers`. When the user asks for a summary or a decision record, read them with `ArtifactData`, or ask for the Markdown export. Write it from the room's own answers and comments.
+The answers live in the artifact's database, in the `deck` collection under the document `answers`. Older decks may use another path, so check the `db.doc(...)` call in the deck. When the user asks for a summary or a decision record, read them with `ArtifactData`, or ask for the Markdown export. Write it from the room's own answers and comments.
+
+To export the deck with its results as a PDF, use `scripts/export_pdf.py`. It screenshots each slide of the real deck with the saved answers loaded and joins them into a PDF, so the pages match the deck's design. Don't rebuild the content as a Word document, a PowerPoint deck or a printed HTML page: those lose the design and read worse. The steps are in `references/publishing.md`, under "Exporting results as a PDF".
 
 ## Editing an existing deck
 
@@ -92,3 +94,4 @@ The answers live in the artifact's database, in the `deck` collection under the 
 - `assets/deck-template.html`: the template, with a theme, hero and data layer plus the shared engine.
 - `scripts/check_deck.py`: the checker.
 - `scripts/make_fragment.py`: makes the claude.ai fragment from the full page.
+- `scripts/export_pdf.py`: exports the deck with saved answers as a PDF of slide screenshots.
