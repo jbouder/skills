@@ -4,7 +4,7 @@ A deck works in three places. Only the claude.ai artifact shares answers between
 
 | Where | Answers | Export |
 |---|---|---|
-| claude.ai artifact (default) | Shared with everyone who has access, live | Through the host's save prompt |
+| claude.ai artifact (default) | Shared with everyone who has access, live | Through the host's save prompt, or a PDF with `scripts/export_pdf.py` |
 | Local file | Saved in that browser only | Browser download |
 | Artifacts site | Saved in that browser only | Browser download |
 
@@ -22,6 +22,23 @@ A deck works in three places. Only the claude.ai artifact shares answers between
 To update, regenerate the fragment from the edited full page and publish the same fragment path again. For an artifact from an earlier conversation, read it first (the host requires it) and build on what comes back.
 
 Reading answers back: `ArtifactData` with the artifact URL, collection `deck`, document `answers`. The fields are `answers` (question id to value, or a list for multi questions), `comments` (question id to text), `notes`, and `at`. Map values to labels through the deck's data block.
+
+## Exporting results as a PDF
+
+This is the way to export a deck with its results. The PDF is screenshots of the deck itself, so it keeps the design. Its text is not selectable.
+
+1. Read the artifact with `Artifact` `action: "read"`. The result names the saved HTML file.
+2. Save the answers with `ArtifactData` `action: "get"`, using the collection and document from the deck's `db.doc(...)` call (`deck`/`answers` in current decks) and `out_dir` set to the scratchpad.
+3. Run the export:
+   ```bash
+   uv run --no-project --with playwright --with img2pdf \
+     python3 <skill-dir>/scripts/export_pdf.py <saved deck.html> <answers.json> <scratchpad>/<slug>.pdf --shots <scratchpad>/shots
+   ```
+   It uses the installed Chrome and falls back to Playwright's Chromium (`uv run --no-project --with playwright python -m playwright install chromium` once if neither is there). Add `--dark` for the dark theme.
+4. Check that the output reports every slide and no page errors. Look at the start slide, one area and the result in `--shots`. A warning about the answer count means the answers did not load.
+5. Copy the PDF where the user wants it, by default `~/Downloads/<slug>-<date>.pdf`, and open it.
+
+The script loads the page with a stub `window.claude` that serves the saved document. It hides the pinned top bar, progress bar, slide navigation, comment and edit links, and the clear and export actions. It captures every slide at full height and 2x, in the deck's order, one slide per page at 11 in wide. Pages differ in height, and the result slide is the longest. A local file deck works too: pass the full page, with the answers as JSON in the same shape.
 
 ## Local file
 
