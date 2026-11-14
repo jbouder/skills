@@ -97,8 +97,8 @@ bunx playwright install chromium # once, for npm run e2e
 1. **An issue first**, for anything bigger than a typo: what and why. One
    issue per pull request.
 2. **A branch**, never `main`.
-3. **The checks**, before you push. CI runs the same and they gate the
-   merge:
+3. **The checks**, before you push. CI runs the same, plus the whole
+   browser suite, and they gate the merge:
 
    ```bash
    bunx biome ci .   # format and lint (npm run check fixes)
@@ -106,7 +106,7 @@ bunx playwright install chromium # once, for npm run e2e
    bunx tsc -b       # types
    npm run build && npm run budget
    npm test          # Vitest in workerd
-   npm run e2e       # Playwright + axe, desktop and phone
+   npm run e2e:changed   # the Playwright specs you changed (CI runs them all)
    ```
 
 4. **The pull request** fills in the template. A change to the UI shows it:

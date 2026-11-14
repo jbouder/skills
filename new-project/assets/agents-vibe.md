@@ -150,7 +150,7 @@ Vitest peers).
 bun install
 npm run dev          # Vite + the Worker locally (Miniflare), http://localhost:5173
 npm test             # wrangler types + vitest (runs in workerd)
-npm run e2e          # playwright: build, vite preview, desktop + phone
+npm run e2e          # playwright: build, vite preview, desktop + phone (CI runs this)
 npm run e2e:changed  # only the specs changed since main
 npm run check        # biome check --write
 npm run build        # wrangler types + tsc -b + vite build
@@ -161,10 +161,13 @@ npm run deploy       # build + wrangler deploy
 ```
 
 Run `npm run check && npm run build && npm test` before finishing any
-change, and `npm run e2e` when it touches the UI (first time: `bunx
-playwright install chromium`). Iterate with `npm run e2e:changed` against a
-running `npm run preview -- --port 4318`, but the full `npm run e2e` is the
-gate. Before every push, `bunx biome ci .`, `bunx knip` and `bunx tsc -b`
+change. When it touches the UI, also run the specs for what changed with
+`npm run e2e:changed`, against a running `npm run preview -- --port 4318`
+(first time: `bunx playwright install chromium`). Do not run the full
+`npm run e2e` locally: CI runs every spec, desktop and phone, on every pull
+request, and that is the gate. E2E runs leave their data in the local
+Worker's state, `.wrangler/state`; if the build gets slow, delete that
+folder (local dev data only, recreated on the next run). Before every push, `bunx biome ci .`, `bunx knip` and `bunx tsc -b`
 on the final tree must print no errors: they are CI's first three checks.
 
 **Biome checks the code, not the docs.** Markdown is excluded in
