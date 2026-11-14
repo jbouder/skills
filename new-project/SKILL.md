@@ -1,7 +1,7 @@
 ---
 name: new-project
-description: Scaffolds a new project — an OpenTeams React+TypeScript frontend (Vite, Tailwind v4, Nebari design system), a Python FastAPI backend (PostgreSQL, async SQLAlchemy, Alembic, pytest, uv), a full-stack monorepo with both wired together, or a vibe project (jbouder's personal Cloudflare app stack, built like holocron and datapad — Vite + React 19 + stock shadcn base-lyra on a Cloudflare Worker, bun, Biome, Vitest in workerd, Playwright + axe, pinned CI with deploy, PR previews and releases, and the docs, accessibility, security and motion rules). Not for static pages deployed through the Nebari Apps Pack — use new-nebari-app for those. Triggers on /new-project, "scaffold a new frontend", "create a React project", "new React app", "scaffold a new backend", "create a FastAPI project", "new FastAPI app", "bootstrap a frontend/backend app", "scaffold a monorepo", "create a full-stack project", "new full-stack app", "new vibe project", "start a vibe project", "new Cloudflare app like holocron/datapad".
-argument-hint: <project-name> [--frontend | --backend | --monorepo | --vibe]
+description: Scaffolds a new project — an OpenTeams React+TypeScript frontend (Vite, Tailwind v4, Nebari design system), a Python FastAPI backend (PostgreSQL, async SQLAlchemy, Alembic, pytest, uv), a full-stack monorepo with both wired together, or a vibe project (jbouder's personal Cloudflare app stack, built like holocron and datapad — Vite + React 19 + stock shadcn base-lyra, or the Beskar design system with --beskar, on a Cloudflare Worker, bun, Biome, Vitest in workerd, Playwright + axe, pinned CI with deploy, PR previews and releases, and the docs, accessibility, security and motion rules). Not for static pages deployed through the Nebari Apps Pack — use new-nebari-app for those. Triggers on /new-project, "scaffold a new frontend", "create a React project", "new React app", "scaffold a new backend", "create a FastAPI project", "new FastAPI app", "bootstrap a frontend/backend app", "scaffold a monorepo", "create a full-stack project", "new full-stack app", "new vibe project", "start a vibe project", "new Cloudflare app like holocron/datapad".
+argument-hint: <project-name> [--frontend | --backend | --monorepo | --vibe [--beskar]]
 allowed-tools:
   - Write
   - Bash
@@ -16,15 +16,15 @@ You are scaffolding a new project in one of four layouts. Follow every step belo
 | `--frontend` | `$PROJECT_NAME/` — React 19 + TS + Vite + Tailwind v4 + Nebari + React Router + TanStack Query + Jotai + Vitest + Biome |
 | `--backend` | `$PROJECT_NAME/` — Python 3.12 + FastAPI + async SQLAlchemy 2 + Alembic + Pydantic v2 + pytest + Ruff + uv |
 | `--monorepo` | `$PROJECT_NAME/frontend/` + `$PROJECT_NAME/backend/` + a root `Makefile`, with the frontend's `/api` dev proxy pointed at the backend |
-| `--vibe` | `$PROJECT_NAME/` — a personal Cloudflare app built like holocron and datapad: React 19 + TS + Vite + Tailwind v4 + stock shadcn `base-lyra` (Base UI, Oxanium, square, System/Light/Dark) on one Worker, bun, Biome, knip, Vitest in workerd, Playwright + axe (desktop and phone), pinned CI, deploy, PR previews, releases, and the docs. **Follow Pre-flight, then [Vibe Layout](#vibe-layout---vibe) instead of Steps 1–7.** |
+| `--vibe` | `$PROJECT_NAME/` — a personal Cloudflare app built like holocron and datapad: React 19 + TS + Vite + Tailwind v4 + stock shadcn `base-lyra` (Base UI, Oxanium, square, System/Light/Dark; add `--beskar` to take the components from the Beskar registry instead) on one Worker, bun, Biome, knip, Vitest in workerd, Playwright + axe (desktop and phone), pinned CI, deploy, PR previews, releases, and the docs. **Follow Pre-flight, then [Vibe Layout](#vibe-layout---vibe) instead of Steps 1–7.** |
 
 All paths to `references/` and `assets/` are relative to this skill's directory.
 
 ## Pre-flight Checks
 
-1. Parse `$ARGUMENTS`: the first non-flag token is `PROJECT_NAME`; `--frontend`, `--backend`, `--monorepo` or `--vibe` sets `LAYOUT`.
-2. If `PROJECT_NAME` is empty, stop and tell the user: "Please provide a project name: /new-project <project-name> [--frontend | --backend | --monorepo | --vibe]"
-3. If no flag was given, infer `LAYOUT` from the request: React / frontend / Vite → `frontend`; FastAPI / backend / API service → `backend`; full-stack / monorepo / "frontend and backend" → `monorepo`; vibe project / a personal or side project on Cloudflare / "like holocron" or "like datapad" → `vibe`. If the request doesn't say, ask which layout — this is the one question allowed before scaffolding.
+1. Parse `$ARGUMENTS`: the first non-flag token is `PROJECT_NAME`; `--frontend`, `--backend`, `--monorepo` or `--vibe` sets `LAYOUT`. `--beskar` is a modifier for the vibe layout only: it sets `BESKAR=1` (and `LAYOUT=vibe` if no layout flag was given). With any other layout, stop and tell the user: "--beskar only applies to --vibe projects."
+2. If `PROJECT_NAME` is empty, stop and tell the user: "Please provide a project name: /new-project <project-name> [--frontend | --backend | --monorepo | --vibe [--beskar]]"
+3. If no flag was given, infer `LAYOUT` from the request: React / frontend / Vite → `frontend`; FastAPI / backend / API service → `backend`; full-stack / monorepo / "frontend and backend" → `monorepo`; vibe project / a personal or side project on Cloudflare / "like holocron" or "like datapad" → `vibe`. If the request doesn't say, ask which layout — this is the one question allowed before scaffolding. For a vibe project, set `BESKAR=1` only when the request asks for it ("with beskar", "use the beskar design system", "beskar components"). Otherwise leave it off: stock shadcn is the default, and do not ask.
 4. If a directory named `$PROJECT_NAME` already exists in the current working directory, stop and tell the user: "Directory '$PROJECT_NAME' already exists. Choose a different name or remove the existing directory first."
 5. For `backend` and `monorepo`: run `uv --version`. If it fails, stop and tell the user: "uv is required. Install it with: curl -LsSf https://astral.sh/uv/install.sh | sh"
    For `vibe`: run `bun --version`. If it fails, stop and tell the user: "bun is required. Install it with: curl -fsSL https://bun.sh/install | bash". Then check `PROJECT_NAME` is a valid Worker name (`^[a-z][a-z0-9-]{0,53}$`: lowercase letters, digits and dashes, room for a `-pr-<n>` preview suffix); if not, stop and suggest the nearest valid one.
@@ -379,6 +379,25 @@ Then the stock shadcn components, through the CLI (they are CLI-managed in this 
 cd "$TARGET_DIR" && bunx --bun shadcn@latest add button card dropdown-menu tooltip dialog input label --yes
 ```
 
+**With `--beskar`**, run this in place of the command above. The components come from the [Beskar](https://github.com/jbouder/beskar) registry, the same `base-lyra` components with the house fixes, plus the `beskar-ui` skill for the project's `.claude/skills`:
+
+```bash
+cd "$TARGET_DIR" \
+  && python3 -I "$SKILL_DIR/scripts/vibe_beskar.py" prepare . \
+  && bunx --bun shadcn@latest add @beskar/button @beskar/card @beskar/dropdown-menu @beskar/tooltip @beskar/dialog @beskar/input @beskar/label @beskar/claude-skill --yes --overwrite </dev/null \
+  && bun remove cn \
+  && python3 -I "$SKILL_DIR/scripts/vibe_beskar.py" finish .
+```
+
+`$SKILL_DIR` is this skill's directory. What each part is for:
+
+- `prepare` adds the `@beskar` registry to `components.json` and points `AGENTS.md`, `README.md` and `docs/design.md` at Beskar.
+- `--overwrite` lets the CLI replace `src/lib/utils.ts` with Beskar's `cn()` (clsx + tailwind-merge). Without it the CLI stops to ask, and `</dev/null` keeps it from waiting forever if it asks anything else.
+- `bun remove cn` drops the `cn` package the stock `utils.ts` used, or knip fails on an unused dependency.
+- `finish` removes the motion tokens and the reduced-motion rule that `@beskar/theme` adds to `src/index.css`. The scaffold already has both, and `test/themes.test.ts` fails on the duplicate tokens.
+
+Each component brings `@beskar/theme` with it, which adds the Beskar tone, sidebar and glow tokens to `src/index.css` and leaves the scaffold's own values alone. If `prepare` or `finish` stops with an error, the templates have drifted from the script: fix `scripts/vibe_beskar.py`, do not skip the step.
+
 Then fill `{{THEME_SCRIPT_HASH}}` in `public/_headers` with the SHA-256 of the inline theme script in `index.html` (the CSP allows that one script by hash):
 
 ```bash
@@ -438,6 +457,7 @@ Print the file list (as in Step 7, also excluding `dist/`, `.wrangler/`, `test-r
 
 Stack:
   React 19 + TypeScript + Vite · Tailwind CSS v4 · stock shadcn base-lyra (Base UI)
+    (with --beskar: "Beskar components (shadcn base-lyra registry, Base UI)" on this line)
   Oxanium + JetBrains Mono · Phosphor icons · System / Light / Dark · square corners
   One Cloudflare Worker (static assets + /api) via @cloudflare/vite-plugin
   bun · Biome · knip · Vitest in workerd · Playwright + axe (desktop + phone)
@@ -464,6 +484,7 @@ Make it yours:
   Pages: src/lib/router.ts (Route, parse, pathFor) + src/pages/ + a line in e2e/a11y.spec.ts
   API: an entry in ROUTES (worker/index.ts), its types in shared/, a test in test/api.test.ts
   More components: bunx --bun shadcn@latest add <name>
+    (with --beskar: bunx --bun shadcn@latest add @beskar/<name>; the beskar-ui skill is in .claude/skills)
 
 When it needs more (references/vibe-recipes.md in the new-project skill):
   saved or live state → a Durable Object · private → Cloudflare Access (and delete preview.yml)
@@ -487,4 +508,5 @@ Rules: AGENTS.md (CLAUDE.md points at it), CONTRIBUTING.md, docs/design.md, ACCE
 - **Do not add extra files**: only create the files listed above.
 - **Vibe placeholders**: only the `{{UPPER_CASE}}` tokens in Pre-flight item 7 are placeholders; `${{ … }}` in workflows and `{{ … }}` in JSX are code. `{{THEME_SCRIPT_HASH}}` is the one filled after writing (Step V3).
 - **Vibe components are stock shadcn, not Nebari**: `src/components/ui/` comes from `bunx --bun shadcn@latest add` with the `base-lyra` style. Do not install `@nebari/*` or the `nebari-ui` skill in a vibe project.
+- **Beskar is opt-in**: stock shadcn stays the default for a vibe project. Only `--beskar` (or a request that asks for Beskar) switches `src/components/ui/` to `@beskar/*`. The vibe templates themselves do not change for it: `scripts/vibe_beskar.py` makes the swap around the `shadcn add` call in Step V3, and Steps V4 to V6 run the same either way. When the templates change, scaffold a `--beskar` project too and run Step V4 on it, including the Playwright suite.
 - **Vibe templates are generated, not hand-kept**: the `vibe-*.md` references (except `vibe-recipes.md`) and `assets/agents-vibe.md` were generated from a scaffold that passed lint, knip, types, build, budget, Vitest and the Playwright + axe suite. To change them, never edit the Markdown by hand: `python3 -I scripts/vibe_refs.py scaffold <dir>` writes a project from them, change it there, run Steps V3 and V4 on it, then `python3 -I scripts/vibe_refs.py extract <dir>` regenerates them (the script's docstring has the loop).
