@@ -2,17 +2,22 @@
 // kit-ui: compare a screenshot of the built UI with the Figma frame's export.
 // No dependencies. Reads 8-bit, non-interlaced PNGs.
 //
-//   node visual-diff.mjs <built.png> <figma.png> [--max 2] [--threshold 0.1]
-//                        [--tolerance 1] [--fit] [--out diff.png]
+//   node visual-diff.mjs <built.png> <figma.png> [--max 2] [--max-content N]
+//                        [--threshold 0.05] [--tolerance 1] [--fit] [--out diff.png]
 //
-//   --max        percent of differing pixels allowed before exit code 1 (default 2)
-//   --threshold  per-pixel color distance, 0 to 1 (default 0.1)
+//   --max          percent of all pixels allowed to differ before exit code 1 (default 2)
+//   --max-content  percent of content pixels allowed to differ (default: not enforced).
+//                  Content pixels are those that are not background in either image.
+//                  This is the honest number: a blank page scores near 100 here and
+//                  only a few percent on --max.
+//   --threshold    per-pixel color distance, 0 to 1 (default 0.05)
 //   --tolerance  a pixel passes if a similar one sits within this many pixels in the
 //                other image; absorbs antialiasing and 1px shifts (default 1)
 //   --fit        compare the shared top-left area when the sizes differ (else exit 2)
 //   --out        write a PNG with the differing pixels in red
 //
-// Prints JSON: size, differing pixels, percent, and the grid cells that differ most.
+// Prints JSON: size, differing pixels, percent of all pixels, percent of content
+// pixels (ofContent), and the grid cells that differ most.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { deflateSync, inflateSync } from 'node:zlib';
 
@@ -93,8 +98,9 @@ function dist(a, i, b, j) {
 const args = process.argv.slice(2);
 const opt = (name, fallback) => { const i = args.indexOf(`--${name}`); if (i < 0) return fallback; const v = args[i + 1]; args.splice(i, 2); return v; };
 const flag = (name) => { const i = args.indexOf(`--${name}`); if (i < 0) return false; args.splice(i, 1); return true; };
-const max = Number(opt('max', 2)), threshold = Number(opt('threshold', 0.1)), tol = Number(opt('tolerance', 1)), outPath = opt('out', null), fit = flag('fit');
-if (args.length !== 2) { console.error('usage: visual-diff.mjs <built.png> <figma.png> [--max 2] [--threshold 0.1] [--tolerance 1] [--fit] [--out diff.png]'); process.exit(2); }
+const maxContentArg = opt('max-content', null), maxContent = maxContentArg === null ? null : Number(maxContentArg);
+const max = Number(opt('max', 2)), threshold = Number(opt('threshold', 0.05)), tol = Number(opt('tolerance', 1)), outPath = opt('out', null), fit = flag('fit');
+if (args.length !== 2) { console.error('usage: visual-diff.mjs <built.png> <figma.png> [--max 2] [--max-content N] [--threshold 0.05] [--tolerance 1] [--fit] [--out diff.png]'); process.exit(2); }
 
 const A = decode(args[0]), B = decode(args[1]);
 if ((A.w !== B.w || A.h !== B.h) && !fit) {
@@ -112,6 +118,17 @@ const near = (src, sw, x, y, other, ow, oh) => {
   }
   return false;
 };
+// Most of a screen is background, so a share of all pixels flatters a bad build.
+// Content pixels are the ones that differ from their own image's background color.
+const background = (img) => {
+  const seen = new Map();
+  for (let i = 0; i < img.w * img.h; i += 7) { const k = (img.rgb[i * 3] << 16) | (img.rgb[i * 3 + 1] << 8) | img.rgb[i * 3 + 2]; seen.set(k, (seen.get(k) || 0) + 1); }
+  let best = 0, key = 0;
+  for (const [k, n] of seen) if (n > best) { best = n; key = k; }
+  return new Uint8Array([key >> 16, (key >> 8) & 255, key & 255]);
+};
+const bgA = background(A), bgB = background(B);
+let content = 0;
 const COLS = 8, ROWS = 6;
 const cells = new Uint32Array(COLS * ROWS);
 const out = outPath ? new Uint8Array(w * h * 3) : null;
@@ -119,6 +136,7 @@ let diff = 0;
 for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
   const i = (y * A.w + x) * 3, j = (y * B.w + x) * 3;
   const same = dist(A.rgb, i, B.rgb, j) <= limit || (tol > 0 && near(A.rgb, A.w, x, y, B.rgb, B.w, B.h) && near(B.rgb, B.w, x, y, A.rgb, A.w, A.h));
+  if (dist(A.rgb, i, bgA, 0) > limit || dist(B.rgb, j, bgB, 0) > limit) content++;
   if (!same) { diff++; cells[Math.min(ROWS - 1, Math.floor((y / h) * ROWS)) * COLS + Math.min(COLS - 1, Math.floor((x / w) * COLS))]++; }
   if (out) { const k = (y * w + x) * 3; if (same) { const g = 255 - (255 - (A.rgb[i] * 0.3 + A.rgb[i + 1] * 0.59 + A.rgb[i + 2] * 0.11)) * 0.25; out[k] = out[k + 1] = out[k + 2] = g; } else { out[k] = 220; out[k + 1] = 0; out[k + 2] = 40; } }
 }
@@ -126,5 +144,7 @@ if (out) writeFileSync(outPath, encode(w, h, out));
 const percent = Math.round((diff / (w * h)) * 10000) / 100;
 const worst = [...cells].map((n, k) => ({ n, k })).filter((c) => c.n).sort((a, b) => b.n - a.n).slice(0, 5)
   .map(({ n, k }) => ({ x: Math.round(((k % COLS) / COLS) * w), y: Math.round((Math.floor(k / COLS) / ROWS) * h), w: Math.round(w / COLS), h: Math.round(h / ROWS), pixels: n }));
-console.log(JSON.stringify({ width: w, height: h, compared: fit && (A.w !== B.w || A.h !== B.h) ? 'shared area' : 'full', differing: diff, percent, max, pass: percent <= max, worst }, null, 2));
-process.exit(percent <= max ? 0 : 1);
+const ofContent = content ? Math.min(100, Math.round((diff / content) * 10000) / 100) : diff ? 100 : 0;
+const pass = percent <= max && (maxContent === null || ofContent <= maxContent);
+console.log(JSON.stringify({ width: w, height: h, compared: fit && (A.w !== B.w || A.h !== B.h) ? 'shared area' : 'full', differing: diff, percent, max, contentPixels: content, ofContent, maxContent, pass, worst }, null, 2));
+process.exit(pass ? 0 : 1);
