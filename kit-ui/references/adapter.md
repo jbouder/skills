@@ -34,6 +34,7 @@ When the kit's owner fixes the file, delete the entry.
 | `names.map` | `code-syntax` | Variable name to CSS name, for the few you want to name by hand. Wins over everything. |
 | `stateAxes` | states | Axis names to read as the `State` axis. |
 | `files` | pages | Page name to code file name, where the default (the page name in kebab-case) is wrong. |
+| `shadcn` | the base | Page name to the shadcn component to install for it, where that is not the file name (`"Datatable": "table"`). `null` means shadcn has no fitting component: write the page from its behavior hint. |
 | `behavior` | `behavior` | Component name to behavior hint, in the same form as a `Behavior:` line. A key ending in `*` matches every name that starts with it. A `Behavior:` line in the file wins. |
 
 ## Passing it to the scripts
@@ -46,7 +47,8 @@ The scripts take the adapter through `ARGS`. Pass only the keys each one reads:
 | `tokens.js` | `names` |
 | `node.js` | `names`, `iconPage` |
 
-`files` is not passed: it is read when a component file is named.
+`files` and `shadcn` are not passed: they are read when a component file is
+named and installed.
 
 ## Derived names
 

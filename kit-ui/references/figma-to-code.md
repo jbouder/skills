@@ -4,6 +4,11 @@ How to turn what `scripts/figma/node.js` returns into React and Tailwind.
 Follow the tables. The same spec must give the same code in any session, so
 where a rule exists, use it, and do not add a class no rule asks for.
 
+A kit component starts as the stock shadcn file. These tables give the
+classes that replace shadcn's look, and `references/restyle.md` says which
+stock classes go and which stay. Only a page shadcn has no component for is
+written whole from these rules.
+
 ## Reading the spec
 
 A **component set** returns:
@@ -166,21 +171,25 @@ separate component for the set.
 
 - One file per kit page, in the `components` folder from `kit.json`. The
   name is the adapter's `files` entry for the page when there is one, else
-  the page name in kebab-case with slashes dropped. Named function
-  exports in PascalCase, matching the kit's component names (`Select
-  Trigger` is `SelectTrigger`) unless a `Code:` line says otherwise. No
-  default export, no `forwardRef` on React 19.
-- Generate the parts the kit draws or a `Code:` line names **and** the
-  screen uses. Do not generate parts nothing draws (a provider, a trigger
-  that is never shown).
+  the page name in kebab-case with slashes dropped. On a shadcn base, the
+  exports are shadcn's: keep them, and add a kit name only where a `Code:`
+  line asks for one shadcn lacks. A page written from its behavior hint uses
+  named function exports in PascalCase, matching the kit's component names
+  (`Select Trigger` is `SelectTrigger`) unless a `Code:` line says
+  otherwise. No default export, no `forwardRef` on React 19.
+- On a shadcn base, keep every part the file has, drawn or not
+  (`references/restyle.md`). A page written from its behavior hint gets the
+  parts the kit draws or a `Code:` line names **and** the screen uses, and
+  no part nothing draws.
 - `cva` for variants; export the variants function beside the component
   (a `react/only-export-components` lint warning there is expected).
   `cn(variants({ ... }), className)` so the caller's classes win. Type
   `className` as `string`.
 - `data-slot="<kebab-name>"` on every part's root, plus `data-variant` and
   `data-size` when it has them.
-- The first line names the source, one id per set:
-  `// kit-ui: Button (4:583), Icon Button (4:1449). Regenerate with /kit-ui, do not restyle by hand.`
+- The first line names the source, one id per set, and the shadcn base:
+  `// kit-ui: Button (4:583), Icon Button (4:1449) on shadcn button (base-vega). Regenerate with /kit-ui, do not restyle by hand.`
+  A page written from its behavior hint ends `on no shadcn base` instead.
 - Icons import from the package in `kit.json`: `Icon/CaretDown` with suffix
   `Icon` is `CaretDownIcon`. A weight on the end of the name is a prop:
   `Icon/CheckBold` is `<CheckIcon weight="bold" />`.

@@ -1,24 +1,30 @@
 ---
 name: kit-ui
-description: Build UI code straight from a Figma UI kit, with no component registry or design-system package in between. Reads the kit's variables, styles and components through the Figma MCP, writes the theme CSS and each component on demand, builds a screen from a Figma frame, then checks the result against the frame (pixel diff, token-only styling, accessibility). Use when an app names a Figma kit as its design source, or when asked to "build this Figma frame", "sync the tokens from the kit", "add the kit's <component>", "check for drift against the kit", "audit this Figma kit", or /kit-ui. Works with a kit made for it and, through an adapter in kit.json, with a design file a team already owns. Not for apps that install their components from a registry: use that registry's own skill.
+description: Build UI code from a Figma UI kit on top of stock shadcn components, with no design-system registry in between. Reads the kit's variables, styles and components through the Figma MCP, writes the theme CSS, installs each shadcn component (Base UI) on demand and restyles it from the kit's spec, builds a screen from a Figma frame, then checks the result against the frame (a look at full size, token-only styling, accessibility). Use when an app names a Figma kit as its design source, or when asked to "build this Figma frame", "sync the tokens from the kit", "add the kit's <component>", "check for drift against the kit", "audit this Figma kit", or /kit-ui. Works with a kit made for it and, through an adapter in kit.json, with a design file a team already owns. Not for apps that install their components from a design-system registry such as @nebari: use that registry's own skill.
 user-invocable: true
 argument-hint: "init <figma kit url> | audit | sync | add <component>... | build <figma frame url>... | check | drift"
 ---
 
 # Kit UI
 
-The Figma kit is the design system. There is no registry and no component
-package: this skill reads the kit and writes the code. The kit supplies the
-**look**, a headless library supplies the **behavior**, and the rules here
-turn one into the other the same way every time.
+The Figma kit is the design system's look. Stock shadcn is its base. There
+is no design-system registry: this skill installs each shadcn component with
+the shadcn CLI, then restyles it from the kit. shadcn supplies the
+**structure and behavior** (parts, props, state, keyboard and ARIA, on Base
+UI), the kit supplies the **look** (every color, border, radius, size,
+spacing, text style and shadow), and the rules here join the two the same way
+every time.
 
 What ends up in the app:
 
-- `kit.json`: which kit, and where things go. Written once by `init`.
-- `kit.lock.json`: what was generated from which Figma node, with a hash of each.
+- `kit.json`: which kit, the shadcn style, and where things go. Written once by `init`.
+- `components.json`: shadcn's config, written by `shadcn init`.
+- `kit.lock.json`: what was generated from which Figma node and which shadcn
+  component, with a hash of each.
 - A generated theme file (tokens). Never edited by hand.
-- One component file per kit page, written on first use and then **kept**.
-  A component already in the lock is reused, not regenerated.
+- One component file per kit page, installed from shadcn and restyled on
+  first use, then **kept**. A component already in the lock is reused, not
+  regenerated.
 
 ## Before anything else
 
@@ -56,12 +62,25 @@ What ends up in the app:
    `references/adapter.md`, run `kit.js` again with it, and show what is
    left. Those are for the kit's owner.
 3. Detect the app: Tailwind version, the global CSS file, the components
-   folder, the import alias, the icon package, and the `cn()` helper. If there
-   is no `cn()`, create `src/lib/utils.ts` with `clsx` and `tailwind-merge`.
-4. Install what is missing, and nothing else: `class-variance-authority`,
-   `clsx`, `tailwind-merge`, the icon package, the kit's font packages, and
-   the behavior libraries in `kit.json`.
-5. Write `kit.json`. The kit name is the name in the URL (the path segment
+   folder, the import alias and the icon package. The root `tsconfig.json`
+   needs the `@/*` path (`compilerOptions.paths`) for the shadcn CLI, as well
+   as `tsconfig.app.json`.
+4. Set up shadcn on Base UI, unless `components.json` is already there:
+
+   ```
+   bunx shadcn@latest init --base base --preset vega --yes --no-monorepo </dev/null
+   ```
+
+   Run it with no other `.css` file in the app root: the CLI picks the first
+   CSS file it finds. Check that `components.json` names the global CSS file
+   and `"style": "base-vega"`. `init` writes `src/lib/utils.ts`, which
+   exports `cn` from the `cn` package (a single replacement for `clsx` and
+   `tailwind-merge`). Use it as the `cn()` helper.
+5. Install what is still missing, and nothing else: the icon package, the
+   kit's font packages, and the behavior libraries in `kit.json` that shadcn
+   did not bring. Remove the font package `init` added
+   (`@fontsource-variable/inter`).
+6. Write `kit.json`. The kit name is the name in the URL (the path segment
    after the file key), else ask. Do not read it from the file: through the
    MCP it comes back as "Document". The name is never written into generated
    files.
@@ -69,6 +88,7 @@ What ends up in the app:
    ```json
    {
      "kit": { "name": "Beskar UI Kit", "fileKey": "…", "url": "…" },
+     "base": { "shadcn": "base-vega" },
      "theme": "src/kit.css",
      "css": "src/index.css",
      "components": "src/components/ui",
@@ -83,25 +103,30 @@ What ends up in the app:
    An `adapter` block goes here too when the file needs one. For Lucide,
    `icons` is `{ "package": "lucide-react", "suffix": "", "case": "kebab" }`.
 
-   `behavior` lists the headless libraries the app allows. A kit component
-   whose hint names a package outside this list needs the user's approval
-   before it is installed.
-6. Write `kit.lock.json`. Paths in the lock are relative to the app root.
+   `base.shadcn` is the shadcn style every component is installed in.
+   `behavior` lists the headless libraries the app allows, for the pages
+   shadcn has no component for. A kit component whose hint names a package
+   outside this list needs the user's approval before it is installed.
+7. Write `kit.lock.json`. Paths in the lock are relative to the app root.
 
    ```json
    {
      "kit": { "name": "…", "fileKey": "…" },
+     "base": { "shadcn": "base-vega", "cli": "4.23.0" },
      "index": [{ "name": "Button", "id": "4:583", "page": "Button", "behavior": "@base-ui/react/button" }],
      "icons": ["Check", "X"],
      "tokens": { "hash": "…", "file": "src/kit.css", "text": {}, "effects": {} },
-     "components": { "Button": { "file": "src/components/ui/button.tsx", "nodes": { "4:583": "<hash>" } } },
+     "components": { "Button": { "file": "src/components/ui/button.tsx", "shadcn": "button", "nodes": { "4:583": "<hash>" } } },
      "screens": { "17:349": { "file": "src/screens/today.tsx", "hash": "<hash>" } }
    }
    ```
 
    `index` and `icons` are `kit.js`'s `components` and `icons`, as returned.
    With an icon page, `icons` is `{ page, count }`, not a list of names.
-7. Run `sync`.
+   `base.cli` is what `bunx shadcn@latest --version` prints. A component's
+   `shadcn` is the name it was installed as, or `null` when shadcn has none
+   and the file was written from its behavior hint.
+8. Run `sync`.
 
 ### `audit`
 
@@ -118,24 +143,12 @@ adapter can meet it.
    `hash`. If it does not, the file was mistyped: write it again.
 3. Put `hash`, `text` and `effects` in the lock under `tokens`.
 4. If `skipped` is not empty, those variables have no usable CSS name. Report them.
-5. Make the app's global CSS start like this, and nothing else kit-related
-   goes in it:
-
-   ```css
-   @import "tailwindcss";
-   @import "./kit.css";
-
-   @custom-variant dark (&:is(.dark *));
-
-   @layer base {
-     body {
-       @apply bg-background font-sans text-foreground antialiased;
-     }
-   }
-   ```
-
-   Use the `darkSelector` from `kit.json` in the variant. `antialiased`
-   matches how Figma draws text.
+5. Replace the theme `shadcn init` wrote into the global CSS with the kit's,
+   by "Global CSS" in `references/restyle.md`: keep the Tailwind,
+   `tw-animate-css` and `shadcn/tailwind.css` imports, import the kit theme,
+   and drop shadcn's `:root`, `.dark` and `@theme inline` blocks. Nothing
+   else kit-related goes in it. Use the `darkSelector` from `kit.json` in the
+   variant. `antialiased` matches how Figma draws text.
 6. Fonts: import the kit's font packages once, from the app entry. If an
    installed family name differs from the kit's (a variable font registers
    as "Oxanium Variable"), add this after the imports, with the kit's own
@@ -153,17 +166,27 @@ adapter can meet it.
    page**: every component set on the page goes in the same file
    (`Select Trigger`, `Select Item` and `Select Content` are all
    `select.tsx`). The file name is the page name in kebab-case with slashes
-   dropped (`Datapad / Parts` is `datapad-parts.tsx`).
+   dropped (`Datapad / Parts` is `datapad-parts.tsx`), or the adapter's
+   `files` entry.
 2. Skip any page whose file is already in the lock: it exists. Regenerate
    only when `drift` says the kit changed, or the user asks.
-3. Run `scripts/figma/node.js` **once**, with the ids of every set on every
+3. Pick the shadcn component for each page by `references/restyle.md`, and
+   install them all in one `bunx shadcn@latest add <names> --yes </dev/null`.
+   A page shadcn has no component for is written from its behavior hint, by
+   `references/figma-to-code.md`.
+4. Run `scripts/figma/node.js` **once**, with the ids of every set on every
    page you are adding. Do not filter by state: the result is factored by
    axis and is small (about 4 KB for a 96-variant Button).
-4. Write each file by the rules in `references/figma-to-code.md`, in
-   dependency order (a component that contains instances of another needs
-   that one first). Take the behavior from the component's `Behavior:` hint,
-   read with `references/behavior-map.md`.
-5. Record each in the lock under `components`, keyed by page name.
+5. Restyle each installed file by `references/restyle.md`, taking the
+   classes from the spec by `references/figma-to-code.md`. Keep shadcn's
+   parts, props and behavior. Restyle the shadcn dependencies the CLI
+   brought too. Go in dependency order (a component that contains instances
+   of another needs that one first). Check that the primitive shadcn uses
+   matches the component's `Behavior:` hint, read with
+   `references/behavior-map.md`. Where they differ, keep shadcn's and list it.
+6. Run `bunx tsc -b` and fix what the restyle broke (usually a removed
+   variant option, by `references/restyle.md`).
+7. Record each in the lock under `components`, keyed by page name.
 
 ### `build <figma frame url>...`
 
@@ -190,7 +213,8 @@ Several frames can be one screen at different widths. Pass them together.
 All four must pass before the work is called done.
 
 1. **Tokens only.** `node scripts/check-literals.mjs <src> --lock kit.lock.json`
-   must report 0 errors.
+   must report 0 errors. A `base-token` error is a stock shadcn color class
+   the restyle missed: it renders with no color.
 2. **Not broken.** Export each frame with the Figma MCP's screenshot tool at
    1x (set its max dimension to the frame's longer side). Screenshot the
    built page at the frame's width and height, device scale factor 1, after
@@ -245,8 +269,9 @@ visible differences that remain with their severity, and the axe result.
 Run `scripts/figma/node.js` once with every id in the lock (components and
 screens) and `hashOnly: true`, and `scripts/figma/tokens.js`. Compare hashes
 with the lock. Report what changed in the kit since the code was generated.
-Regenerate only what the user approves, then run `check` on every screen
-that uses it.
+Regenerate only what the user approves: reinstall the stock file
+(`bunx shadcn@latest add <name> --overwrite --yes </dev/null`), restyle it
+from the new spec, then run `check` on every screen that uses it.
 
 ## Rules
 
@@ -260,15 +285,21 @@ that uses it.
   decoration, and give the text a muted token instead.
 - **Tokens, never values.** Every color is a token class. A hex value in a
   node spec means the kit has an unbound paint: report it, do not copy it.
-- **No registry fallback.** Do not install a component from shadcn or any
-  other registry to fill a gap, and do not paste one from memory. The point
-  is that the kit is enough. If it is not, that is the finding.
+- **Stock shadcn is the only base.** Install from the shadcn CLI in the
+  style `kit.json` names, and from nothing else: no design-system registry
+  (`@nebari` or any other), and no component pasted from memory. The kit
+  decides the look. shadcn decides the structure and behavior.
+- **Restyle, do not rewrite.** Keep every part, prop, hook and ARIA
+  attribute the shadcn file has. Replace only its look, by
+  `references/restyle.md`. A part the kit does not draw stays, styled with
+  kit tokens.
 - **Generated once, then owned.** The lock is how two sessions produce the
   same Button. Read it first, every time.
 - **When the rules do not say, do not improvise a style.** Take the plainest
   reading of the spec, and list the gap in your report so the rules can grow.
-- **Behavior is not invented.** Use the hinted primitive. For a hint of
-  `none`, use the native element the hint names.
+- **Behavior is not invented.** It comes from the shadcn file. Only for a
+  page shadcn has no component for, use the hinted primitive, and for a hint
+  of `none`, the native element the hint names.
 - **Say what the kit could not tell you.** Motion, focus order, responsive
   breakpoints, loading and error behavior, and tabs or panels with no frame
   are not in a static design. List the calls you made for the user at the end.
