@@ -5,15 +5,22 @@ exists because code has to be derived from the kit with no human filling the
 gaps. `scripts/figma/kit.js` checks the ones marked **checked** and reports
 them by the rule name in brackets.
 
+A file that someone else owns and that was not made for this skill can meet
+some rules through the `adapter` block in `kit.json` instead. Those rules are
+marked **adapter**. See `references/adapter.md`.
+
 ## Variables
 
 - **Every color lives in a variable, and the color collection has a Light and
   a Dark mode.** [`variables`, `modes`] **checked**. The theme is generated
   from the modes. A color that only exists as a paint cannot become a token.
+  A collection with one mode is read as primitives and needs no Dark mode,
+  as long as some color collection has one.
 - **Every variable has WEB code syntax of the form `var(--name)`.**
-  [`code-syntax`] **checked**. That name becomes the CSS custom property and,
-  for colors, the Tailwind color (`--primary` gives `bg-primary`). Two
-  variables must not share a name.
+  [`code-syntax`] **checked**, **adapter** (`names`). That name becomes the
+  CSS custom property and, for colors, the Tailwind color (`--primary` gives
+  `bg-primary`). Two variables must not share a name, unless one is only an
+  alias of the other.
 - **Spacing variables may use `calc(...)` syntax instead.** They are not
   emitted: lengths map to the Tailwind scale by value (4px per step).
 - **Scopes are set.** [`scopes`] **checked**. `ALL_SCOPES` is the sign of a
@@ -38,11 +45,14 @@ them by the rule name in brackets.
 
 - **One page per component family.** The page name is the code file name
   (`Dropdown Menu` gives `dropdown-menu.tsx`). Every set on the page goes in
-  that file. Pages whose name starts with `-` or `_` are ignored.
+  that file. **adapter** (`files`, `skipPages`). An emoji or symbol in front
+  of a page name is dropped. Pages whose name starts with `-`, `_` or `=`
+  are ignored, and so are components whose name starts with `_` or `.`.
 - **Unique names across the file.** [`names`] **checked**.
 - **Variant axes are the code props.** `Variant`, `Size` and the like, with
   the option names the code should use (`default`, `outline`, `sm`).
-- **Interaction states are an axis named `State`.** Options map to
+- **Interaction states are an axis named `State`.** [`state-axis`]
+  **checked**, **adapter** (`stateAxes`). Options map to
   selectors: `Default`, `Hover`, `Focus`, `Disabled`, `Invalid`,
   `Placeholder`, and the selection states `On`, `Active`, `Selected`,
   `Highlighted`, `Open`. A boolean state can be its own axis (`Checked`).
@@ -53,7 +63,7 @@ them by the rule name in brackets.
   properties, icons are INSTANCE_SWAP properties.** Layer names are the
   slot names (`label`, `icon-start`).
 - **Every component has a description with a `Behavior:` line.**
-  [`description`, `behavior`] **checked**. The line names the package that
+  [`description`, `behavior`] **checked**, **adapter** (`behavior`). The line names the package that
   supplies keyboard handling, focus management and ARIA, or `none` with the
   native element to use:
 
@@ -79,7 +89,10 @@ them by the rule name in brackets.
   name in the app's icon package, minus its suffix (`Icon/CaretDown` is
   `CaretDownIcon` from `@phosphor-icons/react`). A weight goes on the end of
   the name (`Icon/CheckBold` is `CheckIcon` with `weight="bold"`). The
-  vector's fill is bound to a variable so instances can recolor it.
+  vector's fill or stroke is bound to a variable so instances can recolor it.
+  **adapter** (`iconPage`): a file that keeps an icon library on one page
+  under the library's own names (`chevron-down` from Lucide) names that page
+  instead, and `kit.json`'s `icons.case` says how the names are written.
 
 ## Screens built from the kit
 

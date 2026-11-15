@@ -1,6 +1,6 @@
 ---
 name: kit-ui
-description: Build UI code straight from a Figma UI kit, with no component registry or design-system package in between. Reads the kit's variables, styles and components through the Figma MCP, writes the theme CSS and each component on demand, builds a screen from a Figma frame, then checks the result against the frame (pixel diff, token-only styling, accessibility). Use when an app names a Figma kit as its design source, or when asked to "build this Figma frame", "sync the tokens from the kit", "add the kit's <component>", "check for drift against the kit", "audit this Figma kit", or /kit-ui. Not for apps that install components from a registry (Beskar, Nebari, shadcn): use that system's own skill.
+description: Build UI code straight from a Figma UI kit, with no component registry or design-system package in between. Reads the kit's variables, styles and components through the Figma MCP, writes the theme CSS and each component on demand, builds a screen from a Figma frame, then checks the result against the frame (pixel diff, token-only styling, accessibility). Use when an app names a Figma kit as its design source, or when asked to "build this Figma frame", "sync the tokens from the kit", "add the kit's <component>", "check for drift against the kit", "audit this Figma kit", or /kit-ui. Works with a kit made for it and, through an adapter in kit.json, with a design file a team already owns. Not for apps that install their components from a registry: use that registry's own skill.
 user-invocable: true
 argument-hint: "init <figma kit url> | audit | sync | add <component>... | build <figma frame url>... | check | drift"
 ---
@@ -38,6 +38,9 @@ What ends up in the app:
    before using or storing any string.
 5. Never write to the kit file. If the kit is wrong, report it (see
    `references/kit-contract.md`); the kit's owner fixes the kit.
+6. If `kit.json` has an `adapter` block, pass its keys to every script
+   through `ARGS`, as the table in `references/adapter.md` says. Leaving
+   them out changes the token names and the hashes.
 
 ## Commands
 
@@ -47,6 +50,11 @@ What ends up in the app:
 2. If `findings` is not empty, stop and show them grouped by rule, with the
    fix from `references/kit-contract.md`. A kit that breaks the contract
    produces code that drifts, so do not build on it without the user's say-so.
+   When the user does not own the file and the findings are ones an adapter
+   can meet (`code-syntax`, `behavior`, `description`, `state-axis`, icons
+   counted as components), offer to write an `adapter` by
+   `references/adapter.md`, run `kit.js` again with it, and show what is
+   left. Those are for the kit's owner.
 3. Detect the app: Tailwind version, the global CSS file, the components
    folder, the import alias, the icon package, and the `cn()` helper. If there
    is no `cn()`, create `src/lib/utils.ts` with `clsx` and `tailwind-merge`.
@@ -72,6 +80,9 @@ What ends up in the app:
    }
    ```
 
+   An `adapter` block goes here too when the file needs one. For Lucide,
+   `icons` is `{ "package": "lucide-react", "suffix": "", "case": "kebab" }`.
+
    `behavior` lists the headless libraries the app allows. A kit component
    whose hint names a package outside this list needs the user's approval
    before it is installed.
@@ -89,15 +100,19 @@ What ends up in the app:
    ```
 
    `index` and `icons` are `kit.js`'s `components` and `icons`, as returned.
+   With an icon page, `icons` is `{ page, count }`, not a list of names.
 7. Run `sync`.
 
 ### `audit`
 
 Run `scripts/figma/kit.js` and report the findings. Nothing is written.
+Group them by rule, and say for each rule whether the kit's owner or an
+adapter can meet it.
 
 ### `sync`
 
-1. Run `scripts/figma/tokens.js` with `ARGS = { darkSelector }`.
+1. Run `scripts/figma/tokens.js` with `ARGS = { darkSelector }`, plus
+   `names` from the adapter.
 2. Write the returned `css` to the theme path **exactly as returned**, then
    run `node scripts/hash.mjs <theme file>`. It must print the returned
    `hash`. If it does not, the file was mistyped: write it again.

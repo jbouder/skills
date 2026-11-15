@@ -4,6 +4,8 @@
 //   where     optional, sets only: keep options, e.g. { State: ['Default', 'Hover'] }
 //   whereNot  optional, sets only: drop options, e.g. { Size: ['xs', 'lg'] }
 //   hashOnly  optional: return only { id, name, hash } per id (drift check)
+//   names     optional: the adapter's { derive, ignoreSyntax, map } from kit.json
+//   iconPage  optional: the adapter's icon page; instances of its components are icons
 //
 // A component set comes back factored by axis:
 //   tree        the base variant in full (each axis at its option named "default", else false/off, else the file's default)
@@ -17,12 +19,29 @@
 // Colors are token names (the variable's CSS name). A hex value means the paint is unbound: a kit defect.
 // A suffix like primary/80 is paint opacity. Instance props equal to the default are left out.
 if (typeof ARGS !== 'object' || !ARGS || !Array.isArray(ARGS.ids)) throw new Error('Set ARGS.ids above this script.');
-const vname = {}, vraw = {}, valpha = {};
+const vname = {}, vraw = {}, valpha = {}, colName = {};
+for (const c of await figma.variables.getLocalVariableCollectionsAsync()) colName[c.id] = c.name;
+// The CSS name of a variable: the adapter's map, else its WEB code syntax, else derived from its name.
+const N = ARGS.names || {};
+const cssOf = (v) => {
+  if (N.map && N.map[v.name]) return '--' + String(N.map[v.name]).replace(/^--/, '');
+  const web = (v.codeSyntax && v.codeSyntax.WEB) || '';
+  const ignore = (N.ignoreSyntax || []).indexOf(colName[v.variableCollectionId]) >= 0;
+  if (!ignore && /^calc\(.+\)$/.test(web)) return '';
+  const m = ignore ? null : /^var\((--[\w-]+)\)$/.exec(web);
+  if (m) return m[1];
+  if (web && !ignore) return null;
+  if (!N.derive && !ignore) return null;
+  return '--' + v.name.toLowerCase().replace(/^color\//, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+};
 for (const v of await figma.variables.getLocalVariablesAsync()) {
-  const m = /^var\((--[\w-]+)\)$/.exec((v.codeSyntax && v.codeSyntax.WEB) || '');
-  vname[v.id] = m ? m[1].slice(2) : v.name;
+  const n = cssOf(v);
+  vname[v.id] = n ? n.slice(2) : v.name;
   vraw[v.id] = v;
 }
+const clean = (s) => s.replace(/^[^A-Za-z0-9]+/, '').trim();
+const iconPage = ARGS.iconPage ? clean(ARGS.iconPage) : null;
+const pageOf = (n) => { let p = n; while (p && p.type !== 'PAGE') p = p.parent; return p ? clean(p.name) : ''; };
 // A color variable's own alpha shows up as the paint's opacity. It belongs to the token, not the paint.
 const alphas = (id, depth) => {
   const out = [];
@@ -72,7 +91,14 @@ async function describe(n, top, cap) {
     o.t = 'inst';
     o.of = set ? set.name : mc ? mc.name : '?';
     if (set) o.variant = mc.name;
-    if (/^icon\//i.test(o.of)) { const g = n.children[0]; if (g && 'fills' in g) o.color = paints(g.fills); return o; }
+    if (/^icon\//i.test(o.of) || (iconPage && mc && pageOf(mc) === iconPage)) {
+      if (!/^icon\//i.test(o.of)) o.icon = true;
+      const g = n.children[0];
+      if (g && 'fills' in g) o.color = paints(g.fills);
+      // A stroked icon (Lucide) carries its color on the strokes of its vectors.
+      if (!o.color) { const s = n.findOne((x) => 'strokes' in x && paints(x.strokes)); if (s) o.color = paints(s.strokes); }
+      return o;
+    }
     const cp = n.componentProperties, props = {};
     const defs = mc ? (set || mc).componentPropertyDefinitions : {};
     for (const k in cp) {
