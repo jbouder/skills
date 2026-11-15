@@ -67,21 +67,27 @@ them by the rule name in brackets.
   Behavior: none (a span)
   ```
 
-  A line starting `Code:` that sketches the intended JSX is optional and
-  used when present.
+  A line starting `Code:` that sketches the intended JSX is optional. When
+  present it wins over the default mapping: a set described as
+  `size="icon"` on Button becomes options on Button, not its own export.
+- **A `Focus` variant changes color, not size.** If focus adds a stroke the
+  resting state lacks, the code draws it inset so nothing moves.
 
 ## Icons
 
 - **Icons are components named `Icon/<Name>`**, where `<Name>` is the export
   name in the app's icon package, minus its suffix (`Icon/CaretDown` is
-  `CaretDownIcon` from `@phosphor-icons/react`). The vector's fill is bound
-  to a variable so instances can recolor it.
+  `CaretDownIcon` from `@phosphor-icons/react`). A weight goes on the end of
+  the name (`Icon/CheckBold` is `CheckIcon` with `weight="bold"`). The
+  vector's fill is bound to a variable so instances can recolor it.
 
 ## Screens built from the kit
 
 - **Auto-layout everywhere.** A frame with absolute children comes through
   as coordinates, and the code will be coordinates.
 - **Kit components are used as instances, not detached copies.**
+- **Text holds 4.5:1 as drawn.** Opacity on a container counts: a card at
+  60% that holds text fails, and the code will not follow it.
 - **Layer names mean something** (`header`, `timeline`, `dock`). They become
   the structure and the component names of the screen.
 

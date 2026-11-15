@@ -1,6 +1,6 @@
 // kit-ui: kit index and contract audit. Run through the Figma MCP's use_figma tool. Read-only.
-// Returns every component in the file (name, id, page, variant axes, properties,
-// behavior hint), the icon names (components named Icon/<Name>), and the places the kit breaks references/kit-contract.md.
+// Returns every component in the file (name, id, page, behavior hint), the icon
+// names (components named Icon/<Name>), and the places the kit breaks references/kit-contract.md.
 // Optional: `const ARGS = { skipPages: ['Cover'] };` on a line above this script.
 const A = typeof ARGS === 'object' && ARGS ? ARGS : {};
 const skip = A.skipPages || [];
@@ -23,23 +23,16 @@ for (const v of vars) {
 if (!(await figma.getLocalTextStylesAsync()).length) flag('text-styles', 'file', 'No local text styles.');
 // Components
 const components = [], icons = [];
-const strip = (k) => k.replace(/#\d+:\d+$/, '');
 for (const page of figma.root.children) {
   if (skip.indexOf(page.name) >= 0 || /^(-|_)/.test(page.name)) continue;
   await page.loadAsync();
   for (const n of page.findAllWithCriteria({ types: ['COMPONENT_SET', 'COMPONENT'] })) {
     if (n.type === 'COMPONENT' && n.parent && n.parent.type === 'COMPONENT_SET') continue;
-    const defs = n.componentPropertyDefinitions;
-    const axes = {}, props = {};
-    for (const k in defs) {
-      if (defs[k].type === 'VARIANT') axes[k] = defs[k].variantOptions;
-      else props[strip(k)] = defs[k].type;
-    }
     const desc = n.description || '';
     const beh = /^Behavior:\s*(.+)$/m.exec(desc);
     const isIcon = /^icon\//i.test(n.name);
     if (isIcon) { icons.push(n.name.replace(/^icon\//i, '')); continue; }
-    components.push({ name: n.name, id: n.id, page: page.name, variants: n.type === 'COMPONENT_SET' ? n.children.length : 1, axes, props, behavior: beh ? beh[1].trim() : null });
+    components.push({ name: n.name, id: n.id, page: page.name, behavior: beh ? beh[1].trim() : null });
     if (!desc) flag('description', n.name, 'No description.');
     else if (!beh) flag('behavior', n.name, 'Description has no "Behavior:" line.');
     // Raw paints: a fill or stroke that is not bound to a variable.
@@ -56,4 +49,5 @@ for (const page of figma.root.children) {
 }
 const names = {};
 for (const c of components) { if (names[c.name]) flag('names', c.name, 'Two components share this name (pages ' + names[c.name] + ' and ' + c.page + ').'); names[c.name] = c.page; }
+// `components` and `icons` go into kit.lock.json as they are.
 return { collections: cols.map((c) => ({ name: c.name, modes: c.modes.map((m) => m.name), variables: c.variableIds.length })), components, icons, findings };

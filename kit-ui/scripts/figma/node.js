@@ -1,18 +1,26 @@
 // kit-ui: node spec. Run through the Figma MCP's use_figma tool. Read-only.
-// Required: `const ARGS = { ids: ['12:34'] };` on a line above this script.
-//   ids       component set, component, or frame ids (from kit.js, or a frame URL's node-id)
-//   where     optional, component sets only: keep variants matching every pair, e.g. { State: 'Default' }
-//   hashOnly  optional: return only { id, name, hash } for each id (drift check)
-// A component set comes back as its default variant in full plus, for every other
-// variant, only what differs. A frame comes back as one tree whose kit-component
-// instances are leaves. Colors are token names (the variable's CSS name), never hex,
-// unless the paint is unbound: then the value is a hex string and is a kit defect.
+// Required: `const ARGS = { ids: ['12:34', '56:78'] };` on a line above this script.
+//   ids       component set, component, or frame ids. Pass every id you need in ONE call.
+//   where     optional, sets only: keep options, e.g. { State: ['Default', 'Hover'] }
+//   whereNot  optional, sets only: drop options, e.g. { Size: ['xs', 'lg'] }
+//   hashOnly  optional: return only { id, name, hash } per id (drift check)
+//
+// A component set comes back factored by axis:
+//   tree        the base variant in full (each axis at its option named "default", else false/off, else the file's default)
+//   axes        the axes and their options
+//   changes     for each axis and option, what changes from the base when only that axis changes
+//   exceptions  for a variant that differs in two or more axes, only what the axis changes
+//               do not already predict. An axis missing from an exception's name means
+//               it holds for every option of that axis.
+// A change is a map from a layer path to the properties that differ; null means gone.
+// A frame comes back as one tree whose kit-component instances are leaves.
+// Colors are token names (the variable's CSS name). A hex value means the paint is unbound: a kit defect.
 // A suffix like primary/80 is paint opacity. Instance props equal to the default are left out.
 if (typeof ARGS !== 'object' || !ARGS || !Array.isArray(ARGS.ids)) throw new Error('Set ARGS.ids above this script.');
 const vname = {}, vraw = {}, valpha = {};
 for (const v of await figma.variables.getLocalVariablesAsync()) {
-  const m = /^var\(--([\w-]+)\)$/.exec((v.codeSyntax && v.codeSyntax.WEB) || '');
-  vname[v.id] = m ? m[1] : v.name;
+  const m = /^var\((--[\w-]+)\)$/.exec((v.codeSyntax && v.codeSyntax.WEB) || '');
+  vname[v.id] = m ? m[1].slice(2) : v.name;
   vraw[v.id] = v;
 }
 // A color variable's own alpha shows up as the paint's opacity. It belongs to the token, not the paint.
@@ -40,7 +48,7 @@ const paint = (p) => {
 };
 const paints = (ps) => { if (!Array.isArray(ps)) return null; const r = ps.map(paint).filter(Boolean); return r.length ? (r.length === 1 ? r[0] : r) : null; };
 const size = (n, ax) => { const m = ax === 'w' ? n.layoutSizingHorizontal : n.layoutSizingVertical; return m === 'HUG' ? 'hug' : m === 'FILL' ? 'fill' : r1(ax === 'w' ? n.width : n.height); };
-async function describe(n, top) {
+async function describe(n, top, cap) {
   const o = { n: n.name };
   if (n.visible === false) o.hidden = true;
   if (!top) { o.w = size(n, 'w'); o.h = size(n, 'h'); } else { o.w = n.layoutMode ? size(n, 'w') : r1(n.width); o.h = n.layoutMode ? size(n, 'h') : r1(n.height); }
@@ -52,7 +60,7 @@ async function describe(n, top) {
     o.t = 'text';
     o.style = typeof n.textStyleId === 'string' && sname[n.textStyleId] ? sname[n.textStyleId] : r1(n.fontSize) + 'px ' + (n.fontName.style || '');
     o.color = paints(n.fills);
-    o.chars = n.characters.length > 60 ? n.characters.slice(0, 57) + '...' : n.characters;
+    o.chars = n.characters.length > cap ? n.characters.slice(0, cap - 3) + '...' : n.characters;
     if (n.textDecoration && n.textDecoration !== 'NONE') o.deco = n.textDecoration.toLowerCase();
     if (n.textTruncation === 'ENDING') o.truncate = n.maxLines || 1;
     if (n.textAlignHorizontal !== 'LEFT') o.align = n.textAlignHorizontal.toLowerCase();
@@ -90,7 +98,7 @@ async function describe(n, top) {
   if ('fills' in n) { const f = paints(n.fills); if (f) o.fill = f; }
   if ('strokes' in n && n.strokes.length) {
     const c = paints(n.strokes);
-    if (c) { o.stroke = { c }; const w = typeof n.strokeWeight === 'number' ? n.strokeWeight : [n.strokeTopWeight, n.strokeRightWeight, n.strokeBottomWeight, n.strokeLeftWeight]; o.stroke.w = w; if (n.strokeAlign !== 'INSIDE') o.stroke.at = n.strokeAlign.toLowerCase(); if (n.dashPattern && n.dashPattern.length) o.stroke.dash = true; }
+    if (c) { o.stroke = { c }; o.stroke.w = typeof n.strokeWeight === 'number' ? n.strokeWeight : [n.strokeTopWeight, n.strokeRightWeight, n.strokeBottomWeight, n.strokeLeftWeight]; if (n.strokeAlign !== 'INSIDE') o.stroke.at = n.strokeAlign.toLowerCase(); if (n.dashPattern && n.dashPattern.length) o.stroke.dash = true; if (n.strokesIncludedInLayout) o.stroke.layout = true; }
   }
   if (typeof n.cornerRadius === 'number' && n.cornerRadius > 0) o.radius = n.cornerRadius >= 500 ? 'full' : n.cornerRadius;
   if (typeof n.effectStyleId === 'string' && sname[n.effectStyleId]) o.effect = sname[n.effectStyleId];
@@ -99,47 +107,96 @@ async function describe(n, top) {
     if (e && e.radius === 0 && e.spread) { const b = e.boundVariables && e.boundVariables.color; o.ring = { w: e.spread, c: b ? vname[b.id] : 'rgb(' + [e.color.r, e.color.g, e.color.b].map((x) => Math.round(x * 255)).join(' ') + ' / ' + r1(e.color.a) + ')' }; }
     else if (e) o.effect = 'unstyled shadow';
   }
-  if ('children' in n && n.children.length) { o.kids = []; for (const c of n.children) o.kids.push(await describe(c, false)); }
+  if ('children' in n && n.children.length) { o.kids = []; for (const c of n.children) o.kids.push(await describe(c, false, cap)); }
   return o;
 }
 const flat = (o, path, acc) => {
-  const self = {}; for (const k in o) if (k !== 'kids') self[k] = o[k];
-  acc[path] = self;
+  const self = {}; for (const k in o) if (k !== 'kids' && k !== 'n') self[k] = o[k];
+  acc[path || '/'] = self;
   const count = {};
   for (const c of o.kids || []) { count[c.n] = (count[c.n] || 0) + 1; flat(c, path + '/' + c.n + (count[c.n] > 1 ? '#' + count[c.n] : ''), acc); }
   return acc;
 };
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+// What `f` changes relative to `g`, by layer path.
+const delta = (f, g) => {
+  const d = {};
+  for (const p in f) {
+    if (!g[p]) { d[p] = f[p]; continue; }
+    const c = {};
+    for (const k of new Set(Object.keys(f[p]).concat(Object.keys(g[p])))) if (!same(f[p][k], g[p][k])) c[k] = f[p][k] === undefined ? null : f[p][k];
+    if (Object.keys(c).length) d[p] = c;
+  }
+  for (const p in g) if (!f[p]) d[p] = null;
+  return d;
+};
+const apply = (g, d) => {
+  for (const p in d) {
+    if (d[p] === null) delete g[p];
+    else if (!g[p]) g[p] = JSON.parse(JSON.stringify(d[p]));
+    else for (const k in d[p]) { if (d[p][k] === null) delete g[p][k]; else g[p][k] = d[p][k]; }
+  }
+  return g;
+};
 const fnv = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(16); };
+const opts = (name) => { const o = {}; for (const part of name.split(', ')) { const i = part.indexOf('='); o[part.slice(0, i)] = part.slice(i + 1); } return o; };
+const W = ARGS.where || {}, WN = ARGS.whereNot || {};
+const keep = (o) => Object.keys(W).every((a) => [].concat(W[a]).indexOf(o[a]) >= 0) && !Object.keys(WN).some((a) => [].concat(WN[a]).indexOf(o[a]) >= 0);
 const results = [];
 for (const id of ARGS.ids) {
   const n = await figma.getNodeByIdAsync(id);
   if (!n) { results.push({ id, error: 'not found' }); continue; }
   let r;
   if (n.type === 'COMPONENT_SET') {
-    const defs = n.componentPropertyDefinitions, props = {};
-    for (const k in defs) props[strip(k)] = defs[k].type === 'VARIANT' ? defs[k].variantOptions : { type: defs[k].type, default: defs[k].type === 'INSTANCE_SWAP' ? ((await figma.getNodeByIdAsync(defs[k].defaultValue)) || {}).name : defs[k].defaultValue };
-    const base = n.defaultVariant;
-    const baseTree = await describe(base, true);
-    const baseFlat = flat(baseTree, '', {});
-    const variants = {};
-    for (const c of n.children) {
-      if (c.id === base.id) continue;
-      const f = flat(await describe(c, true), '', {});
-      const d = {};
-      for (const p in f) {
-        if (!baseFlat[p]) { d[p || '/'] = f[p]; continue; }
-        const diff = {};
-        for (const k of new Set(Object.keys(f[p]).concat(Object.keys(baseFlat[p])))) if (k !== 'n' && JSON.stringify(f[p][k]) !== JSON.stringify(baseFlat[p][k])) diff[k] = f[p][k] === undefined ? null : f[p][k];
-        if (Object.keys(diff).length) d[p || '/'] = diff;
-      }
-      for (const p in baseFlat) if (!f[p]) d[p] = null;
-      variants[c.name] = d;
+    const defs = n.componentPropertyDefinitions, props = {}, axes = {};
+    for (const k in defs) {
+      if (defs[k].type === 'VARIANT') axes[k] = defs[k].variantOptions;
+      else props[strip(k)] = { type: defs[k].type, default: defs[k].type === 'INSTANCE_SWAP' ? ((await figma.getNodeByIdAsync(defs[k].defaultValue)) || {}).name : defs[k].defaultValue };
     }
-    const full = { id, name: n.name, type: 'set', description: n.description, props, default: base.name, base: baseTree, variants };
-    r = full; r.hash = fnv(JSON.stringify(full));
-    if (ARGS.where) { const keep = {}; for (const k in variants) if (Object.keys(ARGS.where).every((a) => k.split(', ').indexOf(a + '=' + ARGS.where[a]) >= 0)) keep[k] = variants[k]; r.variants = keep; r.filtered = ARGS.where; }
+    const fileDefault = opts(n.defaultVariant.name), want = {};
+    for (const a in axes) want[a] = axes[a].find((o) => /^default$/i.test(o)) || axes[a].find((o) => /^(false|off|no|none)$/i.test(o)) || fileDefault[a];
+    const all = n.children.map((c) => ({ c, o: opts(c.name) }));
+    const baseEntry = all.find((e) => Object.keys(axes).every((a) => e.o[a] === want[a])) || all.find((e) => e.c.id === n.defaultVariant.id);
+    const baseO = baseEntry.o;
+    const tree = await describe(baseEntry.c, true, 60);
+    const baseFlat = flat(tree, '', {});
+    const flats = {};
+    for (const e of all) flats[e.c.name] = e === baseEntry ? baseFlat : flat(await describe(e.c, true, 60), '', {});
+    const differs = (o) => Object.keys(axes).filter((a) => o[a] !== baseO[a]);
+    const axisOut = {}, axisAll = {};
+    for (const e of all) { const d = differs(e.o); if (d.length === 1) { const a = d[0]; (axisAll[a] = axisAll[a] || {})[e.o[a]] = delta(flats[e.c.name], baseFlat); } }
+    const exceptions = {}, excAll = {};
+    for (const e of all) {
+      const d = differs(e.o);
+      if (d.length < 2) continue;
+      const predicted = JSON.parse(JSON.stringify(baseFlat));
+      for (const a of Object.keys(axes)) if (e.o[a] !== baseO[a] && axisAll[a] && axisAll[a][e.o[a]]) apply(predicted, axisAll[a][e.o[a]]);
+      const rest = delta(flats[e.c.name], predicted);
+      if (Object.keys(rest).length) { excAll[e.c.name] = rest; if (keep(e.o)) exceptions[e.c.name] = rest; }
+    }
+    // The same exception across every option of an axis is one exception without that axis.
+    const group = (list) => {
+      const out = {}, by = {};
+      for (const name in list) (by[JSON.stringify(list[name])] = by[JSON.stringify(list[name])] || []).push(opts(name));
+      for (const body in by) {
+        let rows = by[body];
+        for (const a of Object.keys(axes)) {
+          const parts = {};
+          for (const r of rows) { const k = Object.keys(r).filter((x) => x !== a).map((x) => x + '=' + r[x]).join(', '); (parts[k] = parts[k] || []).push(r[a]); }
+          if (rows.every((r) => a in r) && Object.values(parts).every((v) => axes[a].every((o) => v.indexOf(o) >= 0))) {
+            const seen = {}; rows = rows.map((r) => { const c = Object.assign({}, r); delete c[a]; return c; }).filter((r) => { const k = JSON.stringify(r); if (seen[k]) return false; seen[k] = 1; return true; });
+          }
+        }
+        for (const r of rows) out[Object.keys(r).map((x) => x + '=' + r[x]).join(', ')] = JSON.parse(body);
+      }
+      return out;
+    };
+    for (const a in axisAll) for (const o in axisAll[a]) { const probe = Object.assign({}, baseO); probe[a] = o; if (keep(probe)) (axisOut[a] = axisOut[a] || {})[o] = axisAll[a][o]; }
+    r = { id, name: n.name, type: 'set', description: n.description, axes: axes, props, base: baseEntry.c.name, tree, changes: axisOut, exceptions: group(exceptions), variants: all.length };
+    r.hash = fnv(JSON.stringify([tree, axisAll, excAll, props]));
+    if (ARGS.where || ARGS.whereNot) r.filtered = true;
   } else {
-    const tree = await describe(n, true);
+    const tree = await describe(n, true, n.type === 'COMPONENT' ? 60 : 400);
     r = { id, name: n.name, type: n.type === 'COMPONENT' ? 'component' : 'frame', tree };
     if (n.type === 'COMPONENT') r.description = n.description;
     r.hash = fnv(JSON.stringify(tree));

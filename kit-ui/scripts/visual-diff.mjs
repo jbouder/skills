@@ -99,10 +99,23 @@ const args = process.argv.slice(2);
 const opt = (name, fallback) => { const i = args.indexOf(`--${name}`); if (i < 0) return fallback; const v = args[i + 1]; args.splice(i, 2); return v; };
 const flag = (name) => { const i = args.indexOf(`--${name}`); if (i < 0) return false; args.splice(i, 1); return true; };
 const maxContentArg = opt('max-content', null), maxContent = maxContentArg === null ? null : Number(maxContentArg);
+const scale = Number(opt('scale', 1));
 const max = Number(opt('max', 2)), threshold = Number(opt('threshold', 0.05)), tol = Number(opt('tolerance', 1)), outPath = opt('out', null), fit = flag('fit');
 if (args.length !== 2) { console.error('usage: visual-diff.mjs <built.png> <figma.png> [--max 2] [--max-content N] [--threshold 0.05] [--tolerance 1] [--fit] [--out diff.png]'); process.exit(2); }
 
-const A = decode(args[0]), B = decode(args[1]);
+// Average down by an integer factor. Glyph edges that Figma and a browser rasterize
+// differently wash out, while a wrong color, size or position survives.
+const shrink = (img, f) => {
+  if (f <= 1) return img;
+  const w = Math.floor(img.w / f), h = Math.floor(img.h / f), rgb = new Uint8Array(w * h * 3);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) for (let c = 0; c < 3; c++) {
+    let sum = 0;
+    for (let dy = 0; dy < f; dy++) for (let dx = 0; dx < f; dx++) sum += img.rgb[((y * f + dy) * img.w + x * f + dx) * 3 + c];
+    rgb[(y * w + x) * 3 + c] = Math.round(sum / (f * f));
+  }
+  return { w, h, rgb };
+};
+const A = shrink(decode(args[0]), scale), B = shrink(decode(args[1]), scale);
 if ((A.w !== B.w || A.h !== B.h) && !fit) {
   console.error(JSON.stringify({ error: 'sizes differ', built: [A.w, A.h], figma: [B.w, B.h], hint: 'Export the frame at 1x and screenshot at the frame size and device scale factor 1, or pass --fit.' }));
   process.exit(2);

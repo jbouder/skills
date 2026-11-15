@@ -43,8 +43,10 @@ marks the active row with `data-selected`, for example).
 
 The primitive covers keyboard and ARIA mechanics. The wrapper covers the rest:
 
-- **A name.** An icon-only button, a close button, a spinner: each ships with
-  a default `aria-label` the caller can override.
+- **A name.** A part with one fixed meaning (a dialog's close button, a
+  spinner) ships with a default `aria-label` the caller can override. A
+  generic icon-only control has no honest default: the caller must pass
+  `aria-label`, and the file's header comment says so.
 - **A visible focus state.** Use the kit's `Focus` variant. If a focusable
   component has none, that is a kit gap: report it, and until it is fixed use
   the kit's focus ring token so the control is never without one.
@@ -53,6 +55,15 @@ The primitive covers keyboard and ARIA mechanics. The wrapper covers the rest:
 - **Popups render in a portal** and take the kit's popover surface tokens.
 - **Overlays** (dialog, sheet) get the kit's overlay token on the backdrop.
 - **Reduced motion.** Non-essential transitions sit behind `motion-safe:`.
+
+## Notes per primitive
+
+- **Button:** a link that should look like a button is an anchor with the
+  variants function's classes. Use `render` (with `nativeButton={false}`)
+  only when the element must stay a Base UI button.
+- **Tabs:** the panel is a tab stop, so it needs the kit's focus ring too.
+- **Checkbox, Switch:** the primitive sets `data-disabled` and the native
+  `disabled`; style with `data-disabled:` so both cases are covered.
 
 ## Composition
 
