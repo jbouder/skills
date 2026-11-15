@@ -1,8 +1,8 @@
 {
   "kit": {
     "name": "Nebari Design System",
-    "fileKey": "8R42sYihwaeTkpDvBeH7Bc",
-    "url": "https://www.figma.com/design/8R42sYihwaeTkpDvBeH7Bc/Nebari-Design-System"
+    "fileKey": "<file key>",
+    "url": "https://www.figma.com/design/<file key>/Nebari-Design-System"
   },
   "theme": "src/kit.css",
   "css": "src/index.css",
