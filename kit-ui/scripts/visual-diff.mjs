@@ -15,10 +15,17 @@
 //                other image; absorbs antialiasing and 1px shifts (default 1)
 //   --fit        compare the shared top-left area when the sizes differ (else exit 2)
 //   --out        write a PNG with the differing pixels in red
+//   --tiles      write side-by-side tiles to this folder, at 1:1 scale: the Figma frame on the
+//                left, the build on the right. For looking at, not for scoring. A full screen
+//                shown whole is scaled down and hides a wrong fill or alignment; a tile does not.
+//
+// The percentages are a smoke test. They catch a broken or empty page. They are not a
+// fidelity measure: a one-pixel shift nobody can see moves them more than a wrong color does.
 //
 // Prints JSON: size, differing pixels, percent of all pixels, percent of content
 // pixels (ofContent), and the grid cells that differ most.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { deflateSync, inflateSync } from 'node:zlib';
 
 const SIG = [137, 80, 78, 71, 13, 10, 26, 10];
@@ -100,8 +107,8 @@ const opt = (name, fallback) => { const i = args.indexOf(`--${name}`); if (i < 0
 const flag = (name) => { const i = args.indexOf(`--${name}`); if (i < 0) return false; args.splice(i, 1); return true; };
 const maxContentArg = opt('max-content', null), maxContent = maxContentArg === null ? null : Number(maxContentArg);
 const scale = Number(opt('scale', 1));
-const max = Number(opt('max', 2)), threshold = Number(opt('threshold', 0.05)), tol = Number(opt('tolerance', 1)), outPath = opt('out', null), fit = flag('fit');
-if (args.length !== 2) { console.error('usage: visual-diff.mjs <built.png> <figma.png> [--max 2] [--max-content N] [--threshold 0.05] [--tolerance 1] [--fit] [--out diff.png]'); process.exit(2); }
+const max = Number(opt('max', 2)), threshold = Number(opt('threshold', 0.05)), tol = Number(opt('tolerance', 1)), outPath = opt('out', null), tilesDir = opt('tiles', null), fit = flag('fit');
+if (args.length !== 2) { console.error('usage: visual-diff.mjs <built.png> <figma.png> [--max 2] [--max-content N] [--threshold 0.05] [--tolerance 1] [--fit] [--out diff.png] [--tiles dir]'); process.exit(2); }
 
 // Average down by an integer factor. Glyph edges that Figma and a browser rasterize
 // differently wash out, while a wrong color, size or position survives.
@@ -115,7 +122,24 @@ const shrink = (img, f) => {
   }
   return { w, h, rgb };
 };
-const A = shrink(decode(args[0]), scale), B = shrink(decode(args[1]), scale);
+const fullA = decode(args[0]), fullB = decode(args[1]);
+// Tiles: each about 480 by 450, the frame on the left and the build on the right, split by a gray bar.
+if (tilesDir) {
+  mkdirSync(tilesDir, { recursive: true });
+  const W = Math.min(fullA.w, fullB.w), H = Math.min(fullA.h, fullB.h), gap = 8;
+  const cols = Math.max(1, Math.round(W / 480)), rows = Math.max(1, Math.round(H / 450));
+  const tw = Math.ceil(W / cols), th = Math.ceil(H / rows);
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const x0 = c * tw, y0 = r * th, cw = Math.min(tw, W - x0), ch = Math.min(th, H - y0), ow = cw * 2 + gap;
+    const out = new Uint8Array(ow * ch * 3).fill(128);
+    for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) for (let k = 0; k < 3; k++) {
+      out[(y * ow + x) * 3 + k] = fullB.rgb[((y0 + y) * fullB.w + x0 + x) * 3 + k];
+      out[(y * ow + cw + gap + x) * 3 + k] = fullA.rgb[((y0 + y) * fullA.w + x0 + x) * 3 + k];
+    }
+    writeFileSync(join(tilesDir, `r${r + 1}c${c + 1}.png`), encode(ow, ch, out));
+  }
+}
+const A = shrink(fullA, scale), B = shrink(fullB, scale);
 if ((A.w !== B.w || A.h !== B.h) && !fit) {
   console.error(JSON.stringify({ error: 'sizes differ', built: [A.w, A.h], figma: [B.w, B.h], hint: 'Export the frame at 1x and screenshot at the frame size and device scale factor 1, or pass --fit.' }));
   process.exit(2);
