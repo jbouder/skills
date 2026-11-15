@@ -4,6 +4,12 @@ A kit draws what a component looks like. It does not say how a dialog traps
 focus or how a menu moves with the arrow keys. That comes from a headless
 library, named by the `Behavior:` line in each kit component's description.
 
+Most components start as a stock shadcn file, which already imports its
+primitive. There the hint is a check: the shadcn file's primitive should
+match it. If it does not, keep shadcn's and list the difference. The rest of
+this page applies in full to a page shadcn has no component for, and the
+state attributes apply to every restyle.
+
 ## Reading the hint
 
 | Hint | What to do |

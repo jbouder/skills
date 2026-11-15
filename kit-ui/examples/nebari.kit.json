@@ -4,6 +4,7 @@
     "fileKey": "<file key>",
     "url": "https://www.figma.com/design/<file key>/Nebari-Design-System"
   },
+  "base": { "shadcn": "base-vega" },
   "theme": "src/kit.css",
   "css": "src/index.css",
   "components": "src/components/ui",
@@ -26,6 +27,9 @@
       "Sidebar Nav": "sidebar",
       "Tooltips": "tooltip",
       "Utilities": "popover"
+    },
+    "shadcn": {
+      "Datatable": "table"
     },
     "behavior": {
       "Accordion Item": "@base-ui/react/accordion",
