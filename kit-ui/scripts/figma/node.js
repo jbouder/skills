@@ -42,6 +42,13 @@ for (const v of await figma.variables.getLocalVariablesAsync()) {
 const clean = (s) => s.replace(/^[^A-Za-z0-9]+/, '').trim();
 const iconPage = ARGS.iconPage ? clean(ARGS.iconPage) : null;
 const pageOf = (n) => { let p = n; while (p && p.type !== 'PAGE') p = p.parent; return p ? clean(p.name) : ''; };
+// A library component has no page in the file that uses it. There, an icon is a loose component (not in a set) drawn with shapes only.
+const SHAPES = ['VECTOR', 'BOOLEAN_OPERATION', 'GROUP', 'ELLIPSE', 'LINE', 'RECTANGLE', 'POLYGON', 'STAR'];
+const onIconPage = (n, mc, set) => {
+  if (!iconPage || !mc) return false;
+  if (!mc.remote) return pageOf(mc) === iconPage;
+  return !set && n.children.length > 0 && !n.findOne((x) => SHAPES.indexOf(x.type) < 0);
+};
 // A color variable's own alpha shows up as the paint's opacity. It belongs to the token, not the paint.
 const alphas = (id, depth) => {
   const out = [];
@@ -54,6 +61,24 @@ const alphas = (id, depth) => {
 for (const id in vraw) if (vraw[id].resolvedType === 'COLOR') valpha[id] = alphas(id).filter((x) => x < 0.999);
 const sname = {};
 for (const s of (await figma.getLocalTextStylesAsync()).concat(await figma.getLocalEffectStylesAsync())) sname[s.id] = s.name;
+// A file that uses the kit as a library has none of the kit's variables or styles as local ones.
+// `need` loads the ones a node uses, so a frame drawn outside the kit file reads the same as one inside it.
+// It runs per node as the node is described: Figma fills in library bindings as it goes, so one scan up front misses some.
+const loadVar = async (id, depth) => {
+  if (vraw[id]) return;
+  const v = await figma.variables.getVariableByIdAsync(id);
+  if (!v) return;
+  if (!colName[v.variableCollectionId]) { const c = await figma.variables.getVariableCollectionByIdAsync(v.variableCollectionId); if (c) colName[v.variableCollectionId] = c.name; }
+  vraw[id] = v;
+  const n = cssOf(v);
+  vname[id] = n ? n.slice(2) : v.name;
+  if (depth < 5) for (const val of Object.values(v.valuesByMode)) if (val && val.type === 'VARIABLE_ALIAS') await loadVar(val.id, depth + 1);
+  if (v.resolvedType === 'COLOR') valpha[id] = alphas(id).filter((x) => x < 0.999);
+};
+const need = async (x) => {
+  for (const k of ['fills', 'strokes', 'effects']) { const ps = x[k]; if (Array.isArray(ps)) for (const p of ps) { const b = p.boundVariables && p.boundVariables.color; if (b && !vraw[b.id]) await loadVar(b.id, 0); } }
+  for (const k of ['textStyleId', 'effectStyleId']) { const id = x[k]; if (typeof id === 'string' && id && !sname[id]) { const st = await figma.getStyleByIdAsync(id); if (st) sname[id] = st.name; } }
+};
 const h2 = (v) => Math.round(v * 255).toString(16).padStart(2, '0');
 const r1 = (n) => Math.round(n * 10) / 10;
 const strip = (k) => k.replace(/#\d+:\d+$/, '');
@@ -69,6 +94,7 @@ const paints = (ps) => { if (!Array.isArray(ps)) return null; const r = ps.map(p
 const size = (n, ax) => { const m = ax === 'w' ? n.layoutSizingHorizontal : n.layoutSizingVertical; return m === 'HUG' ? 'hug' : m === 'FILL' ? 'fill' : r1(ax === 'w' ? n.width : n.height); };
 async function describe(n, top, cap) {
   const o = { n: n.name };
+  await need(n);
   if (n.visible === false) o.hidden = true;
   if (!top) { o.w = size(n, 'w'); o.h = size(n, 'h'); } else { o.w = n.layoutMode ? size(n, 'w') : r1(n.width); o.h = n.layoutMode ? size(n, 'h') : r1(n.height); }
   if (n.layoutPositioning === 'ABSOLUTE') o.abs = { x: r1(n.x), y: r1(n.y), pin: n.constraints.horizontal + ' ' + n.constraints.vertical };
@@ -91,8 +117,9 @@ async function describe(n, top, cap) {
     o.t = 'inst';
     o.of = set ? set.name : mc ? mc.name : '?';
     if (set) o.variant = mc.name;
-    if (/^icon\//i.test(o.of) || (iconPage && mc && pageOf(mc) === iconPage)) {
+    if (/^icon\//i.test(o.of) || onIconPage(n, mc, set)) {
       if (!/^icon\//i.test(o.of)) o.icon = true;
+      for (const x of n.findAll(() => true)) await need(x);
       const g = n.children[0];
       if (g && 'fills' in g) o.color = paints(g.fills);
       // A stroked icon (Lucide) carries its color on the strokes of its vectors.
