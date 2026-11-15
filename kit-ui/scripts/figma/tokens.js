@@ -1,7 +1,8 @@
 // kit-ui: tokens. Run through the Figma MCP's use_figma tool. Read-only.
 // Returns the theme CSS for the kit's variables, text styles and effect styles,
 // a text-style-to-class map, and a hash for kit.lock.json.
-// Optional: put `const ARGS = { darkSelector: '.dark' };` on a line above this script.
+// Optional: put `const ARGS = { darkSelector: '.dark', names: {...} };` on a line above this script.
+// `names` is the adapter's { derive, ignoreSyntax, map } from kit.json (see references/adapter.md).
 // After writing `css` to a file, `node scripts/hash.mjs <file>` must print the returned `hash`.
 // `skipped` lists variables with no usable CSS name (see references/kit-contract.md).
 const A = typeof ARGS === 'object' && ARGS ? ARGS : {};
@@ -12,17 +13,31 @@ const num = (n) => String(Math.round(n * 1000) / 1000);
 const cols = await figma.variables.getLocalVariableCollectionsAsync();
 const byId = {};
 for (const v of await figma.variables.getLocalVariablesAsync()) byId[v.id] = v;
-const cssName = (v) => {
-  const m = /^var\((--[\w-]+)\)$/.exec((v.codeSyntax && v.codeSyntax.WEB) || '');
-  return m ? m[1] : null;
+const colName = {};
+for (const c of cols) colName[c.id] = c.name;
+// The CSS name of a variable: the adapter's map, else its WEB code syntax, else derived from its name.
+// '' means "has calc() syntax, emit nothing"; null means "no usable name".
+const N = A.names || {};
+const cssOf = (v) => {
+  if (N.map && N.map[v.name]) return '--' + String(N.map[v.name]).replace(/^--/, '');
+  const web = (v.codeSyntax && v.codeSyntax.WEB) || '';
+  const ignore = (N.ignoreSyntax || []).indexOf(colName[v.variableCollectionId]) >= 0;
+  if (!ignore && /^calc\(.+\)$/.test(web)) return '';
+  const m = ignore ? null : /^var\((--[\w-]+)\)$/.exec(web);
+  if (m) return m[1];
+  if (web && !ignore) return null;
+  if (!N.derive && !ignore) return null;
+  return '--' + v.name.toLowerCase().replace(/^color\//, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 };
+const cssName = (v) => cssOf(v) || null;
 const unit = (name) => (/duration|delay/.test(name) ? 'ms' : 'px');
 const out = (v, raw, depth) => {
   if (raw && raw.type === 'VARIABLE_ALIAS') {
     const t = byId[raw.id];
     if (!t) return null;
     const n = cssName(t);
-    if (n) return 'var(' + n + ')';
+    // An alias to a variable with the same CSS name would point at itself: use the value.
+    if (n && n !== cssName(v)) return 'var(' + n + ')';
     if (depth > 5) return null;
     const c = cols.find((x) => x.id === t.variableCollectionId);
     return out(t, t.valuesByMode[c.defaultModeId], (depth || 0) + 1);
@@ -31,14 +46,20 @@ const out = (v, raw, depth) => {
   if (v.resolvedType === 'FLOAT') return num(raw) + unit(v.name);
   return String(raw);
 };
-const root = [], dark = [], theme = [], skipped = [];
+const root = [], dark = [], theme = [], skipped = [], done = {};
 for (const c of cols) {
   const light = c.modes.find((m) => /light/i.test(m.name)) || c.modes.find((m) => m.modeId === c.defaultModeId);
   const dk = c.modes.find((m) => /dark/i.test(m.name));
   for (const id of c.variableIds) {
     const v = byId[id];
-    const n = cssName(v);
-    if (!n) { if (!/^calc\(/.test((v.codeSyntax && v.codeSyntax.WEB) || '')) skipped.push(v.name); continue; }
+    const n = cssOf(v);
+    if (!n) { if (n === null) skipped.push(v.name); continue; }
+    // A string variable (a font family) is emitted from the text styles below, not from here.
+    if (v.resolvedType === 'STRING' || v.resolvedType === 'BOOLEAN') continue;
+    // A length with a derived name is not a token: lengths map to the Tailwind scale by value. Radius is the exception.
+    if (v.resolvedType === 'FLOAT' && !/^--radius/.test(n) && !(N.map && N.map[v.name]) && !/^var\(/.test((v.codeSyntax && v.codeSyntax.WEB) || '')) continue;
+    if (done[n]) continue; // the first variable to claim a name wins; kit.js reports a real clash
+    done[n] = 1;
     const a = out(v, v.valuesByMode[light.modeId]);
     if (v.resolvedType === 'COLOR') {
       root.push(n + ': ' + a + ';');
@@ -77,7 +98,7 @@ const effects = {};
 for (const s of await figma.getLocalEffectStylesAsync()) {
   const parts = s.effects.filter((e) => e.type === 'DROP_SHADOW' && e.visible !== false).map((e) =>
     num(e.offset.x) + 'px ' + num(e.offset.y) + 'px ' + num(e.radius) + 'px ' + num(e.spread || 0) + 'px rgb(' + [e.color.r, e.color.g, e.color.b].map((x) => Math.round(x * 255)).join(' ') + ' / ' + num(e.color.a) + ')');
-  if (!parts.length) continue;
+  if (!parts.length || effects[s.name]) continue; // two styles with one name: the first wins
   const n = s.name.toLowerCase().replace(/[\s/]+/g, '-');
   theme.push('--' + n + ': ' + parts.join(', ') + ';');
   effects[s.name] = n.indexOf('shadow-') === 0 ? n : 'shadow-[var(--' + n + ')]';

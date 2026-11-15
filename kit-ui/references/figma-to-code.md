@@ -108,9 +108,18 @@ Dark mode needs nothing: the tokens change, the classes do not.
    | `Hover` | `hover:` |
    | `Focus` | `focus-visible:` (on a wrapper: `has-[:focus-visible]:`) |
    | `Disabled` | `data-disabled:` for a primitive, `disabled:` for a native control; add `pointer-events-none` under the same prefix |
-   | `Invalid` | `aria-invalid:` |
+   | `Invalid`, `Error` | `aria-invalid:` |
+   | `Pressed` | `active:` |
+   | `Focused` | the same as `Focus` |
    | `Placeholder` | `placeholder:` for the text color; for a select, the primitive's placeholder attribute |
    | `On`, `Active`, `Selected`, `Highlighted`, `Open`, `Checked=true` | the primitive's data attribute, from `references/behavior-map.md` |
+
+   An axis listed in the adapter's `stateAxes` is read as `State`. An option
+   that names two states (`Focus / Pressed`) goes under both prefixes. An
+   option that shows content, not interaction, is not a selector: `Filled`
+   is the value's text color where `Default` shows the placeholder, and
+   `Loading`, `Empty` and the like are listed in the report as states the
+   caller renders.
 
    State classes that hold for every variant go in the base string. An
    `exceptions` entry goes in the string of the variant it names
@@ -156,7 +165,8 @@ separate component for the set.
 ## File shape
 
 - One file per kit page, in the `components` folder from `kit.json`. The
-  name is the page name in kebab-case with slashes dropped. Named function
+  name is the adapter's `files` entry for the page when there is one, else
+  the page name in kebab-case with slashes dropped. Named function
   exports in PascalCase, matching the kit's component names (`Select
   Trigger` is `SelectTrigger`) unless a `Code:` line says otherwise. No
   default export, no `forwardRef` on React 19.
@@ -174,6 +184,13 @@ separate component for the set.
 - Icons import from the package in `kit.json`: `Icon/CaretDown` with suffix
   `Icon` is `CaretDownIcon`. A weight on the end of the name is a prop:
   `Icon/CheckBold` is `<CheckIcon weight="bold" />`.
+- With `icons.case: "kebab"`, turn the kit's name into PascalCase first:
+  `chevron-down` with no suffix is `ChevronDown` from `lucide-react`. An
+  instance marked `icon: true` in a spec is one of these. Check that the
+  export exists in the installed package before using it.
+- Axis and option names become props in camelCase with the kit's spelling
+  otherwise kept (`Variant=Outline` is `variant="outline"`: lowercase the
+  option when every option of the axis is a single capitalized word).
 
 ## Screens
 
