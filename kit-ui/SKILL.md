@@ -173,6 +173,12 @@ Several frames can be one screen at different widths. Pass them together.
    `node-id`, with `-` turned into `:`).
 2. List every kit component the trees use (`t: "inst"`, by `of`). `add` the
    ones not in the lock, in one go.
+   - The frames may be in another file that uses the kit as a library. Run
+     `node.js` in the frames' file, with the same adapter keys. Token and text
+     style names come back the same as in the kit file.
+   - An instance whose `of` is not in the lock's `components` is a component
+     local to the frames' file. It is not a kit component: run `node.js` on
+     its id (in the frames' file) and write it as an app component.
 3. Write the screens by `references/figma-to-code.md`. Instances become the
    generated components. Boxes become layout. A structure that repeats
    becomes one local component, used many times.

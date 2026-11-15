@@ -28,7 +28,7 @@ When the kit's owner fixes the file, delete the entry.
 | Key | Fills the gap in | What it does |
 |---|---|---|
 | `skipPages` | pages | Pages to leave out: covers, swatches, playgrounds. Names are compared without their emoji prefix. |
-| `iconPage` | icons | Every component on this page is an icon, whatever it is named. Without it, icons are the components named `Icon/<Name>`. |
+| `iconPage` | icons | Every component on this page is an icon, whatever it is named. Without it, icons are the components named `Icon/<Name>`. In a file that only uses the kit as a library, a component has no page, so there an icon is a loose library component (not in a set) drawn with shapes only. |
 | `names.derive` | `code-syntax` | `true`: a variable with no WEB code syntax gets a CSS name from its own name. |
 | `names.ignoreSyntax` | `code-syntax` | Collections whose code syntax is wrong (left over from a template, or shared by several variables). Their names are derived. |
 | `names.map` | `code-syntax` | Variable name to CSS name, for the few you want to name by hand. Wins over everything. |
