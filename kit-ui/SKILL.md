@@ -187,30 +187,58 @@ Several frames can be one screen at different widths. Pass them together.
 
 ### `check`
 
-All three must pass before the work is called done.
+All four must pass before the work is called done.
 
 1. **Tokens only.** `node scripts/check-literals.mjs <src> --lock kit.lock.json`
    must report 0 errors.
-2. **Looks like the frame.** Export each frame with the Figma MCP's
-   screenshot tool at 1x (set its max dimension to the frame's longer side).
-   Screenshot the built page at the frame's width and height, device scale
-   factor 1, after `document.fonts.ready`. Then:
+2. **Not broken.** Export each frame with the Figma MCP's screenshot tool at
+   1x (set its max dimension to the frame's longer side). Screenshot the
+   built page at the frame's width and height, device scale factor 1, after
+   `document.fonts.ready`. Then, in light and in dark:
 
    ```
-   node scripts/visual-diff.mjs built.png figma.png --scale 3 --max-content 10 --out diff.png
+   node scripts/visual-diff.mjs built.png figma.png --scale 3 --max-content 25 --out diff.png --tiles tiles
    ```
 
-   `--scale 3` averages away the glyph edges that Figma and a browser draw
-   differently, so what is left is real: a wrong color, size or position.
-   A faithful build scores under 10 here. Do it in light and in dark. On a
-   fail, open `diff.png`, fix the worst cell first, and run it again. Two
-   rounds with no gain means stop and report what is left. Do not loosen
-   the limits to get a pass.
-3. **Accessible.** Run axe on the built page (Playwright with
+   This number is a smoke test. A page that is broken, empty or laid out
+   wrong scores far above 25. It does **not** say the build looks like the
+   frame: a table one pixel low scores 15 and looks identical, and a wrong
+   fill on an avatar barely moves it. Do not tune a build to lower it, and
+   never stop because it is low.
+3. **Looks like the frame.** This is a look, not a number. `--tiles` wrote
+   the screen as tiles at full size, the frame on the left and the build on
+   the right. Read **every** tile (a whole screen shown at once is scaled
+   down and hides these). For each one, list what a person comparing the two
+   halves would notice:
+
+   - an element missing, extra, or different (wrong icon, wrong text)
+   - a wrong fill or color: outlined where the frame is filled, black where
+     it is muted
+   - a wrong alignment: centered where the frame is left-aligned
+   - a wrong shape or size: a square where the frame has a circle, or off by
+     more than about 2 pixels
+   - spacing or position off by more than about 4 pixels
+   - a wrong font weight or size
+   - a missing or wrong border, radius or shadow
+   - content cut off or overlapping
+
+   Ignore shifts of 1 to 2 pixels and the way text edges are drawn. Check
+   small things on purpose: icon colors, avatar fills, button shapes and
+   shadows are what this step exists to catch.
+
+   Rate each finding `obvious` (seen at a glance), `noticeable` (seen side by
+   side) or `subtle` (real, likely missed). Fix every `obvious` and
+   `noticeable` one at its source: the spec says what the fill, alignment or
+   radius is, so read it again before guessing. Then screenshot and look
+   again. Stop when none are left, or after two rounds with no gain, and
+   report what remains. Where the frame does not say what should happen
+   (long text, an empty state), do not guess silently: list it.
+4. **Accessible.** Run axe on the built page (Playwright with
    `@axe-core/playwright` if the app has it) and tab through it once: every
    control reachable, focus visible, overlays trap and return focus.
 
-Report the three results with their numbers.
+Report all four: the literal count, the smoke-test number, the list of
+visible differences that remain with their severity, and the axe result.
 
 ### `drift`
 
