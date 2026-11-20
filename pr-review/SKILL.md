@@ -141,15 +141,15 @@ Default scope: **inline comments for the blocking findings only**, a short body,
 
 ### The body comment stays light
 
-One to three sentences. It frames the review; it does not restate it, and it does not rank the comments. Good shape:
+The body is just the count of changes requested, nothing more:
 
-> The body cap is wired so it only takes effect in dev mode, the inverse of the intent. One-word fix inline.
+> One change.
 
-Or, with several comments:
+> Three changes.
 
-> Three changes inline: an upgrade note for the new `path` default, and two places where group comparisons don't match it yet.
+The inline comments carry the substance. Don't describe them in the body, don't add "inline", and don't rank them. For an approval with no comments, a one-line approval is enough.
 
-What to keep out of it: a re-listing of the inline findings, a summary of the PR, praise padding (no "Nice cleanup" openers, even short ones), and hedging about your own confidence. If a finding needed a caveat, the caveat belongs in that finding's inline comment.
+What to keep out of it: a description or re-listing of the inline findings, a summary of the PR, praise padding (no "Nice cleanup" openers, even short ones), and hedging about your own confidence. If a finding needed a caveat, the caveat belongs in that finding's inline comment.
 
 ### Inline comments stay short
 
