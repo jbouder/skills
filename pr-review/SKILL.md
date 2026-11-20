@@ -143,7 +143,27 @@ One to three sentences. It frames the review; it does not restate it. Good shape
 
 > One blocker inline — the body cap is wired so it only takes effect in dev mode, the inverse of the intent. One-word fix. The rest is should-fix and can follow up.
 
-What to keep out of it: a re-listing of the inline findings, a summary of the PR, praise padding, and hedging about your own confidence. If a finding needed a caveat, the caveat belongs in that finding's inline comment.
+Or, with several findings:
+
+> One blocker: the new `path` default needs an upgrade note. Two smaller fixes inline.
+
+What to keep out of it: a re-listing of the inline findings, a summary of the PR, praise padding (no "Nice cleanup" openers, even short ones), and hedging about your own confidence. If a finding needed a caveat, the caveat belongs in that finding's inline comment.
+
+### Inline comments stay short
+
+Each inline comment is two or three sentences: what breaks for the user, the cause in one clause, and the fix. Label a blocker "Blocker:" at the start; leave should-fix unlabeled. No mechanism walkthrough, no evidence dump, no "why CI is green". Those stay in the terminal report.
+
+- When the fix is a one-line change on the anchored line, end with a ```suggestion block and nothing after it. Build the suggestion from the exact line at the PR head (see the API reference), never retyped.
+- When the defect lives in a file the PR does not touch, anchor on the closest related line in the diff, name the real `file:line` in the first sentence, and describe the fix in prose. No suggestion block.
+
+Shapes that landed well (PR 257):
+
+> Blocker: this default breaks installs whose tokens carry plain names (`ops`, or a role claim). After upgrade the gateway only allows `/ops`, so the internal endpoint returns 403, while the key manager still lists the model. Please add an `upgrading.mdx` entry: role claims set `groupsClaimForm: name`, and realms issuing bare group names switch their mapper to `full.path: true`.
+
+> With `groupsClaimForm: name` this still puts `/llm` in tokens, so private models vanish from the key manager. Follow the form:
+> *(suggestion block with the one-line fix)*
+
+> The auditor needs the same normalization. `audit/auditor.go:91` and `:141` still compare exactly, so once the userinfo lookup is built it would revoke keys from users still in `/llm`. Passing the group form to `NewAuditor` and normalizing both sides would cover it.
 
 ### Mechanics
 
