@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Make the claude.ai artifact fragment from a full Q&A deck page.
+"""Make the claude.ai artifact fragment from a full question deck page.
 
 Usage: python3 make_fragment.py <deck.html> <fragment.html>
 

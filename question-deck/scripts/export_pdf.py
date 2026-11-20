@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export a Q&A deck, with its saved answers and notes, as a PDF of slide screenshots.
+"""Export a question deck, with its saved answers and notes, as a PDF of slide screenshots.
 
 Usage:
   uv run --no-project --with playwright --with img2pdf \\
@@ -89,7 +89,7 @@ def main() -> None:
     notes, qstatus = docs(a.notes), docs(a.qstatus)
     names = json.loads(Path(a.names).read_text(encoding="utf-8")) if a.names else {}
     html = Path(a.deck).read_text(encoding="utf-8")
-    shots = Path(a.shots or tempfile.mkdtemp(prefix="qa-deck-shots-"))
+    shots = Path(a.shots or tempfile.mkdtemp(prefix="question-deck-shots-"))
     shots.mkdir(parents=True, exist_ok=True)
     page_file = shots / "page.html"
     page_file.write_text(stub(notes, qstatus, names) + html, encoding="utf-8")

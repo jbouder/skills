@@ -1,6 +1,6 @@
 # Design: a deck that belongs to its audience
 
-A Q&A deck sits in front of a customer or a team for an hour while they answer questions about their own work. If it looks like a generic form, it reads as a template someone filled in. If it looks like their world, it reads as work done for them, and that buys attention for every question in it. Treat the design as half the deliverable.
+A question deck sits in front of a customer or a team for an hour while they answer questions about their own work. If it looks like a generic form, it reads as a template someone filled in. If it looks like their world, it reads as work done for them, and that buys attention for every question in it. Treat the design as half the deliverable.
 
 ## Contents
 - Sources

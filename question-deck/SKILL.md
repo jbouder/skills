@@ -1,11 +1,11 @@
 ---
-name: qa-deck
-description: Build an interactive Q&A deck: a standalone HTML page that walks a room or a team through questions section by section and keeps their answers. Each section has context (prose, or a baseline compared side by side with alternatives, with fit grades), then a sheet of questions with threaded answers and notes, an Answered toggle per question, and section notes. It has a start slide with live open counts, an optional overview with option cards and a fit matrix, an optional step rail for sequential flows, facilitator notes, an "Answers so far" summary with Markdown and JSON export, answers shared with names through a claude.ai artifact, and a PDF export of the deck with its answers. Every deck gets its own visual design drawn from the audience and the subject. Use when the user wants a Q&A deck, discovery, kickoff, scoping or handoff questionnaire, a walkthrough of a flow with open questions per step, a comparison of today's system with alternatives that collects answers, or "questions for the customer" in a shareable page, or asks to add sections, questions or comparisons to a deck built this way. Also use /qa-deck.
+name: question-deck
+description: Build an interactive question deck (a Q&A deck): a standalone HTML page that walks a room or a team through questions section by section and keeps their answers. Each section has context (prose, or a baseline compared side by side with alternatives, with fit grades), then a sheet of questions with threaded answers and notes, an Answered toggle per question, and section notes. It has a start slide with live open counts, an optional overview with option cards and a fit matrix, an optional step rail for sequential flows, facilitator notes, an "Answers so far" summary with Markdown and JSON export, answers shared with names through a claude.ai artifact, and a PDF export of the deck with its answers. Every deck gets its own visual design drawn from the audience and the subject. Use when the user wants a Q&A deck, discovery, kickoff, scoping or handoff questionnaire, a walkthrough of a flow with open questions per step, a comparison of today's system with alternatives that collects answers, or "questions for the customer" in a shareable page, or asks to add sections, questions or comparisons to a deck built this way. Also use /question-deck.
 user-invocable: true
 argument-hint: "<project> [what to ask about] [--compare baseline vs options] [--minutes N] [audience notes]"
 ---
 
-# Q&A deck
+# Question deck
 
 Builds a deck of questions for one project as a single self-contained HTML page. The room works through sections. Each section shows what they need to know, then asks what only they can answer. Answers and notes save as people type them, with their names, so the deck becomes the record of the conversation and stays useful after it.
 

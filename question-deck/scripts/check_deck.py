@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check a Q&A deck: design done, data valid, page rules followed.
+"""Check a question deck: design done, data valid, page rules followed.
 
 Usage: python3 check_deck.py <deck.html> [--fragment]
 
