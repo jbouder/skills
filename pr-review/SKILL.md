@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Review a pull request in depth, report severity-ranked findings with verified evidence, then on approval push a GitHub change request with inline comments on the blockers and a short review body. Language-agnostic, with a frontend lens that switches on automatically for React/TS diffs — OpenTeams conventions, accessibility, correct use of Nebari design components/utils/theme, no hard-coded colors or styling, no stray console logs, dead commented-out code and TODOs. Use when asked to "review pr <n>", "review this PR", "review this frontend PR", "review the frontend changes", "check this React/TS diff before merge", "/pr-review", or to gate a PR before merge.
+description: Review a pull request in depth, report severity-ranked findings with verified evidence, then on approval push a GitHub change request with inline comments on the chosen findings and a short review body, with no severity labels on anything posted. Language-agnostic, with a frontend lens that switches on automatically for React/TS diffs — OpenTeams conventions, accessibility, correct use of Nebari design components/utils/theme, no hard-coded colors or styling, no stray console logs, dead commented-out code and TODOs. Use when asked to "review pr <n>", "review this PR", "review this frontend PR", "review the frontend changes", "check this React/TS diff before merge", "/pr-review", or to gate a PR before merge.
 user-invocable: true
 argument-hint: "[PR number | PR url | branch | (blank = working diff, or ask which PR)] [--quick]"
 ---
@@ -137,28 +137,30 @@ Then **stop**. Do not push yet.
 
 Default scope: **inline comments for the blocking findings only**, a short body, and the should-fix findings left in the terminal. Push more only if the user asks.
 
+**Posted comments carry no severity.** Severity ranks findings in the terminal report and decides what gets posted. It never appears on GitHub: no "Blocker:", "Should fix:", "Nit:" or emoji tiers in inline comments, and no "one blocker" counts in the body. Every comment that gets posted is one the author is expected to address, so all of them read the same way.
+
 ### The body comment stays light
 
-One to three sentences. It frames the review; it does not restate it. Good shape:
+One to three sentences. It frames the review; it does not restate it, and it does not rank the comments. Good shape:
 
-> One blocker inline — the body cap is wired so it only takes effect in dev mode, the inverse of the intent. One-word fix. The rest is should-fix and can follow up.
+> The body cap is wired so it only takes effect in dev mode, the inverse of the intent. One-word fix inline.
 
-Or, with several findings:
+Or, with several comments:
 
-> One blocker: the new `path` default needs an upgrade note. Two smaller fixes inline.
+> Three changes inline: an upgrade note for the new `path` default, and two places where group comparisons don't match it yet.
 
 What to keep out of it: a re-listing of the inline findings, a summary of the PR, praise padding (no "Nice cleanup" openers, even short ones), and hedging about your own confidence. If a finding needed a caveat, the caveat belongs in that finding's inline comment.
 
 ### Inline comments stay short
 
-Each inline comment is two or three sentences: what breaks for the user, the cause in one clause, and the fix. Label a blocker "Blocker:" at the start; leave should-fix unlabeled. No mechanism walkthrough, no evidence dump, no "why CI is green". Those stay in the terminal report.
+Each inline comment is two or three sentences: what breaks for the user, the cause in one clause, and the fix. No severity label. No mechanism walkthrough, no evidence dump, no "why CI is green". Those stay in the terminal report.
 
 - When the fix is a one-line change on the anchored line, end with a ```suggestion block and nothing after it. Build the suggestion from the exact line at the PR head (see the API reference), never retyped.
 - When the defect lives in a file the PR does not touch, anchor on the closest related line in the diff, name the real `file:line` in the first sentence, and describe the fix in prose. No suggestion block.
 
 Shapes that landed well (PR 257):
 
-> Blocker: this default breaks installs whose tokens carry plain names (`ops`, or a role claim). After upgrade the gateway only allows `/ops`, so the internal endpoint returns 403, while the key manager still lists the model. Please add an `upgrading.mdx` entry: role claims set `groupsClaimForm: name`, and realms issuing bare group names switch their mapper to `full.path: true`.
+> This default breaks installs whose tokens carry plain names (`ops`, or a role claim). After upgrade the gateway only allows `/ops`, so the internal endpoint returns 403, while the key manager still lists the model. Please add an `upgrading.mdx` entry: role claims set `groupsClaimForm: name`, and realms issuing bare group names switch their mapper to `full.path: true`.
 
 > With `groupsClaimForm: name` this still puts `/llm` in tokens, so private models vanish from the key manager. Follow the form:
 > *(suggestion block with the one-line fix)*
@@ -172,7 +174,7 @@ Read **`references/github-review-api.md`** before building the payload. It has t
 The short version:
 
 1. Get the head SHA: `gh pr view <n> --json headRefOid -q .headRefOid`.
-2. For each blocker, find an anchorable line in the relevant hunk (see the reference).
+2. For each finding being posted, find an anchorable line in the relevant hunk (see the reference).
 3. Write the payload to a JSON file in the scratchpad — never inline in the shell, the quoting will bite you.
 4. `gh api repos/<owner>/<repo>/pulls/<n>/reviews --method POST --input <file>`.
 
