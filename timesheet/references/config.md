@@ -38,7 +38,7 @@ The config lives at `~/.claude/timesheet/config.json`, outside every repo, becau
 | `workTypes` | The types the timesheet tool uses, in the order to show them. |
 | `authorEmails` | Extra commit emails besides the global `git config user.email`. |
 | `rules` | Mapping rules, below. |
-| `ignore` | Regexes. A repo whose name, folder, remote or path matches one is left off the sheet. |
+| `ignore` | Regexes. A repo whose name, folder, remote or path matches one is left off the sheet, unless a rule maps it: a rule wins over `ignore`, so one repo in a personal folder can still count. |
 
 ## Rules
 

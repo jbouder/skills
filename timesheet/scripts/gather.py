@@ -193,14 +193,15 @@ def apply_rules(meta, rules, ignore):
         "remote": meta.get("remote") or "",
         "path": meta.get("path") or "",
     }
-    for pat in ignore:
-        if any(re.search(pat, v, re.I) for v in fields.values() if v):
-            return {"ignored": True, "by": pat}
+    # A rule wins over ignore, so one repo in an ignored folder can still count.
     for r in rules:
         on = r.get("on", "any")
         targets = fields.values() if on == "any" else [fields.get(on, "")]
         if any(t and re.search(r["match"], t, re.I) for t in targets):
             return {"project": r["project"], "type": r.get("type"), "by": r["match"]}
+    for pat in ignore:
+        if any(re.search(pat, v, re.I) for v in fields.values() if v):
+            return {"ignored": True, "by": pat}
     return None
 
 
