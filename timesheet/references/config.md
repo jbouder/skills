@@ -8,6 +8,7 @@ The config lives at `~/.claude/timesheet/config.json`, outside every repo, becau
 {
   "hoursPerDay": 8,
   "increment": 0.25,
+  "minMeetingHours": 0.5,
   "workDays": [0, 1, 2, 3, 4],
   "reposDir": "~/repos",
   "maxRepoDepth": 3,
@@ -25,6 +26,7 @@ The config lives at `~/.claude/timesheet/config.json`, outside every repo, becau
 | --- | --- |
 | `hoursPerDay` | Hours each work day adds up to. |
 | `increment` | Rounding step in hours. Use `0.5` or `1` if the timesheet tool wants coarser numbers. |
+| `minMeetingHours` | The least a meeting counts for. A 15-minute meeting counts as this. Set it to the `increment` to count meetings at their scheduled length. |
 | `workDays` | Weekday numbers that get hours, Monday = 0. |
 | `reposDir` | Where git repos live. Falls back to the standup plugin's `reposDir`, then `~/repos`. |
 | `maxRepoDepth` | How many folders deep to look for repos under `reposDir`. |

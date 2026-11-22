@@ -39,6 +39,7 @@ SKIP_DIRS = {"node_modules", ".venv", "venv", "dist", "build", ".git", "__pycach
 DEFAULT_CONFIG = {
     "hoursPerDay": 8,
     "increment": 0.25,
+    "minMeetingHours": 0.5,
     "workDays": [0, 1, 2, 3, 4],
     "reposDir": None,
     "maxRepoDepth": 3,
