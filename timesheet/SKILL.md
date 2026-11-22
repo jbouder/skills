@@ -103,17 +103,18 @@ Work day by day. All numbers are hours, rounded to `config.increment` (default 0
 Print, in this order and nothing else:
 
 1. One line: the window, total hours, and which sources were used or missing.
-2. The table. One row per bucket, `Project - Type`, sorted by project then type, columns Mon to Fri (plus any weekend day with hours) and Total. A final Total row. Hours as numbers (`1.5`, not `1h 30m`), blank for zero.
-3. **Why** for each bucket, one line: the evidence behind the biggest numbers ("12 commits and 6.4h of sessions in `<repo>`; 3 calendar meetings with `<domain>`"). Repo names in backticks.
-4. **Questions**, numbered: unmapped or ambiguous items, low-confidence days, unanswered meetings, possible days off. Each says what you assumed in the draft. At most eight; fold the rest into the closest one.
+2. **The table.** One row per bucket, `Project - Type`, sorted by project then type, columns Mon to Fri (plus any weekend day with hours) and Total. A final Total row. Hours as numbers (`1.5`, not `1h 30m`), blank for zero.
+3. **Project totals.** The same columns with one row per project, the sum of its buckets, most hours first, and a final Total row that matches the first table's. This shows where the week went at a glance.
+4. **Summary**, one entry per project in the same order as the totals: its hours, then one to three plain sentences on the work done, written for someone who was not there ("Added Python compatibility to the dashboard and started CVE/KEV tracking for packages; reviewed the priorities and the freshness doc."). Name the evidence behind the biggest numbers in a short clause ("12 commits in `<repo>`, 3 meetings with `<domain>`"), with repo names in backticks. Put a day that went over `hoursPerDay` first, as an Overtime line saying what drove it.
+5. **Questions**, numbered: unmapped or ambiguous items, low-confidence days, unanswered meetings, possible days off. Each says what you assumed in the draft. At most eight; fold the rest into the closest one.
 
-Then ask the user to answer the questions or adjust the numbers. Apply their answers, reprint only the table and what changed, and repeat until they say it is right.
+Then ask the user to answer the questions or adjust the numbers. Apply their answers, reprint both tables and what changed, and repeat until they say it is right.
 
 ## Step 7: Save and learn
 
 When the user accepts the draft:
 
-1. Write the final table, the Why lines and a short Sources line to `<outputDir>/<Friday's date>.md`. If the file exists, replace it. Also print the table one last time as plain tab-separated text, ready to paste into a spreadsheet.
+1. Write the bucket table, the project totals, the Summary and a short Sources line to `<outputDir>/<Friday's date>.md`. If the file exists, replace it. Also print the bucket table one last time as plain tab-separated text, ready to paste into a spreadsheet.
 2. Turn what the user confirmed into config rules: a repo, folder, remote owner, calendar title word, attendee domain or Datapad project that now has a known project or type. Show the rules you would add or change as a short list, and write `~/.claude/timesheet/config.json` only after the user says yes. Create the folder and file on the first run, with the defaults from `references/config.md`. Keep existing rules unless the user replaced them.
 3. Do not write client names into this skill's files, its repo, or a repo's memory. Claude Code memory may record that the timesheet config exists, not its contents.
 
