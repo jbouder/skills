@@ -16,6 +16,7 @@ The config lives at `~/.claude/timesheet/config.json`, outside every repo, becau
   "idleMinutes": 10,
   "outputDir": "~/timesheets",
   "internalProject": "Internal",
+  "internalType": null,
   "workTypes": ["Meetings", "Development", "Design", "Planning", "Admin"],
   "authorEmails": [],
   "rules": [],
@@ -35,6 +36,7 @@ The config lives at `~/.claude/timesheet/config.json`, outside every repo, becau
 | `idleMinutes` | A gap between two messages in a Claude Code session longer than this is idle, not work. |
 | `outputDir` | Where the weekly Markdown files go. |
 | `internalProject` | The project for work that belongs to no client. |
+| `internalType` | When set, the one type for all `internalProject` work, such as `"Misc"` with an `internalProject` of `"Admin"`. When `null`, it is classified like any other work. |
 | `workTypes` | The types the timesheet tool uses, in the order to show them. |
 | `authorEmails` | Extra commit emails besides the global `git config user.email`. |
 | `rules` | Mapping rules, below. |

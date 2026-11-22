@@ -50,6 +50,7 @@ DEFAULT_CONFIG = {
     "idleMinutes": 10,
     "outputDir": "~/timesheets",
     "internalProject": "Internal",
+    "internalType": None,
     "workTypes": ["Meetings", "Development", "Design", "Planning", "Admin"],
     "rules": [],
     "ignore": [],

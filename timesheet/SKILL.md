@@ -61,7 +61,7 @@ Use, in this order:
 4. **Memory**: a memory file that says a repo is a playground for, a fork of, or built for a client puts it under that client, even when it lives in a personal folder.
 5. **Session topics**: the first prompt of a Claude Code session often names the client or repo when the session's folder does not.
 
-Work that belongs to no client goes to `config.internalProject` (default "Internal"). That covers company meetings, internal tools, hiring, and the user's open source or personal repos unless memory ties one to a client. Items matching `config.ignore` are left out entirely.
+Work that belongs to no client goes to `config.internalProject` (default "Internal"), with the type `config.internalType` when it is set (so all of it lands in one bucket, such as `Admin - Misc`), else the type the evidence shows. That covers company meetings, internal tools, hiring, and the user's open source or personal repos unless memory ties one to a client. Items matching `config.ignore` are left out entirely.
 
 Name each project the way the user's other sources name it: Datapad's project or org name first, then the name already in the config, then a cleaned-up folder or domain name ("acme-corp" becomes "Acme Corp"). One project, one name, across the whole sheet.
 
