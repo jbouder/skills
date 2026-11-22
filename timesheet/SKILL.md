@@ -14,6 +14,7 @@ This skill is public. It never names a client or project. All names come from th
 ## Files
 
 - `scripts/gather.py`: local evidence as JSON. Claude Code active time per day and repo (from session transcripts, idle gaps removed), commits in every repo under the repos dir, GitHub PRs, reviews and comments, Claude Code memory for each active repo, and the config's mapping for each repo. Run with `python3 -I`.
+- `scripts/day_hours.py`: estimates each day's real length from the gathered sessions and the counted meetings, for the overtime check in Step 5.
 - `references/config.md`: the private config's shape, the matching rules, and the work types. Read it the first time a run has no config, or when editing rules.
 - Private config: `~/.claude/timesheet/config.json` (override with `TIMESHEET_CONFIG`). Never write it, or any client name, into this skill's folder.
 - Output: `<outputDir>/<week-ending>.md`, `~/timesheets` by default.
@@ -93,8 +94,9 @@ Work day by day. All numbers are hours, rounded to `config.increment` (default 0
    - Reviews on that day: 30 minutes each to `<Project> - Development`.
    - Datapad tasks closed and notes written that day with no other evidence for that project: 15 minutes each.
    Claude Code minutes are a weight, not a timecard. Parallel sessions overlap, and the user also works outside Claude Code, so scale the weights to fill the time left rather than using raw minutes.
-4. **Fill to the target.** Each work day adds up to exactly `hoursPerDay`. Put the rounding remainder on the day's largest bucket. If a day's evidence covers less than half of the time left, still fill it, but mark the day low confidence and ask what else happened. If meetings alone exceed `hoursPerDay`, keep the real meeting hours and say the day runs over.
-5. **Drop dust.** A bucket under one increment for the whole week is folded into the closest bucket for the same project, or the same day's largest bucket.
+4. **Set each day's target.** Write the counted meetings (start and end, local time, overlaps and all) to `meetings.json` in the scratchpad and run `python3 -I ~/.claude/skills/timesheet/scripts/day_hours.py <gather.json> <meetings.json>`. It estimates how long each day really was: the meetings plus Claude Code active time outside them, with personal sessions left out. A day's `target` is `hoursPerDay`, unless the estimate reaches `hoursPerDay + overtimeThreshold` (default 1): then the target is the estimate, rounded to the increment. A day with overtime gets a line in Why saying so and what drove it.
+5. **Fill to the target.** Each work day adds up to exactly its target. Put the rounding remainder on the day's largest bucket. If a day's evidence covers less than half of the time left, still fill it, but mark the day low confidence and ask what else happened. If meetings alone exceed the target, keep the real meeting hours and say the day runs over.
+6. **Drop dust.** A bucket under one increment for the whole week is folded into the closest bucket for the same project, or the same day's largest bucket.
 
 ## Step 6: Show the draft
 

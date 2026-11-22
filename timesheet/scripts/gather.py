@@ -17,6 +17,9 @@ missing file or a failing command becomes a note in "warnings".
 Usage:
   gather.py [--start YYYY-MM-DD] [--end YYYY-MM-DD] [--last] [--no-github]
 
+Each session carries its active spans and whether it is personal (ignored),
+for day_hours.py.
+
 Without dates the window is Monday to Friday of the current week (on a
 weekend, the week that just ended). --last picks the week before that.
 """
@@ -40,6 +43,7 @@ DEFAULT_CONFIG = {
     "hoursPerDay": 8,
     "increment": 0.25,
     "minMeetingHours": 0.5,
+    "overtimeThreshold": 1,
     "workDays": [0, 1, 2, 3, 4],
     "reposDir": None,
     "maxRepoDepth": 3,
@@ -315,6 +319,7 @@ def claude_sessions(start, end, repos, idle):
             "first": stamps[0].strftime("%Y-%m-%d %H:%M"),
             "last": stamps[-1].strftime("%Y-%m-%d %H:%M"),
             "activeMinutesByDay": minutes_by_day(spans),
+            "spans": [[a.strftime("%Y-%m-%dT%H:%M"), b.strftime("%Y-%m-%dT%H:%M")] for a, b in spans],
             "cwd": cwd,
             "repoPath": home["path"] if home else None,
             "topic": topic,
@@ -475,6 +480,17 @@ def main():
             for d, m in s["activeMinutesByDay"].items():
                 meta["sessionMinutesByDay"][d] = meta["sessionMinutesByDay"].get(d, 0) + round(m * share)
         active_repos.append(meta)
+
+    # A session is personal when every repo it touched is ignored, or, with no
+    # repo, when its folder matches an ignore pattern.
+    ignored_paths = {r["path"] for r in active_repos if (r["mapping"] or {}).get("ignored")}
+    for s in sessions:
+        keys = [k for k in s["editsByRepo"] if k.startswith("/")] or ([s["repoPath"]] if s["repoPath"] else [])
+        if keys:
+            s["ignored"] = all(k in ignored_paths for k in keys)
+        else:
+            rel = os.path.relpath(s["cwd"], repos_root) if s["cwd"] else ".."
+            s["ignored"] = not rel.startswith("..") and any(re.search(p, rel, re.I) for p in cfg.get("ignore", []))
 
     gh = {} if a.no_github else github(start, end)
 
