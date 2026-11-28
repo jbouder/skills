@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* One reading column: verdict and summary, the shape of the change, screenshots, findings with their diffs, reviewers, recommendation. */
+:root {
+  --bg: #f5f6f9; --surface: #ffffff; --fg: #161b26; --muted: #5a6475; --line: #dce0e8;
+  --link: #2f5bd7; --product: #2f5bd7; --tests: #0e8f81; --generated: #a6aebc; --docs: #c2800c;
+  --ok: #1a7f4b; --ok-bg: #e5f5ec; --block: #b3261e; --block-bg: #fdecea; --warn: #9a5b00; --warn-bg: #fdf3e3;
+  --add-bg: #e3f6e9; --del-bg: #fde8e6; --hit: #f5c84b; --code-bg: #eef0f5;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #10141c; --surface: #181d28; --fg: #e6e9ef; --muted: #99a3b4; --line: #2b3242;
+    --link: #8aa8f8; --product: #7a9bf6; --tests: #40c2b2; --generated: #5a6478; --docs: #e0a63a;
+    --ok: #52c68b; --ok-bg: #14291f; --block: #ff8a80; --block-bg: #331a18; --warn: #f0a956; --warn-bg: #2a2114;
+    --add-bg: #15301f; --del-bg: #3a1c1a; --hit: #b98a12; --code-bg: #212836;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 16px; line-height: 1.55; padding: 40px 16px 72px; }
+main { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
+section, header { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+h1 { font-size: 1.7rem; line-height: 1.2; font-weight: 700; margin: 0; text-wrap: balance; }
+h2 { font-size: 1.2rem; font-weight: 600; margin: 0; text-wrap: balance; }
+h3 { font-size: 1.02rem; font-weight: 600; margin: 0; text-wrap: balance; }
+p { margin: 0; max-width: 70ch; }
+.prose { display: flex; flex-direction: column; gap: 10px; }
+.muted { color: var(--muted); }
+.small { font-size: 0.9rem; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere; }
+.num { font-variant-numeric: tabular-nums; }
+a { color: var(--link); text-underline-offset: 2px; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+a.ref { font-family: var(--mono); font-size: 0.86em; overflow-wrap: anywhere; }
+.eyebrow { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 0.9rem; color: var(--muted); }
+.meta b { color: var(--fg); font-weight: 500; }
+.label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+.pill { display: inline-block; font-size: 0.8rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+.pill.approve { background: var(--ok-bg); color: var(--ok); }
+.pill.request-changes, .pill.blocking { background: var(--block-bg); color: var(--block); }
+.pill.should-fix { background: var(--warn-bg); color: var(--warn); }
+.pill.tag { background: var(--code-bg); color: var(--muted); font-weight: 500; }
+.verdict { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; display: flex; flex-direction: column; gap: 6px; }
+.verdict .top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.verdict strong { font-size: 1.15rem; }
+
+.stack { display: flex; height: 26px; border-radius: 4px; overflow: hidden; gap: 2px; }
+.stack span, .bar span { display: block; min-width: 1px; }
+.k-product { background: var(--product); } .k-tests { background: var(--tests); }
+.k-generated { background: var(--generated); } .k-docs { background: var(--docs); }
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px 20px; }
+.legend div { display: flex; flex-direction: column; gap: 2px; font-size: 0.9rem; }
+.legend .k { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.legend .v { font-size: 1.2rem; font-weight: 600; }
+.sw { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.rows { display: flex; flex-direction: column; gap: 8px; }
+.row { display: grid; grid-template-columns: 280px minmax(0, 1fr) 60px; gap: 12px; align-items: center; }
+.row .name { font-family: var(--mono); font-size: 0.82rem; overflow-wrap: anywhere; }
+.row .bar { display: flex; height: 14px; gap: 1px; border-radius: 3px; overflow: hidden; }
+.row .n { text-align: right; font-size: 0.88rem; color: var(--muted); }
+
+.flow { display: flex; flex-direction: column; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
+.step .prose { font-size: 0.93rem; color: var(--muted); }
+.step .tagline { font-family: var(--mono); font-size: 0.78rem; color: var(--link); }
+.arrow { width: 1px; height: 20px; background: var(--muted); margin: 0 auto; position: relative; }
+.arrow::after { content: ""; position: absolute; bottom: 0; left: -4px; border: 4px solid transparent; border-top-color: var(--muted); border-bottom: 0; }
+.fork { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+
+.shots { display: flex; flex-direction: column; gap: 24px; }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+figure { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+figure .frame { border: 1px solid var(--line); border-radius: 6px; overflow: auto; max-height: 720px; background: var(--surface); }
+figure img { display: block; width: 100%; height: auto; }
+figure img.narrow { width: auto; max-width: 100%; margin: 0 auto; }
+figcaption { font-size: 0.92rem; display: flex; flex-direction: column; gap: 2px; }
+
+.findings { display: flex; flex-direction: column; gap: 20px; }
+.finding { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.finding .head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.refs { display: flex; flex-direction: column; gap: 4px; font-size: 0.92rem; }
+.refs .sub { color: var(--muted); font-size: 0.88rem; }
+.part { display: flex; flex-direction: column; gap: 4px; }
+
+.diff { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; min-width: 0; }
+.diff .dh { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; padding: 6px 12px; background: var(--code-bg); font-size: 0.85rem; border-bottom: 1px solid var(--line); }
+.diff .dh span { color: var(--muted); }
+.diff .scroll { overflow-x: auto; }
+.diff table { border-collapse: collapse; font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; min-width: 100%; }
+.diff td { padding: 0 8px; white-space: pre; vertical-align: top; }
+.diff td.ln { text-align: right; color: var(--muted); user-select: none; width: 1%; font-variant-numeric: tabular-nums; }
+.diff td.sign { width: 1%; padding: 0 2px 0 8px; user-select: none; color: var(--muted); }
+.diff tr.add td { background: var(--add-bg); }
+.diff tr.del td { background: var(--del-bg); }
+.diff tr.hit td.ln:first-child { box-shadow: inset 3px 0 0 var(--hit); }
+.diff .more { padding: 6px 12px; font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); }
+
+.reviewers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.reviewer { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.reviewer .prose { font-size: 0.93rem; }
+.rec { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+ul.plain, ol.plain { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 6px; max-width: 70ch; }
+footer { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-direction: column; gap: 4px; }
+
+@media (max-width: 640px) {
+  .row { grid-template-columns: minmax(0, 1fr) 60px; gap: 2px 12px; }
+  .row .name { grid-column: 1 / -1; }
+  h1 { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function () {
+  var D = JSON.parse(document.getElementById("data").textContent);
+  var pr = D.pr, rv = D.review, dirs = D.dirs || [];
+  var KINDS = [["product", "Product code"], ["tests", "Tests and fakes"], ["generated", "Generated and vendored"], ["docs", "Docs"]];
+  var VERDICT = { "approve": "Approve", "request-changes": "Request changes" };
+  var SEV = { "blocking": "Blocking", "should-fix": "Should fix" };
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function fmt(n) { return Number(n).toLocaleString("en-US"); }
+  function date(iso) { return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }); }
+  function plural(n, word) { return fmt(n) + " " + word + (n === 1 ? "" : "s"); }
+  function encPath(p) { return p.split("/").map(encodeURIComponent).join("/"); }
+
+  // Permalink to the code at the PR head, so the link still points at the reviewed lines after new pushes.
+  function blobUrl(ref) {
+    var isDir = ref.isDir || /\/$/.test(ref.path) || dirs.indexOf(ref.path.replace(/\/$/, "")) >= 0;
+    var url = pr.repoUrl + "/" + (isDir ? "tree" : "blob") + "/" + pr.headSha + "/" + encPath(ref.path.replace(/\/$/, ""));
+    if (ref.line) url += "#L" + ref.line + (ref.endLine && ref.endLine !== ref.line ? "-L" + ref.endLine : "");
+    return url;
+  }
+  // The same line in the PR's Files tab, when the file is part of the diff.
+  function diffUrl(ref) {
+    var a = pr.diffAnchors[ref.path];
+    if (!a) return null;
+    return pr.url + "/files#diff-" + a + (ref.line ? "R" + ref.line : "");
+  }
+  function refText(ref, short) {
+    var p = ref.path;
+    if (short) { var parts = p.replace(/\/$/, "").split("/"); if (parts.length > 2) p = parts.slice(-2).join("/"); }
+    return p + (ref.line ? ":" + ref.line + (ref.endLine && ref.endLine !== ref.line ? "-" + ref.endLine : "") : "");
+  }
+  function refLink(ref, short) {
+    return '<a class="ref" href="' + esc(blobUrl(ref)) + '" title="' + esc(refText(ref)) + '">' + esc(refText(ref, short)) + "</a>";
+  }
+  function parseToken(t) {
+    var m = t.match(/^(.*?)(?::(\d+)(?:-(\d+))?)?$/);
+    return { path: m[1], line: m[2] ? +m[2] : undefined, endLine: m[3] ? +m[3] : undefined };
+  }
+  // Inline text: [[path:line]] becomes a permalink, `x` becomes code, **x** becomes bold.
+  function inline(s) {
+    var h = esc(s);
+    h = h.replace(/\[\[([^\]\s]+?)\]\]/g, function (_, t) { return refLink(parseToken(t.replace(/&amp;/g, "&")), true); });
+    h = h.replace(/`([^`]+)`/g, "<code>$1</code>");
+    h = h.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    return h;
+  }
+  function prose(s) {
+    if (!s) return "";
+    return '<div class="prose">' + String(s).split(/\n\s*\n/).map(function (p) { return "<p>" + inline(p.trim()) + "</p>"; }).join("") + "</div>";
+  }
+  function refsBlock(refs) {
+    if (!refs || !refs.length) return "";
+    return '<div class="refs">' + refs.map(function (r) {
+      var d = diffUrl(r), extra = [];
+      if (d) extra.push('<a href="' + esc(d) + '">in the PR diff</a>');
+      if (r.note) extra.push(inline(r.note));
+      return "<div>" + refLink(r) + (extra.length ? ' <span class="sub">· ' + extra.join(" · ") + "</span>" : "") + "</div>";
+    }).join("") + "</div>";
+  }
+  function diffBlock(d) {
+    var head = d.suggestion ? "Suggested change" : d.changed ? "From the PR diff" : "Unchanged in this PR";
+    var rows = d.lines.map(function (l) {
+      var cls = (l.t === "+" ? "add" : l.t === "-" ? "del" : "") + (l.hit ? " hit" : "");
+      return '<tr class="' + cls + '"><td class="ln">' + (l.o || "") + '</td><td class="ln">' + (l.n || "") + '</td><td class="sign">' + (l.t === " " ? "" : l.t) + "</td><td>" + (esc(l.s) || " ") + "</td></tr>";
+    }).join("");
+    var label = refText({ path: d.path, line: d.line, endLine: d.endLine });
+    return '<div class="diff"><div class="dh"><a class="ref" href="' + esc(blobUrl(d)) + '">' + esc(label) + "</a><span>" + head + '</span></div><div class="scroll"><table aria-label="' + esc(head + ": " + label) + '">' + rows + "</table></div>" +
+      (d.truncated ? '<div class="more">Excerpt cut short. <a href="' + esc(diffUrl(d) || blobUrl(d)) + '">See the rest on GitHub</a>.</div>' : "") + "</div>";
+  }
+  function part(label, text) { return text ? '<div class="part"><span class="label">' + label + "</span>" + prose(text) + "</div>" : ""; }
+  function bar(added, cls) {
+    return KINDS.map(function (k) { return added[k[0]] > 0 ? '<span class="k-' + k[0] + '" style="flex:' + added[k[0]] + '"></span>' : ""; }).join("");
+  }
+  function kindsLabel(added) {
+    return KINDS.filter(function (k) { return added[k[0]] > 0; }).map(function (k) { return fmt(added[k[0]]) + " " + k[1].toLowerCase(); }).join(", ");
+  }
+
+  var h = [];
+  var blocking = rv.findings.filter(function (f) { return f.severity === "blocking"; });
+  var should = rv.findings.filter(function (f) { return f.severity === "should-fix"; });
+  // The reviewers each read through one lens, so they do not vote on the same evidence.
+  // What is worth saying is which lenses turned up something that blocks merge.
+  function blockingIn(id) { return blocking.filter(function (f) { return (f.raisedBy || []).indexOf(id) >= 0; }).length; }
+  var hitLenses = rv.reviewers.filter(function (r) { return blockingIn(r.id) > 0; });
+  var lensLine = !rv.reviewers.length ? "" : hitLenses.length
+    ? "Blocking findings in " + hitLenses.length + " of " + rv.reviewers.length + " lenses: " + hitLenses.map(function (r) { return r.lens.toLowerCase(); }).join("; ") + "."
+    : "No blocking findings in any of the " + rv.reviewers.length + " lenses.";
+
+  // ---- header and verdict
+  var c = pr.checks, checkBits = [];
+  if (c.passed) checkBits.push(c.passed + " passed");
+  if (c.failed) checkBits.push(c.failed + " failed");
+  if (c.pending) checkBits.push(c.pending + " pending");
+  h.push("<header>" +
+    '<div class="eyebrow">' + esc(pr.owner + "/" + pr.repo) + " · PR #" + pr.number + " · " + esc(pr.head) + " → " + esc(pr.base) + "</div>" +
+    '<h1><a href="' + esc(pr.url) + '" style="color:inherit;text-decoration:none">' + esc(pr.title) + "</a></h1>" +
+    '<div class="meta"><span>Author <b>' + esc(pr.author) + "</b></span><span>Opened <b>" + date(pr.createdAt) + "</b></span>" +
+    '<span><b class="num">' + fmt(pr.commitCount) + "</b> commits</span><span><b class=\"num\">" + fmt(pr.changedFiles || pr.areas.reduce(function (n, a) { return n + a.files; }, 0)) + "</b> files</span>" +
+    '<span><b class="num">+' + fmt(pr.totals.additions) + " −" + fmt(pr.totals.deletions) + "</b></span>" +
+    "<span>Checks <b>" + (checkBits.join(", ") || "none") + "</b></span>" + (pr.isDraft ? "<span><b>Draft</b></span>" : "") + "</div>" +
+    '<div class="verdict"><div class="top"><span class="pill ' + rv.verdict + '">' + VERDICT[rv.verdict] + "</span><strong>" +
+    (rv.findings.length ? plural(blocking.length, "blocking finding") + ", " + should.length + " to fix" : "No findings") + "</strong>" +
+    '<a class="small" href="#recommendation">Full recommendation</a></div>' + prose(rv.verdictReason) + "</div>" +
+    prose(rv.summary) + "</header>");
+
+  // ---- size
+  var t = pr.totals.added, legend = KINDS.filter(function (k) { return t[k[0]] > 0; });
+  h.push('<section><h2>How much there is to read</h2><p>The PR adds <strong class="num">' + fmt(pr.totals.additions) + '</strong> lines and removes <strong class="num">' + fmt(pr.totals.deletions) + "</strong>. " +
+    '<strong class="num">' + fmt(t.product) + "</strong> of the added lines are product code.</p>" +
+    '<div class="stack" role="img" aria-label="Added lines: ' + esc(kindsLabel(t)) + '">' + bar(t) + "</div>" +
+    '<div class="legend">' + legend.map(function (k) { return '<div><span class="k"><i class="sw k-' + k[0] + '"></i>' + k[1] + '</span><span class="v num">' + fmt(t[k[0]]) + "</span></div>"; }).join("") + "</div></section>");
+
+  // ---- areas
+  var max = Math.max.apply(null, pr.areas.map(function (a) { return a.additions; }).concat([1]));
+  h.push('<section><h2>Where the lines are</h2><p class="muted small">Added lines per area, on one scale. Each name opens that folder or file at the reviewed commit.</p><div class="rows">' +
+    pr.areas.map(function (a) {
+      var name = a.noLink ? '<span title="' + esc((a.members || []).join(", ")) + '">' + esc(a.name) + "</span>" : '<a class="ref" style="font-size:inherit" href="' + esc(blobUrl({ path: a.name, isDir: a.isDir })) + '">' + esc(a.name) + "</a>";
+      return '<div class="row"><div class="name">' + name + '</div><div><div class="bar" style="width:' + Math.max(0.6, a.additions / max * 100) + '%" role="img" aria-label="' + esc(kindsLabel(a.added)) + '" title="' + esc(kindsLabel(a.added)) + '">' + bar(a.added) + '</div></div><div class="n num">' + fmt(a.additions) + "</div></div>";
+    }).join("") + "</div></section>");
+
+  // ---- flow
+  if (rv.flow && rv.flow.length) {
+    h.push('<section><h2>' + esc(rv.flowTitle || "How it works") + '</h2><div class="flow">' + rv.flow.map(function (s, i) {
+      var box = function (x) { return '<div class="step">' + (x.tag ? '<span class="tagline">' + esc(x.tag) + "</span>" : "") + "<h3>" + inline(x.title) + "</h3>" + prose(x.text) + "</div>"; };
+      return (i ? '<div class="arrow"></div>' : "") + (s.branch ? '<div class="fork">' + s.branch.map(box).join("") + "</div>" : box(s));
+    }).join("") + "</div></section>");
+  }
+
+  // ---- key changes
+  if (rv.keyChanges.length) {
+    h.push('<section><h2>Key changes</h2><div class="findings">' + rv.keyChanges.map(function (k) {
+      return '<article class="finding"><h3>' + inline(k.title) + "</h3>" + prose(k.text) + refsBlock(k.refs) + (k.diffs || []).map(diffBlock).join("") + "</article>";
+    }).join("") + "</div></section>");
+  }
+
+  // ---- screenshots
+  if (pr.uiChanged || rv.screenshots.length) {
+    var body;
+    if (rv.screenshots.length) {
+      var groups = [], byPair = {};
+      rv.screenshots.forEach(function (s) {
+        if (s.pair && byPair[s.pair]) { byPair[s.pair].push(s); return; }
+        var g = [s]; groups.push(g); if (s.pair) byPair[s.pair] = g;
+      });
+      body = '<div class="shots">' + groups.map(function (g) {
+        g.sort(function (a, b) { return (a.state === "before" ? 0 : 1) - (b.state === "before" ? 0 : 1); });
+        return '<div class="' + (g.length > 1 ? "pair" : "") + '">' + g.map(function (s) {
+          var bits = [s.state === "before" ? "Before" : s.state === "after" && g.length > 1 ? "After" : "", s.route, s.viewport, s.theme === "dark" ? "dark" : ""].filter(Boolean);
+          return '<figure><div class="frame"><img' + (s.device === "mobile" ? ' class="narrow" style="max-width:390px"' : "") + ' src="' + s.src + '" alt="' + esc(s.caption) + '"></div><figcaption><span>' + inline(s.caption) + '</span><span class="muted small mono">' + esc(bits.join(" · ")) + "</span></figcaption></figure>";
+        }).join("") + "</div>";
+      }).join("") + "</div>" + (rv.screenshotsNote ? prose(rv.screenshotsNote) : "");
+    } else {
+      body = '<p><span class="pill should-fix">Not captured</span></p>' + prose(rv.screenshotsNote);
+    }
+    h.push('<section><h2>The running app</h2><p class="muted small">' + plural(pr.uiFiles.length, "UI file") + " changed. Screenshots come from the PR's code at the reviewed commit.</p>" + body + "</section>");
+  }
+
+  // ---- findings
+  function finding(f) {
+    var who = (f.raisedBy || []).map(function (id) { var r = rv.reviewers.filter(function (x) { return x.id === id; })[0]; return r ? r.lens : id; });
+    return '<article class="finding" id="' + esc(f.id) + '"><div class="head"><span class="pill ' + f.severity + '">' + SEV[f.severity] + "</span>" +
+      (f.tags || []).map(function (x) { return '<span class="pill tag">' + esc(x) + "</span>"; }).join("") + '<span class="muted small mono">' + esc(f.id) + "</span></div>" +
+      "<h3>" + inline(f.title) + "</h3>" + prose(f.what) + refsBlock(f.refs) + (f.diffs || []).map(diffBlock).join("") +
+      part("Evidence", f.evidence) + part("Why the checks pass", f.whyCiGreen) + part("Fix", f.fix) + (f.fixDiff ? diffBlock(f.fixDiff) : "") +
+      (who.length ? '<p class="muted small">Raised by: ' + esc(who.join(", ")) + "</p>" : "") + "</article>";
+  }
+  h.push('<section><h2>Findings</h2>' + (rv.findings.length
+    ? '<div class="findings">' + blocking.concat(should).map(finding).join("") + "</div>"
+    : "<p>Nothing that needs to change before merge.</p>") + "</section>");
+
+  if (rv.worthKnowing.length) {
+    h.push('<section><h2>Worth knowing</h2><p class="muted small">Not defects. Things the author needs before merging.</p><div class="findings">' + rv.worthKnowing.map(function (k) {
+      return '<article class="finding"><h3>' + inline(k.title) + "</h3>" + prose(k.text) + refsBlock(k.refs) + "</article>";
+    }).join("") + "</div></section>");
+  }
+
+  // ---- reviewers
+  if (rv.reviewers.length) {
+    h.push('<section><h2>What each reviewer said</h2><p class="muted small">Three reviewers read the PR independently, each through one lens. Their findings were checked against the code before anything was kept.</p><div class="reviewers">' + rv.reviewers.map(function (r) {
+      var counts = r.reported != null ? '<p class="muted small">Found ' + fmt(r.reported) + ", kept " + (r.kept || 0) + " after checking</p>" : "";
+      var nb = blockingIn(r.id);
+      var pill = nb ? '<span class="pill blocking">' + nb + " blocking</span>" : '<span class="pill approve">Nothing blocking</span>';
+      return '<div class="reviewer"><h3>' + esc(r.lens) + "</h3><div>" + pill + "</div>" + prose(r.summary) + counts + "</div>";
+    }).join("") + "</div></section>");
+  }
+
+  // ---- reading order
+  if (rv.readingOrder.length) {
+    h.push('<section><h2>A reading order</h2><ol class="plain">' + rv.readingOrder.map(function (r) {
+      return "<li>" + (r.refs || []).map(function (x) { return refLink(x); }).join(", ") + (r.text ? " " + inline(r.text) : "") + "</li>";
+    }).join("") + "</ol></section>");
+  }
+
+  // ---- recommendation
+  var rec = rv.recommendation, must = (rec.mustChange || []).map(function (id) { return rv.findings.filter(function (f) { return f.id === id; })[0]; }).filter(Boolean);
+  h.push('<section id="recommendation"><h2>Consolidated recommendation</h2><div class="rec"><div><span class="pill ' + rv.verdict + '">' + VERDICT[rv.verdict] + "</span>" +
+    (lensLine ? ' <span class="muted small">' + esc(lensLine) + "</span>" : "") + "</div>" + prose(rec.text) +
+    (must.length ? '<div class="part"><span class="label">Change before merge</span><ul class="plain">' + must.map(function (f) { return '<li><a href="#' + esc(f.id) + '">' + inline(f.title) + "</a></li>"; }).join("") + "</ul></div>" : "") +
+    part("Where the reviewers were overruled", rec.overruled) + "</div></section>");
+
+  // ---- footer
+  var how = rv.mode === "panel" ? "Three-reviewer panel, findings verified against the code." : "Quick single pass. Blocking findings were not reproduced.";
+  h.push("<footer><span>Reviewed at commit " + '<a class="ref" href="' + esc(pr.repoUrl + "/commit/" + pr.headSha) + '">' + pr.headSha.slice(0, 10) + "</a> on " + date(D.generatedAt) + ". " + how + " Code links are pinned to that commit.</span>" +
+    (rv.notDone && rv.notDone.length ? "<span>Not done: " + rv.notDone.map(inline).join(" ") + "</span>" : "") + "</footer>");
+
+  document.getElementById("app").innerHTML = h.join("");
+})();
+</script>
+</body>
+</html>
