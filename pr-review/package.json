@@ -1,0 +1,11 @@
+{
+  "name": "pr-review-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Screenshot capture for the pr-review skill's HTML report. The other scripts need only Node.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "playwright": "1.63.0"
+  }
+}

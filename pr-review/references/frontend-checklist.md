@@ -1,6 +1,6 @@
 # Frontend Review Checklist
 
-The frontend lens of `pr-review`. Walk every section against the frontend part of the diff. Each item is a question — a "no" (or "unclear") is a candidate finding to verify (Phase 1, step 4) before reporting.
+The frontend lens of `pr-review`. Walk every section against the frontend part of the diff. Each item is a question — a "no" (or "unclear") is a candidate finding to verify (Phase 1, step 6) before reporting.
 
 ## 1. General code review
 
